@@ -63,6 +63,16 @@ class EngineRuntimeTest extends TestCase
         $pdo->exec("INSERT INTO room_players (player_id, room_id, game_id, player_name, is_host, seat) VALUES
                     ($alice, '" . self::$roomId . "', " . self::$gameId . ", 'alice', 1, 0),
                     ($bob, '" . self::$roomId . "', " . self::$gameId . ", 'bob', 0, 1)");
+
+        // Fire the join lifecycle — same as the room.php join wrapper — so
+        // on_player_join assigns each player their symbol (X / O).
+        $rt = new Runtime($pdo);
+        $game = $pdo->query("SELECT * FROM games WHERE id = " . self::$gameId)->fetch(PDO::FETCH_ASSOC);
+        foreach (['alice', 'bob'] as $name) {
+            $stmt = $pdo->prepare("SELECT * FROM players WHERE game_id = ? AND name = ?");
+            $stmt->execute([self::$gameId, $name]);
+            $rt->fire($game, self::$roomId, $stmt->fetch(PDO::FETCH_ASSOC), 'on_player_join', [], null);
+        }
     }
 
     private function game(): array
@@ -104,9 +114,11 @@ class EngineRuntimeTest extends TestCase
 
     public function testWrongTurnRejectedAndNothingPersisted(): void
     {
+        // Alice just moved (test above) — turn flipped to seat 1, so a second
+        // Alice move is the wrong-turn case.
         $before = self::$pdo->query("SELECT COUNT(*) FROM player_updates")->fetchColumn();
         $rt = new Runtime(self::$pdo);
-        $res = $rt->fire($this->game(), self::$roomId, $this->player('bob'), 'on_player_action', ['x' => 1, 'y' => 0], 'move');
+        $res = $rt->fire($this->game(), self::$roomId, $this->player('alice'), 'on_player_action', ['x' => 1, 'y' => 0], 'move');
 
         $this->assertSame('rejected', $res['result']);
         $this->assertSame('not your turn', $res['reason']);
