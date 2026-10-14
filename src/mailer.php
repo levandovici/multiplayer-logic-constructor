@@ -29,10 +29,10 @@ function smtp_send(string $to, string $subject, string $body): bool {
     $pass = env_val('SMTP_PASS', '');
     $from = env_val('SMTP_FROM', env_val('EMAIL_FROM', $user));
 
-    $transport = $port === 465 ? "ssl://$host:$port" : "tcp://$host:$port";
+    $scheme = $port === 465 ? 'ssl' : 'tcp';
     $errno = 0;
     $errstr = '';
-    $sock = @fsockopen($transport, $errno, $errstr, 15);
+    $sock = @fsockopen("$scheme://$host", $port, $errno, $errstr, 15);
     if (!$sock) {
         error_log("smtp: connect failed: $errstr ($errno)");
         return false;
