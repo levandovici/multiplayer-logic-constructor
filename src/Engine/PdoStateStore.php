@@ -137,6 +137,21 @@ final class PdoStateStore implements StateStore
         ")->execute([(int)$ctx->game['id'], $ctx->room['room_id'] ?? null, $timer]);
     }
 
+    public function kickPlayer(Context $ctx, int $playerId): void
+    {
+        $this->pdo->prepare("DELETE FROM room_players WHERE room_id = ? AND player_id = ?")
+            ->execute([$ctx->roomId(), $playerId]);
+    }
+
+    public function setRoomStatus(Context $ctx, string $status): void
+    {
+        $this->pdo->prepare("UPDATE rooms SET status = ? WHERE room_id = ?")
+            ->execute([$status, $ctx->roomId()]);
+        if ($ctx->room !== null) {
+            $ctx->room['status'] = $status;
+        }
+    }
+
     public function log(Context $ctx, string $action, mixed $payload, string $result, ?string $reason, int $steps, int $durationMs): void
     {
         $this->pdo->prepare("

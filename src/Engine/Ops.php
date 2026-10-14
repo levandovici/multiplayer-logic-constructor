@@ -24,11 +24,15 @@ final class Ops
         // action outcome
         'respond', 'reject',
         // communication
-        'send.player', 'send.room', 'send.others',
+        'send.player', 'send.room', 'send.others', 'broadcast.log',
         // timers
         'schedule', 'cancel_timer',
         // audit
         'log',
+        // anti-cheat primitives
+        'require', 'consume', 'ratelimit', 'verify.move',
+        'turn.assert', 'turn.set', 'turn.next',
+        'player.kick', 'match.start', 'match.end',
     ];
 
     /** Expression ops — evaluate to a value. */
@@ -39,7 +43,8 @@ final class Ops
         'ctx.player_id', 'ctx.player_name', 'ctx.player_is_host', 'ctx.player_seat',
         'ctx.room_id', 'ctx.room_name', 'ctx.room_status', 'ctx.now',
         'ctx.action', 'ctx.event', 'ctx.timer',
-        'room.players', 'room.player_count',
+        'room.players', 'room.player_count', 'room.member',
+        'turn.current',
         // math
         'add', 'sub', 'mul', 'div', 'mod',
         'abs', 'min', 'max', 'clamp', 'floor', 'ceil', 'round', 'pow', 'sqrt',

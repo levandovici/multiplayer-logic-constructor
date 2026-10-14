@@ -43,6 +43,12 @@ interface StateStore
     /** Cancel pending (not yet running) events named $timer for this room. */
     public function cancelEvents(Context $ctx, string $timer): void;
 
+    /** Remove a player from the room (player.kick block). */
+    public function kickPlayer(Context $ctx, int $playerId): void;
+
+    /** Set rooms.status (match.start/match.end blocks). */
+    public function setRoomStatus(Context $ctx, string $status): void;
+
     /** Append one action_log row summarising the run. */
     public function log(Context $ctx, string $action, mixed $payload, string $result, ?string $reason, int $steps, int $durationMs): void;
 }

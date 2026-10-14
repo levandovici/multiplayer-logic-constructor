@@ -203,6 +203,176 @@ class EngineTest extends TestCase
         $this->assertSame(42, $ctx->roomGet('v'));
     }
 
+    // ====================== anti-cheat ops ======================
+
+    public function testRequireRejectsOnFalse(): void
+    {
+        $this->expectException(Reject::class);
+        $this->execProgram([
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 't',
+                'body' => [['op' => 'require', 'cond' => false, 'reason' => 'nope']],
+            ]],
+        ], 'on_player_action', 't');
+    }
+
+    public function testConsumeAtomic(): void
+    {
+        $store = new ArrayStateStore();
+        $store->playerStates['r1:10'] = ['gold' => 30];
+        [$ctx] = $this->execProgram([
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 'buy',
+                'body' => [['op' => 'consume', 'scope' => 'player', 'name' => 'gold', 'amount' => 20]],
+            ]],
+        ], 'on_player_action', 'buy', [], $this->player(10), $store);
+        $this->assertSame(10, $store->playerStates['r1:10']['gold']);
+
+        // insufficient → reject, balance untouched
+        try {
+            $this->execProgram([
+                'triggers' => [[
+                    'event' => 'on_player_action', 'action' => 'buy',
+                    'body' => [['op' => 'consume', 'scope' => 'player', 'name' => 'gold', 'amount' => 50]],
+                ]],
+            ], 'on_player_action', 'buy', [], $this->player(10), $store);
+            $this->fail('expected reject');
+        } catch (Reject $r) {
+            $this->assertStringContainsString('insufficient', $r->reason);
+        }
+        $this->assertSame(10, $store->playerStates['r1:10']['gold']);
+    }
+
+    public function testRatelimitRejectsAfterLimit(): void
+    {
+        $store = new ArrayStateStore();
+        $ast = [
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 'chat',
+                'body' => [['op' => 'ratelimit', 'limit' => 2, 'per' => 60]],
+            ]],
+        ];
+        $p = $this->player(10);
+        $this->execProgram($ast, 'on_player_action', 'chat', [], $p, $store); // 1
+        $this->execProgram($ast, 'on_player_action', 'chat', [], $p, $store); // 2
+        try {
+            $this->execProgram($ast, 'on_player_action', 'chat', [], $p, $store); // 3 → reject
+            $this->fail('expected reject');
+        } catch (Reject $r) {
+            $this->assertStringContainsString('rate limit', $r->reason);
+        }
+    }
+
+    public function testVerifyMove(): void
+    {
+        // within range → ok
+        $this->execProgram([
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 'm',
+                'body' => [['op' => 'verify.move', 'from' => [0, 0], 'to' => [1, 1], 'max' => 1]],
+            ]],
+        ], 'on_player_action', 'm');
+        // out of range → reject
+        try {
+            $this->execProgram([
+                'triggers' => [[
+                    'event' => 'on_player_action', 'action' => 'm',
+                    'body' => [['op' => 'verify.move', 'from' => [0, 0], 'to' => [5, 0], 'max' => 1]],
+                ]],
+            ], 'on_player_action', 'm');
+            $this->fail('expected reject');
+        } catch (Reject $r) {
+            $this->assertSame('move too far', $r->reason);
+        }
+    }
+
+    public function testTurnCycle(): void
+    {
+        $store = new ArrayStateStore();
+        $store->members = [
+            ['room_id' => 'r1', 'player_id' => 10, 'player_name' => 'a', 'is_host' => 1, 'is_online' => 1, 'seat' => 0],
+            ['room_id' => 'r1', 'player_id' => 11, 'player_name' => 'b', 'is_host' => 0, 'is_online' => 1, 'seat' => 1],
+        ];
+        $ast = [
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 'pass',
+                'body' => [
+                    ['op' => 'turn.assert'],
+                    ['op' => 'turn.next'],
+                ],
+            ]],
+        ];
+        // seed: alice's turn
+        $this->execProgram([
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 'init',
+                'body' => [['op' => 'turn.set', 'player' => 10]],
+            ]],
+        ], 'on_player_action', 'init', [], $this->player(10), $store);
+        $this->assertSame(10, $store->roomStates['r1']['turn']);
+
+        // bob acts out of turn → reject
+        try {
+            $this->execProgram($ast, 'on_player_action', 'pass', [], $this->player(11), $store);
+            $this->fail('expected reject');
+        } catch (Reject $r) {
+            $this->assertSame('not your turn', $r->reason);
+        }
+
+        // alice passes → turn goes to bob; bob passes → wraps to alice
+        $this->execProgram($ast, 'on_player_action', 'pass', [], $this->player(10), $store);
+        $this->assertSame(11, $store->roomStates['r1']['turn']);
+        $this->execProgram($ast, 'on_player_action', 'pass', [], $this->player(11), $store);
+        $this->assertSame(10, $store->roomStates['r1']['turn']);
+    }
+
+    public function testKickAndMatchStatus(): void
+    {
+        $store = new ArrayStateStore();
+        $store->members = [
+            ['room_id' => 'r1', 'player_id' => 10, 'player_name' => 'a', 'is_host' => 1, 'is_online' => 1, 'seat' => 0],
+            ['room_id' => 'r1', 'player_id' => 11, 'player_name' => 'b', 'is_host' => 0, 'is_online' => 1, 'seat' => 1],
+        ];
+        $this->execProgram([
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 't',
+                'body' => [
+                    ['op' => 'match.start'],
+                    ['op' => 'player.kick', 'player' => 11, 'reason' => 'cheating'],
+                    ['op' => 'match.end', 'result' => 'forfeit'],
+                ],
+            ]],
+        ], 'on_player_action', 't', [], $this->player(10), $store);
+
+        $this->assertSame('ended', $store->roomStatuses['r1']);
+        $this->assertSame([11], $store->kicked);
+        $kicks = array_filter($store->sentUpdates, fn($u) => $u['type'] === 'kicked');
+        $this->assertCount(1, $kicks);
+        $this->assertSame(['reason' => 'cheating'], array_values($kicks)[0]['data']);
+        // kick removed bob → match_ended broadcast reaches only alice
+        $ends = array_values(array_filter($store->sentUpdates, fn($u) => $u['type'] === 'match_ended'));
+        $this->assertCount(1, $ends);
+        $this->assertSame(10, $ends[0]['player_id']);
+    }
+
+    public function testRoomMemberExpr(): void
+    {
+        $store = new ArrayStateStore();
+        $store->members = [
+            ['room_id' => 'r1', 'player_id' => 11, 'player_name' => 'bob', 'is_host' => 1, 'is_online' => 1, 'seat' => 2],
+        ];
+        [$ctx] = $this->execProgram([
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 't',
+                'body' => [['op' => 'set.room', 'name' => 'who',
+                    'value' => ['op' => 'room.member', 'id' => 11]]],
+            ]],
+        ], 'on_player_action', 't', [], $this->player(10), $store);
+        $who = $ctx->roomGet('who');
+        $this->assertSame('bob', $who['name']);
+        $this->assertSame(2, $who['seat']);
+    }
+
     // ====================== tic-tac-toe fixture ======================
 
     private function tictactoe(): array

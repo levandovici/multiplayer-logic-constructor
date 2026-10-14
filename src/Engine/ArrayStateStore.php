@@ -20,6 +20,10 @@ final class ArrayStateStore implements StateStore
     public array $events = [];
     /** @var list<string> */
     public array $cancelled = [];
+    /** @var list<int> kicked player ids */
+    public array $kicked = [];
+    /** @var array<string,string> roomId => status */
+    public array $roomStatuses = [];
     /** @var list<array> action log rows */
     public array $log = [];
 
@@ -96,6 +100,24 @@ final class ArrayStateStore implements StateStore
     public function cancelEvents(Context $ctx, string $timer): void
     {
         $this->cancelled[] = $timer;
+    }
+
+    public function kickPlayer(Context $ctx, int $playerId): void
+    {
+        $rid = $ctx->room['room_id'] ?? null;
+        $this->members = array_values(array_filter(
+            $this->members,
+            fn($m) => !(($m['room_id'] ?? null) === $rid && (int)($m['player_id'] ?? 0) === $playerId)
+        ));
+        $this->kicked[] = $playerId;
+    }
+
+    public function setRoomStatus(Context $ctx, string $status): void
+    {
+        if ($ctx->room !== null) {
+            $ctx->room['status'] = $status;
+            $this->roomStatuses[$ctx->room['room_id']] = $status;
+        }
     }
 
     public function log(Context $ctx, string $action, mixed $payload, string $result, ?string $reason, int $steps, int $durationMs): void

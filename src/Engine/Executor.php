@@ -254,6 +254,12 @@ final class Executor
                 );
                 return;
 
+            case 'broadcast.log':
+                $line = Value::str($this->evalExpr($n['message'] ?? '', $scope));
+                $this->ctx->logLines[] = $line;
+                $this->ctx->sendToRoom('log', $line);
+                return;
+
             // ---------- timers ----------
             case 'schedule':
                 $this->ctx->schedule(
@@ -261,6 +267,83 @@ final class Executor
                     max(0, Value::int($this->evalExpr($n['delay'] ?? 60, $scope))),
                     $this->evalExpr($n['payload'] ?? null, $scope)
                 );
+                return;
+
+            // ---------- anti-cheat ----------
+            case 'require':
+                if (!Value::bool($this->evalExpr($n['cond'] ?? false, $scope))) {
+                    throw new Reject(Value::str(
+                        $this->evalExpr($n['reason'] ?? 'requirement failed', $scope)
+                    ));
+                }
+                return;
+
+            case 'consume':
+                // Atomic check-and-decrement against a scoped numeric var.
+                // Runs inside the room-locked transaction, so a second
+                // concurrent spend can't slip through the same check.
+                [$bal, $w] = $this->namedVar($n, $scope);
+                $amount = Value::num($this->evalExpr($n['amount'] ?? 1, $scope));
+                $bal = Value::num($bal);
+                if ($amount < 0) {
+                    throw new EngineError('consume amount must be >= 0');
+                }
+                if ($bal < $amount) {
+                    throw new Reject('insufficient ' . $this->varName($n));
+                }
+                $w($bal - $amount);
+                return;
+
+            case 'ratelimit':
+                // Per-actor bucket in player_state — rejects when the count
+                // in the current window exceeds the limit. Defaults to the
+                // action/timer name as the bucket key.
+                $rlKey = Value::str($this->evalExpr($n['key'] ?? null, $scope));
+                $this->applyRateLimit(
+                    $rlKey !== '' ? $rlKey : ($this->ctx->key ?? 'action'),
+                    Value::int($this->evalExpr($n['limit'] ?? 10, $scope)),
+                    Value::int($this->evalExpr($n['per'] ?? 60, $scope))
+                );
+                return;
+
+            case 'verify.move':
+                $from = Value::listOf($this->evalExpr($n['from'] ?? [], $scope));
+                $to = Value::listOf($this->evalExpr($n['to'] ?? [], $scope));
+                $max = Value::num($this->evalExpr($n['max'] ?? 1, $scope));
+                $this->verifyMove($from, $to, $max);
+                return;
+
+            case 'turn.assert':
+                if ($this->ctx->roomGet('turn') !== $this->ctx->playerId()) {
+                    throw new Reject('not your turn');
+                }
+                return;
+
+            case 'turn.set':
+                $this->ctx->roomSet('turn', $this->ctx->resolvePlayerId(
+                    $this->evalExpr($n['player'] ?? null, $scope)
+                ));
+                return;
+
+            case 'turn.next':
+                $this->advanceTurn();
+                return;
+
+            case 'player.kick':
+                $pid = $this->ctx->resolvePlayerId($this->evalExpr($n['player'] ?? null, $scope));
+                $reason = Value::str($this->evalExpr($n['reason'] ?? 'kicked', $scope));
+                $this->ctx->sendToPlayer($pid, 'kicked', ['reason' => $reason]);
+                $this->ctx->store->kickPlayer($this->ctx, $pid);
+                return;
+
+            case 'match.start':
+                $this->ctx->store->setRoomStatus($this->ctx, 'playing');
+                $this->ctx->sendToRoom('match_started', $this->evalExpr($n['data'] ?? null, $scope));
+                return;
+
+            case 'match.end':
+                $this->ctx->store->setRoomStatus($this->ctx, 'ended');
+                $this->ctx->sendToRoom('match_ended', $this->evalExpr($n['result'] ?? null, $scope));
                 return;
 
             case 'cancel_timer':
@@ -344,6 +427,24 @@ final class Executor
 
             case 'room.player_count':
                 return count($this->ctx->roomPlayers());
+
+            case 'room.member':
+                $pid = $this->ctx->resolvePlayerId($e($node['id'] ?? null));
+                foreach ($this->ctx->roomPlayers() as $m) {
+                    if ((int)$m['player_id'] === $pid) {
+                        return [
+                            'id' => (int)$m['player_id'],
+                            'name' => $m['player_name'],
+                            'is_host' => (bool)$m['is_host'],
+                            'is_online' => (bool)$m['is_online'],
+                            'seat' => $m['seat'] !== null ? (int)$m['seat'] : null,
+                        ];
+                    }
+                }
+                return null;
+
+            case 'turn.current':
+                return $this->ctx->roomGet('turn');
 
             // ---------- math ----------
             case 'add': return Value::num($e($node['a'] ?? 0)) + Value::num($e($node['b'] ?? 0));
@@ -580,6 +681,58 @@ final class Executor
             'game' => $this->ctx->gameSet($name, $value),
             default => throw new EngineError("bad scope $scope"),
         };
+    }
+
+    /**
+     * Per-actor, per-key fixed-window limiter persisted in player_state under
+     * "__rl.<key>" — survives across actions, is server-held, and rolls back
+     * with the transaction. Rejects once `limit` calls inside `per` seconds.
+     */
+    private function applyRateLimit(string $key, int $limit, int $per): void
+    {
+        $per = max(1, $per);
+        $name = '__rl.' . $key;
+        $pid = $this->ctx->playerId();
+        $now = time();
+        $win = $this->ctx->playerGet($pid, $name);
+        if (!is_array($win) || $now - (int)($win['start'] ?? 0) >= $per) {
+            $win = ['start' => $now, 'count' => 0];
+        }
+        $win['count'] = (int)$win['count'] + 1;
+        if ($win['count'] > $limit) {
+            throw new Reject("rate limit: max {$limit} per {$per}s");
+        }
+        $this->ctx->playerSet($pid, $name, $win);
+    }
+
+    /**
+     * Chebyshev distance between two equal-length position lists — the
+     * "max cells per move" check. Lists must match dimension.
+     */
+    private function verifyMove(array $from, array $to, int|float $max): void
+    {
+        if (count($from) !== count($to) || $from === []) {
+            throw new EngineError('verify.move needs equal-length position lists');
+        }
+        foreach ($from as $i => $f) {
+            if (abs(Value::num($f) - Value::num($to[$i])) > $max) {
+                throw new Reject('move too far');
+            }
+        }
+    }
+
+    /** Round-robin: hand `room.turn` to the next member after the current. */
+    private function advanceTurn(): void
+    {
+        $members = $this->ctx->roomPlayers();
+        if ($members === []) {
+            return;
+        }
+        $ids = array_map(fn($m) => (int)$m['player_id'], $members);
+        $cur = $this->ctx->roomGet('turn');
+        $i = $cur !== null ? array_search((int)$cur, $ids, true) : false;
+        $next = $ids[(($i === false ? -1 : $i) + 1) % count($ids)];
+        $this->ctx->roomSet('turn', $next);
     }
 
     /**

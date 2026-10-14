@@ -93,6 +93,25 @@
             [field('TIMER', 'round_end'), val('DELAY', 'Number'), val('PAYLOAD')]), { colour: C.timer }),
         Object.assign(stmt('tm_cancel', 'cancel timer %1', [field('TIMER', 'round_end')]), { colour: C.timer }),
 
+        // ============ anti-cheat ============
+        Object.assign(stmt('ac_require', 'require %1 else reject %2',
+            [val('COND', 'Boolean'), val('REASON')]), { colour: 0 }),
+        Object.assign(stmt('ac_consume', 'consume %3 of %1 %2',
+            [drop('SCOPE', SCOPES), field('NAME', 'gold'), val('AMOUNT')]), { colour: 0 }),
+        Object.assign(stmt('ac_ratelimit', 'rate limit %1 calls per %2 s (key %3)',
+            [val('LIMIT', 'Number'), val('PER', 'Number'), val('KEY')]), { colour: 0 }),
+        Object.assign(stmt('ac_verify_move', 'verify move from %1 to %2 max %3 per cell',
+            [val('FROM'), val('TO'), val('MAX')]), { colour: 0 }),
+        Object.assign(stmt('ac_turn_assert', 'assert it is my turn'), { colour: 0 }),
+        Object.assign(stmt('ac_turn_set', 'set turn to player %1', [val('PLAYER')]), { colour: 0 }),
+        Object.assign(stmt('ac_turn_next', 'advance turn to next player'), { colour: 0 }),
+        Object.assign(stmt('ac_kick', 'kick player %1 reason %2', [val('PLAYER'), val('REASON')]), { colour: 0 }),
+        Object.assign(stmt('ac_match_start', 'match start, broadcast %1', [val('DATA')]), { colour: 0 }),
+        Object.assign(stmt('ac_match_end', 'match end, result %1', [val('RESULT')]), { colour: 0 }),
+        Object.assign(stmt('ac_broadcast_log', 'broadcast log %1', [val('MESSAGE')]), { colour: 0 }),
+        expr('ex_turn_current', 'current turn player', [], 0),
+        expr('ex_room_member', 'room member %1', [val('ID')], 0),
+
         // ============ named list/map mutation ============
         stmt('list_add', 'add %3 to list %1 %2', [drop('SCOPE', SCOPES), field('NAME', 'items'), val('VALUE')]),
         stmt('list_insert_at', 'insert %4 at %3 of list %1 %2', [drop('SCOPE', SCOPES), field('NAME', 'items'), val('INDEX'), val('VALUE')]),
@@ -208,6 +227,10 @@
             cat('Actions', C.action, ['act_respond', 'act_reject', 'act_log']),
             cat('Messages', C.comm, ['send_player', 'send_room', 'send_others']),
             cat('Timers', C.timer, ['tm_schedule', 'tm_cancel']),
+            cat('Anti-cheat', '0', ['ac_require', 'ac_consume', 'ac_ratelimit',
+                'ac_verify_move', 'ac_turn_assert', 'ac_turn_set', 'ac_turn_next',
+                'ac_kick', 'ac_match_start', 'ac_match_end', 'ac_broadcast_log',
+                'ex_turn_current', 'ex_room_member']),
             cat('Lists', C.list, ['list_lit', 'list_item', 'list_add', 'list_insert_at', 'list_set_at',
                 'list_remove_at', 'list_clear', 'list_get', 'list_length', 'list_contains',
                 'list_index_of', 'list_shuffle', 'list_slice', 'list_join']),
@@ -293,6 +316,17 @@
             case 'send_others': return { op: 'send.others', type: strField(b, 'TYPE'), data: inExpr(b, 'DATA') };
             case 'tm_schedule': return { op: 'schedule', timer: strField(b, 'TIMER'), delay: inExpr(b, 'DELAY'), payload: inExpr(b, 'PAYLOAD') };
             case 'tm_cancel': return { op: 'cancel_timer', timer: strField(b, 'TIMER') };
+            case 'ac_require': return { op: 'require', cond: inExpr(b, 'COND'), reason: inExpr(b, 'REASON') };
+            case 'ac_consume': return { op: 'consume', scope: scopeField(b), name: nameField(b), amount: inExpr(b, 'AMOUNT') };
+            case 'ac_ratelimit': return { op: 'ratelimit', limit: inExpr(b, 'LIMIT'), per: inExpr(b, 'PER'), key: inExpr(b, 'KEY') };
+            case 'ac_verify_move': return { op: 'verify.move', from: inExpr(b, 'FROM'), to: inExpr(b, 'TO'), max: inExpr(b, 'MAX') };
+            case 'ac_turn_assert': return { op: 'turn.assert' };
+            case 'ac_turn_set': return { op: 'turn.set', player: inExpr(b, 'PLAYER') };
+            case 'ac_turn_next': return { op: 'turn.next' };
+            case 'ac_kick': return { op: 'player.kick', player: inExpr(b, 'PLAYER'), reason: inExpr(b, 'REASON') };
+            case 'ac_match_start': return { op: 'match.start', data: inExpr(b, 'DATA') };
+            case 'ac_match_end': return { op: 'match.end', result: inExpr(b, 'RESULT') };
+            case 'ac_broadcast_log': return { op: 'broadcast.log', message: inExpr(b, 'MESSAGE') };
             case 'list_add': return { op: 'list.add', scope: scopeField(b), name: nameField(b), value: inExpr(b, 'VALUE') };
             case 'list_insert_at': return { op: 'list.insert_at', scope: scopeField(b), name: nameField(b), index: inExpr(b, 'INDEX'), value: inExpr(b, 'VALUE') };
             case 'list_set_at': return { op: 'list.set_at', scope: scopeField(b), name: nameField(b), index: inExpr(b, 'INDEX'), value: inExpr(b, 'VALUE') };
@@ -335,6 +369,8 @@
         ex_ctx: (b) => ({ op: String(b.getFieldValue('PROP')) }),
         ex_room_players: () => ({ op: 'room.players' }),
         ex_room_player_count: () => ({ op: 'room.player_count' }),
+        ex_room_member: (b) => ({ op: 'room.member', id: inExpr(b, 'ID') }),
+        ex_turn_current: () => ({ op: 'turn.current' }),
         math_bin: (b) => ({ op: String(b.getFieldValue('OP')), a: inExpr(b, 'A'), b: inExpr(b, 'B') }),
         math_un: (b) => ({ op: String(b.getFieldValue('OP')), v: inExpr(b, 'V') }),
         math_clamp: (b) => ({ op: 'clamp', v: inExpr(b, 'V'), min: inExpr(b, 'MIN'), max: inExpr(b, 'MAX') }),
