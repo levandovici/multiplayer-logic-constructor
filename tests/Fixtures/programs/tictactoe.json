@@ -1,0 +1,225 @@
+{
+  "version": 1,
+  "variables": {
+    "player": { "symbol": "" },
+    "room": {
+      "board": [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "turn": 0,
+      "winner": "",
+      "moves": 0
+    },
+    "game": {}
+  },
+  "functions": [
+    {
+      "name": "checkWin",
+      "params": ["s"],
+      "body": [
+        {
+          "op": "foreach",
+          "list": {
+            "op": "list_lit",
+            "items": [
+              [0, 1, 2], [3, 4, 5], [6, 7, 8],
+              [0, 3, 6], [1, 4, 7], [2, 5, 8],
+              [0, 4, 8], [2, 4, 6]
+            ]
+          },
+          "as": "line",
+          "body": [
+            {
+              "op": "if",
+              "cond": {
+                "op": "and",
+                "a": {
+                  "op": "eq",
+                  "a": {
+                    "op": "list_get",
+                    "list": { "op": "var.room", "name": "board" },
+                    "index": {
+                      "op": "list_get",
+                      "list": { "op": "var.local", "name": "line" },
+                      "index": 0
+                    }
+                  },
+                  "b": { "op": "var.local", "name": "s" }
+                },
+                "b": {
+                  "op": "and",
+                  "a": {
+                    "op": "eq",
+                    "a": {
+                      "op": "list_get",
+                      "list": { "op": "var.room", "name": "board" },
+                      "index": {
+                        "op": "list_get",
+                        "list": { "op": "var.local", "name": "line" },
+                        "index": 1
+                      }
+                    },
+                    "b": { "op": "var.local", "name": "s" }
+                  },
+                  "b": {
+                    "op": "eq",
+                    "a": {
+                      "op": "list_get",
+                      "list": { "op": "var.room", "name": "board" },
+                      "index": {
+                        "op": "list_get",
+                        "list": { "op": "var.local", "name": "line" },
+                        "index": 2
+                      }
+                    },
+                    "b": { "op": "var.local", "name": "s" }
+                  }
+                }
+              },
+              "then": [
+                {
+                  "op": "set.room",
+                  "name": "winner",
+                  "value": { "op": "var.local", "name": "s" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "triggers": [
+    {
+      "event": "on_player_join",
+      "body": [
+        {
+          "op": "set.player",
+          "name": "symbol",
+          "value": {
+            "op": "choose",
+            "cond": { "op": "eq", "a": { "op": "ctx.player_seat" }, "b": 0 },
+            "then": "X",
+            "else": {
+              "op": "choose",
+              "cond": { "op": "eq", "a": { "op": "ctx.player_seat" }, "b": 1 },
+              "then": "O",
+              "else": "spectator"
+            }
+          }
+        },
+        {
+          "op": "send.others",
+          "type": "player_joined",
+          "data": {
+            "op": "map_lit",
+            "entries": [
+              { "key": "name", "value": { "op": "ctx.player_name" } },
+              { "key": "seat", "value": { "op": "ctx.player_seat" } }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "event": "on_player_action",
+      "action": "move",
+      "body": [
+        {
+          "op": "if",
+          "cond": { "op": "ne", "a": { "op": "var.room", "name": "winner" }, "b": "" },
+          "then": [ { "op": "reject", "reason": "game is over" } ]
+        },
+        {
+          "op": "if",
+          "cond": {
+            "op": "ne",
+            "a": { "op": "ctx.player_seat" },
+            "b": { "op": "var.room", "name": "turn" }
+          },
+          "then": [ { "op": "reject", "reason": "not your turn" } ]
+        },
+        {
+          "op": "set.local",
+          "name": "idx",
+          "value": {
+            "op": "add",
+            "a": {
+              "op": "mul",
+              "a": { "op": "payload", "key": "x" },
+              "b": 3
+            },
+            "b": { "op": "payload", "key": "y" }
+          }
+        },
+        {
+          "op": "if",
+          "cond": {
+            "op": "ne",
+            "a": {
+              "op": "list_get",
+              "list": { "op": "var.room", "name": "board" },
+              "index": { "op": "var.local", "name": "idx" }
+            },
+            "b": 0
+          },
+          "then": [ { "op": "reject", "reason": "cell already taken" } ]
+        },
+        {
+          "op": "list.set_at",
+          "scope": "room",
+          "name": "board",
+          "index": { "op": "var.local", "name": "idx" },
+          "value": { "op": "var.player", "name": "symbol" }
+        },
+        { "op": "change.room", "name": "moves", "delta": 1 },
+        {
+          "op": "call",
+          "name": "checkWin",
+          "args": [ { "op": "var.player", "name": "symbol" } ]
+        },
+        {
+          "op": "if",
+          "cond": {
+            "op": "and",
+            "a": { "op": "eq", "a": { "op": "var.room", "name": "winner" }, "b": "" },
+            "b": { "op": "eq", "a": { "op": "var.room", "name": "moves" }, "b": 9 }
+          },
+          "then": [
+            { "op": "set.room", "name": "winner", "value": "draw" }
+          ]
+        },
+        {
+          "op": "set.room",
+          "name": "turn",
+          "value": {
+            "op": "sub",
+            "a": 1,
+            "b": { "op": "var.room", "name": "turn" }
+          }
+        },
+        {
+          "op": "send.room",
+          "type": "board",
+          "data": {
+            "op": "map_lit",
+            "entries": [
+              { "key": "board", "value": { "op": "var.room", "name": "board" } },
+              { "key": "turn", "value": { "op": "var.room", "name": "turn" } },
+              { "key": "winner", "value": { "op": "var.room", "name": "winner" } }
+            ]
+          }
+        },
+        {
+          "op": "respond",
+          "value": {
+            "op": "map_lit",
+            "entries": [
+              { "key": "ok", "value": true },
+              { "key": "board", "value": { "op": "var.room", "name": "board" } },
+              { "key": "winner", "value": { "op": "var.room", "name": "winner" } }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
