@@ -109,6 +109,14 @@ class WebExposureTest extends TestCase {
         $this->assertContains($r['status'], [400, 401, 403, 405]);
     }
 
+    /** Web-cron wrapper: no token (or wrong token) must never run the worker. */
+    public function testCronTickRequiresToken(): void {
+        $r = $this->get('/cron-tick.php');
+        $this->assertSame(404, $r['status']);
+        $r = $this->get('/cron-tick.php?cron_token=wrong');
+        $this->assertSame(404, $r['status']);
+    }
+
     /** Auth endpoint: GET must not trigger any state change (POST + CSRF only). */
     public function testAuthGetDoesNothing(): void {
         $r = $this->get('/php/auth.php?action=send_code&email=a@b.c');
