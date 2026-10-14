@@ -1,0 +1,49 @@
+name: Security
+
+on:
+    push:
+        branches: [main]
+    schedule:
+        - cron: '0 6 * * 1'   # weekly, Mondays 06:00 UTC
+
+jobs:
+    # CodeQL needs GitHub code scanning enabled; static analysis runs via
+    # semgrep in Docker instead — scans PHP + JS, prints findings to the job
+    # log. Add `--error` once the baseline has been reviewed to make
+    # findings gate the pipeline.
+    semgrep:
+        name: semgrep scan
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Semgrep (docker)
+              run: |
+                  docker run --rm -v "$PWD:/src" -w /src semgrep/semgrep \
+                    semgrep scan \
+                      --config p/security-audit \
+                      --metrics off \
+                      --exclude vendor \
+                      --exclude tests/Fixtures
+
+    deps:
+        name: dependency audit
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.3'
+                  tools: composer
+            - run: composer install --no-interaction --prefer-dist
+            - run: composer audit
+
+    gitleaks:
+        name: secret scan
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+            - uses: gitleaks/gitleaks-action@v2
+              env:
+                  GITLEAKS_CONFIG: .gitleaks.toml

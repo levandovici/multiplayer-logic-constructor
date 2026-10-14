@@ -67,7 +67,11 @@ try {
     $pdo->exec("SET time_zone = '+00:00'");
 } catch (PDOException $e) {
     error_log('DB connection failed: ' . redact_log_value($e->getMessage()));
-    http_response_code(500);
+    http_response_code(503);
+    if (str_starts_with((string)($_SERVER['REQUEST_URI'] ?? ''), '/api/')) {
+        header('Content-Type: application/json');
+        die(json_encode(['success' => false, 'error' => 'Service unavailable']));
+    }
     die('Service unavailable');
 }
 

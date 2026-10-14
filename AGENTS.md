@@ -50,10 +50,14 @@ actions. See `docs/DESIGN.md` — it is the architecture source of truth.
   TEST_DB_USER=test TEST_DB_PASS=test composer test:integration`.
   `EngineRuntimeTest` runs the published tic-tac-toe fixture through
   Runtime against real MySQL (transaction/rollback assertions).
+- Security (needs a deployed target): `TEST_BASE_URI=https://staging…
+  composer test:security` — docroot leaks, query-token auth, session walls.
 - Smoke (needs a deployed target): `composer test:smoke -- https://host
   [api_token] [player_token]` or `bash tests/Smoke/smoke.sh …`.
 - CI: `.github/workflows/ci.yml` — PHP 8.2–8.5 matrix (unit+contract+lint+
   PHPStan) and a MySQL-service job running the Integration suite.
+  `.github/workflows/security.yml` — weekly + on-push: semgrep static scan,
+  `composer audit`, gitleaks secret scan (`.gitleaks.toml`).
 - Engine fixtures live in `tests/Fixtures/programs/*.json` — canonical AST
   programs executed end-to-end (tictactoe.json covers joins, turns, win
   detection, rejections).

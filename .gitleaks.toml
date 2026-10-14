@@ -1,0 +1,20 @@
+title = "multiplayer-logic-constructor gitleaks config"
+
+[extend]
+useDefault = true
+
+# Documentation placeholders and test fixtures look like tokens but aren't.
+# Global allowlist (gitleaks 8.x schema).
+[allowlist]
+description = "Doc placeholders and test fixtures"
+regexes = [
+    '''API_TOKEN''', '''PLAYER_TOKEN''', '''PRIVATE_TOKEN''', '''API_KEY''',
+    '''test-api-key''', '''test-private-key''', '''player-token-[ab]''',
+    '''ci-api-key''', '''ci-private-key''', '''demo-.*''',
+    '''your_.*_here''', '''aaaa-?bbbb''', '''x{8,}'''
+]
+paths = [
+    '''docs/''', '''tests/''', '''.env.example''',
+    '''.github/''', '''public_html/api/index.php''', '''public_html/index.php''',
+    '''bin/seed-demo.php''', '''README.md''', '''AGENTS.md'''
+]

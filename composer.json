@@ -38,6 +38,7 @@
         "cs": "php-cs-fixer fix --dry-run --diff",
         "test": "phpunit --testsuite Unit,Contract",
         "test:integration": "phpunit --testsuite Integration",
+        "test:security": "phpunit --testsuite Security",
         "test:smoke": "bash tests/Smoke/smoke.sh"
     }
 }
