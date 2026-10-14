@@ -1,30 +1,41 @@
 <?php
 
-// Outbound mail. Prefers authenticated SMTP (SMTP_* env) — better
-// deliverability than mail() on shared hosting; falls back to mail() when
-// SMTP_HOST is unset. No external dependency: sockets + STARTTLS.
+// Outbound mail. Prefers authenticated SMTP (SMTP_* env) when configured —
+// tries the configured port, then the alternate (465 ↔ 587), since hosts
+// often silently drop one of them. Falls back to mail() when SMTP_HOST is
+// unset OR every SMTP attempt fails (Hostinger shared hosting blocks
+// outbound SMTP — the socket connects, then the 220 banner never arrives).
 //
 //   SMTP_HOST=smtp.hostinger.com
 //   SMTP_PORT=465        SSL — or 587 for STARTTLS
 //   SMTP_USER=mailbox@yourdomain.com
 //   SMTP_PASS=…
 //   SMTP_FROM=mailbox@yourdomain.com   (must match the SMTP account)
-//   EMAIL_FROM=…                       fallback envelope when SMTP is off
+//   EMAIL_FROM=…                       fallback envelope for mail()
 
-// Returns true when the message was accepted by the relay/mail().
+// Returns true when the message was accepted by a relay/mail().
 function send_mail(string $to, string $subject, string $body): bool {
-    $host = env_val('SMTP_HOST', '');
-    if ($host !== '') {
-        return smtp_send($to, $subject, $body);
+    if (env_val('SMTP_HOST', '') !== '') {
+        foreach (smtp_ports_to_try() as $port) {
+            if (smtp_send($to, $subject, $body, $port)) {
+                return true;
+            }
+        }
+        error_log('smtp: all attempts failed, falling back to mail()');
     }
     $from = env_val('SMTP_FROM', env_val('EMAIL_FROM', ''));
     $headers = "From: $from\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\n";
     return @mail($to, $subject, $body, $headers);
 }
 
-function smtp_send(string $to, string $subject, string $body): bool {
-    $host = env_val('SMTP_HOST');
+/** Configured port first, then the alternate standard port. */
+function smtp_ports_to_try(): array {
     $port = (int)env_val('SMTP_PORT', '587');
+    return $port === 465 ? [465, 587] : [$port, $port === 587 ? 465 : 587];
+}
+
+function smtp_send(string $to, string $subject, string $body, int $port): bool {
+    $host = env_val('SMTP_HOST');
     $user = env_val('SMTP_USER', '');
     $pass = env_val('SMTP_PASS', '');
     $from = env_val('SMTP_FROM', env_val('EMAIL_FROM', $user));
@@ -34,13 +45,13 @@ function smtp_send(string $to, string $subject, string $body): bool {
     $errstr = '';
     $sock = @fsockopen("$scheme://$host", $port, $errno, $errstr, 15);
     if (!$sock) {
-        error_log("smtp: connect failed: $errstr ($errno)");
+        error_log("smtp: connect $host:$port failed: $errstr ($errno)");
         return false;
     }
     stream_set_timeout($sock, 15);
 
     try {
-        smtp_expect($sock, [220]);
+        smtp_expect($sock, [220], "greeting on $host:$port");
 
         $ehlo = smtp_cmd($sock, 'EHLO ' . ($_SERVER['SERVER_NAME'] ?? 'localhost'), [250]);
 
@@ -73,7 +84,7 @@ function smtp_send(string $to, string $subject, string $body): bool {
         smtp_cmd($sock, 'QUIT', [221]);
         return true;
     } catch (Throwable $e) {
-        error_log('smtp: ' . $e->getMessage());
+        error_log("smtp: $host:$port — " . $e->getMessage());
         return false;
     } finally {
         fclose($sock);
@@ -87,21 +98,25 @@ function smtp_cmd($sock, string $line, array $expect): string {
 }
 
 /** Read a (possibly multiline) reply; assert its code is in $expect. */
-function smtp_expect($sock, array $expect): string {
+function smtp_expect($sock, array $expect, string $what = 'reply'): string {
     $reply = '';
     while (($line = fgets($sock, 515)) !== false) {
         $reply .= $line;
         // "250-..." continues; "250 ..." terminates the reply.
-        if (strlen($line) >= 4 && $line[3] === ' ') {
-            break;
-        }
-        if (strlen($line) < 4) {
+        if (strlen($line) < 4 || $line[3] === ' ') {
             break;
         }
     }
     $code = (int)substr($reply, 0, 3);
     if (!in_array($code, $expect, true)) {
-        throw new RuntimeException('unexpected SMTP reply: ' . trim($reply));
+        if ($reply === '') {
+            $meta = stream_get_meta_data($sock);
+            $why = !empty($meta['timed_out'])
+                ? 'no ' . $what . ' within timeout — connection blackholed (outbound SMTP likely blocked by the host)'
+                : 'connection closed before ' . $what;
+            throw new RuntimeException($why);
+        }
+        throw new RuntimeException('unexpected ' . $what . ': ' . trim($reply));
     }
     return $reply;
 }
