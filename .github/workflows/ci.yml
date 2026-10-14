@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: PHP ${{ matrix.php }} — unit, contract, lint
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3', '8.4', '8.5']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, curl, pdo_mysql, pdo_sqlite
+          coverage: none
+
+      - uses: ramsey/composer-install@v3
+
+      - name: Lint every PHP file
+        run: |
+          find src public_html bin cron tests -name '*.php' -print0 \
+            | xargs -0 -n1 php -l > /dev/null && echo "lint ok"
+
+      - name: PHPUnit (Unit + Contract)
+        run: vendor/bin/phpunit --testsuite Unit,Contract
+
+      - name: PHPStan
+        run: vendor/bin/phpstan analyse --no-progress
+
+  integration:
+    name: Integration (MySQL)
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_mlc
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, curl, pdo_mysql
+          coverage: none
+
+      - uses: ramsey/composer-install@v3
+
+      - name: Import schema
+        run: php bin/migrate.php init
+        env:
+          DB_HOST: 127.0.0.1
+          DB_NAME: test_mlc
+          DB_USER: root
+          DB_PASS: root
+
+      - name: PHPUnit (Integration)
+        run: vendor/bin/phpunit --testsuite Integration
+        env:
+          TEST_DB_HOST: 127.0.0.1
+          TEST_DB_NAME: test_mlc
+          TEST_DB_USER: root
+          TEST_DB_PASS: root

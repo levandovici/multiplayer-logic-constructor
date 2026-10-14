@@ -37,6 +37,7 @@
         "lint": "phpstan analyse --no-progress",
         "cs": "php-cs-fixer fix --dry-run --diff",
         "test": "phpunit --testsuite Unit,Contract",
-        "test:integration": "phpunit --testsuite Integration"
+        "test:integration": "phpunit --testsuite Integration",
+        "test:smoke": "bash tests/Smoke/smoke.sh"
     }
 }

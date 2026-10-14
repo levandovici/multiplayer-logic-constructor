@@ -45,8 +45,15 @@ actions. See `docs/DESIGN.md` — it is the architecture source of truth.
 ## Tests
 
 - Unit + Contract (no DB): `composer install` then `composer test`.
+  Contract tests guard editor↔engine op drift (mlc-blocks.js vs Ops).
 - Integration (needs MySQL): `TEST_DB_HOST=127.0.0.1 TEST_DB_NAME=test_mlc
   TEST_DB_USER=test TEST_DB_PASS=test composer test:integration`.
+  `EngineRuntimeTest` runs the published tic-tac-toe fixture through
+  Runtime against real MySQL (transaction/rollback assertions).
+- Smoke (needs a deployed target): `composer test:smoke -- https://host
+  [api_token] [player_token]` or `bash tests/Smoke/smoke.sh …`.
+- CI: `.github/workflows/ci.yml` — PHP 8.2–8.5 matrix (unit+contract+lint+
+  PHPStan) and a MySQL-service job running the Integration suite.
 - Engine fixtures live in `tests/Fixtures/programs/*.json` — canonical AST
   programs executed end-to-end (tictactoe.json covers joins, turns, win
   detection, rejections).
