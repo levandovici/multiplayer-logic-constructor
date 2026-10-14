@@ -20,6 +20,8 @@ $endpoints = [
     ['GET',  'api/logic.php?action=meta',       'Published program version + trigger table'],
     ['POST', 'api/logic.php?action=do',         'Fire on_player_action — the gameplay trigger endpoint'],
     ['POST', 'api/logic.php?action=message',    'Fire on_message — server-validated custom messages'],
+    ['GET',  'api/state.php',                   'Reconnect snapshot: own player_state + room members'],
+    ['POST', 'api/simulate.php',                'Cabinet-only: dry-run a draft program in a sandbox'],
 ];
 ?>
 <!DOCTYPE html>
