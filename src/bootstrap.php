@@ -11,6 +11,11 @@ if (!defined('APP_ROOT')) {
 
 // Pure helpers with no DB/session dependency — also loaded standalone by tests.
 require_once __DIR__ . '/helpers.php';
+// Emailed login codes — uses the global $pdo built below; lazy per call,
+// safe to load pre-connect.
+require_once __DIR__ . '/email_codes.php';
+// Lifecycle → engine bridge (fire_lifecycle_event). No-ops until M3.
+require_once __DIR__ . '/lifecycle.php';
 
 // Suppress error output immediately — before session_start()/autoload can
 // emit a warning into the response (which would flip headers_sent() and
@@ -204,6 +209,106 @@ function find_game_by_credentials($apiKey, $apiPrivateKey) {
     }
 
     return false;
+}
+
+
+// ====================== Secret storage ======================
+
+// Symmetric store for secrets that must stay retrievable (game private keys —
+// the owner can copy them again in the cabinet), so they can't be hash-only.
+// Wrapped in AES-256-GCM under TOKEN_PEPPER ('enc:v1:' prefix); stored 'raw:'
+// when no pepper is configured. Format is always self-describing.
+function secret_store($plain) {
+    if (!is_string($plain) || $plain === '') {
+        return null;
+    }
+    $pepper = api_token_pepper();
+    if ($pepper === '' || !function_exists('openssl_encrypt')) {
+        return 'raw:' . $plain;
+    }
+    $key = hash('sha256', 'mlc-secret|' . $pepper, true);
+    $nonce = random_bytes(12);
+    $tag = '';
+    $ct = openssl_encrypt($plain, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $nonce, $tag);
+    if ($ct === false) {
+        return 'raw:' . $plain;
+    }
+    return 'enc:v1:' . base64_encode($nonce . $tag . $ct);
+}
+
+// Inverse of secret_store. Returns null when the value cannot be recovered
+// (e.g. enc:v1: stored but TOKEN_PEPPER since rotated/removed).
+function secret_read($stored) {
+    if (!is_string($stored) || $stored === '') {
+        return null;
+    }
+    if (str_starts_with($stored, 'raw:')) {
+        return substr($stored, 4);
+    }
+    if (str_starts_with($stored, 'enc:v1:')) {
+        $pepper = api_token_pepper();
+        $blob = base64_decode(substr($stored, 7), true);
+        if ($pepper === '' || $blob === false || strlen($blob) < 29) {
+            return null;
+        }
+        $key = hash('sha256', 'mlc-secret|' . $pepper, true);
+        $pt = openssl_decrypt(
+            substr($blob, 28),
+            'aes-256-gcm',
+            $key,
+            OPENSSL_RAW_DATA,
+            substr($blob, 0, 12),
+            substr($blob, 12, 16)
+        );
+        return $pt === false ? null : $pt;
+    }
+    return null;
+}
+
+
+// ====================== API auth (game + player) ======================
+
+// Authenticate the game from X-Api-Token. Returns the games row or exits 401.
+function api_auth_game() {
+    $apiToken = $_SERVER['HTTP_X_API_TOKEN'] ?? '';
+    if (!is_string($apiToken) || $apiToken === '') {
+        respond_json(['success' => false, 'error' => 'API token is required'], 401);
+    }
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM games WHERE api_key = ?");
+    $stmt->execute([$apiToken]);
+    $game = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$game) {
+        respond_json(['success' => false, 'error' => 'Invalid API token'], 401);
+    }
+    return $game;
+}
+
+// Authenticate the calling player from X-Player-Token, scoped to the game.
+// Returns the players row or exits 401/403.
+function api_auth_player(array $game) {
+    $token = $_SERVER['HTTP_X_PLAYER_TOKEN'] ?? '';
+    if (!is_string($token) || $token === '') {
+        respond_json(['success' => false, 'error' => 'Player token is required'], 401);
+    }
+    $player = find_player_by_token($token);
+    if (!$player) {
+        respond_json(['success' => false, 'error' => 'Invalid player token'], 401);
+    }
+    if ((int)$player['game_id'] !== (int)$game['id']) {
+        respond_json(['success' => false, 'error' => 'Invalid player token'], 403);
+    }
+    return $player;
+}
+
+// The player's current room membership row, or null. Central so every
+// endpoint reads membership the same way.
+function player_room_membership($playerId) {
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM room_players WHERE player_id = ?");
+    $stmt->execute([(int)$playerId]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row ?: null;
 }
 
 

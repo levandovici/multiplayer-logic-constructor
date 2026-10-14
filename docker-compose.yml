@@ -1,0 +1,20 @@
+#   docker compose up -d mysql
+#   TEST_DB_HOST=127.0.0.1 TEST_DB_NAME=test_mlc TEST_DB_USER=test TEST_DB_PASS=test composer test:integration
+services:
+  mysql:
+    # MariaDB matches Hostinger shared hosting (schema.sql uses MariaDB-only
+    # syntax like ALTER ... IF NOT EXISTS).
+    image: mariadb:11
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test_mlc
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+      TZ: UTC
+    ports:
+      - "3306:3306"
+    tmpfs:
+      - /var/lib/mysql   # ephemeral — containers/tests never persist data
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "-utest", "-ptest"]
+      interval: 5s

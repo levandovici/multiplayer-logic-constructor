@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS players (
     name VARCHAR(100) NOT NULL,
     token VARCHAR(36) UNIQUE NULL,
     token_hash CHAR(64) NULL,
+    token_enc VARCHAR(255) NULL COMMENT 'Token AES-256-GCM under TOKEN_PEPPER — lets login return the same credential without storing plaintext',
     player_data JSON DEFAULT (JSON_OBJECT()) COMMENT 'Free-form client/profile data the developer controls',
     is_online BOOLEAN DEFAULT TRUE,
     last_login TIMESTAMP NULL,

@@ -8,15 +8,18 @@ $description = "Multiplayer Logic Constructor REST API. Player tokens, rooms, bl
 $endpoints = [
     ['POST', 'api/player.php?action=register',  'Create a player → returns player token'],
     ['POST', 'api/player.php?action=login',     'Re-login by name → returns player token'],
+    ['GET',  'api/player.php?action=me',        'Player info + current room'],
     ['POST', 'api/player.php?action=heartbeat', 'Presence + liveness'],
+    ['POST', 'api/player.php?action=logout',    'Mark player offline'],
     ['GET',  'api/player.php?action=updates',   'Poll pending player_updates'],
     ['POST', 'api/room.php?action=create',      'Create room → fires on_room_created'],
-    ['POST', 'api/room.php?action=join',        'Join room → fires on_player_join'],
+    ['POST', 'api/room.php?action=join',        'Join room (id/password or join_token) → fires on_player_join'],
     ['POST', 'api/room.php?action=leave',       'Leave room → fires on_player_leave'],
     ['GET',  'api/room.php?action=list',        'List open rooms'],
-    ['GET',  'api/logic.php?action=meta',       'Published program version + triggers'],
-    ['POST', 'api/logic.php?action=<name>',     'Fire on_player_action — the trigger endpoint'],
-    ['GET',  'api/state.php',                   'Player-visible slice of room/player state'],
+    ['GET',  'api/room.php?action=info',        'Current room + member list'],
+    ['GET',  'api/logic.php?action=meta',       'Published program version + triggers (M3)'],
+    ['POST', 'api/logic.php?action=<name>',     'Fire on_player_action — the trigger endpoint (M3)'],
+    ['GET',  'api/state.php',                   'Player-visible slice of room/player state (M3)'],
 ];
 ?>
 <!DOCTYPE html>
