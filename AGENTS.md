@@ -10,10 +10,13 @@ actions. See `docs/DESIGN.md` — it is the architecture source of truth.
   Hostinger). Pages, `api/` endpoints, statics.
 - `src/` — application code; `bootstrap.php` is the single entry every
   endpoint loads. Never inside the docroot. `src/Engine/` = the block-program
-  interpreter (lands in M2).
-- `bin/` — CLI tools (`migrate.php`); `cron/` — `tick.php` scheduled-events
-  worker. Both require CLI (or `?cron_token=` matching `CRON_TOKEN` for
-  web cron).
+  interpreter: `Ops` (whitelist), `Program` (AST validation), `Executor`
+  (interpreter), `Context` (scopes + outbox), `StateStore` seam with
+  `ArrayStateStore` (tests/simulator) and `PdoStateStore` (production),
+  `Runtime` (one trigger = one transaction, room row FOR UPDATE).
+- `bin/` — CLI tools (`migrate.php`, `seed-demo.php`); `cron/` —
+  `tick.php` scheduled-events worker (fires `on_timer`). Both require CLI
+  (or `?cron_token=` matching `CRON_TOKEN` for web cron).
 - `database/` — `schema.sql`, the complete schema and single source of truth.
   No migration files — import it directly or `php bin/migrate.php init`.
 - `tests/` — PHPUnit (`Unit`, `Contract`, `Integration` suites).
@@ -45,7 +48,15 @@ actions. See `docs/DESIGN.md` — it is the architecture source of truth.
 - Integration (needs MySQL): `TEST_DB_HOST=127.0.0.1 TEST_DB_NAME=test_mlc
   TEST_DB_USER=test TEST_DB_PASS=test composer test:integration`.
 - Engine fixtures live in `tests/Fixtures/programs/*.json` — canonical AST
-  programs executed end-to-end.
+  programs executed end-to-end (tictactoe.json covers joins, turns, win
+  detection, rejections).
+- Signal classes (Reject, RespondSignal, ReturnSignal, BreakSignal,
+  BudgetExhausted, EngineError) are one-class-per-file under src/Engine/ —
+  PSR-4 autoload requires it.
+- The player action endpoint is `POST api/logic.php?action=do` with body
+  `{action, payload}`; `action=message` fires `on_message`;
+  `action=meta` describes the published program. `api/simulate.php` is the
+  cabinet dry-run (session+CSRF, in-memory store).
 
 ## Verify
 

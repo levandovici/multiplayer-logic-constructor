@@ -14,11 +14,13 @@ See **[docs/DESIGN.md](docs/DESIGN.md)** for the full architecture.
    (`local`/`player`/`room`/`game`), game primitives (turns, broadcasts,
    timers) and anti-cheat blocks (`require`, `consume`, server-side RNG).
 2. Publishing freezes an immutable version; the game's runtime pointer flips.
-3. Player devices call `POST /api/logic.php?action=play_card` — the engine
-   executes the matching trigger inside a transaction (room row locked,
-   actions serialized), mutates state, queues `player_updates`, replies.
-4. Clients poll updates (WebSocket sidecar post-MVP). `schedule` blocks fire
-   `on_timer` triggers via `cron/tick.php`.
+3. Player devices call `POST /api/logic.php?action=do` with
+   `{"action":"play_card","payload":{...}}` — the engine executes the
+   matching trigger inside a transaction (room row locked, actions
+   serialized), mutates state, queues `player_updates`, replies.
+4. Clients poll `GET /api/player.php?action=updates` (WebSocket sidecar
+   post-MVP). `schedule` blocks fire `on_timer` triggers via
+   `cron/tick.php`.
 
 ## Stack
 

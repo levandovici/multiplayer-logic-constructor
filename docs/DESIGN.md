@@ -341,18 +341,20 @@ client-side diffing.
 
 ## 11. Milestones
 
-| # | Deliverable                                                        |
-|---|--------------------------------------------------------------------|
-| M0 | Repo skeleton: bootstrap, schema.sql, composer, lint/test config  |
-| M1 | Platform auth + primitives: dev register/login (email codes),     |
-|    | games CRUD, `api/player.php`, `api/room.php`, `player_updates`    |
-| M2 | Engine core: AST loader, executor, scopes, budgets, ~30 base ops  |
-| M3 | `api/logic.php` runtime path + action log + tic-tac-toe fixture   |
-| M4 | `scheduled_events` + `cron/tick.php` worker + `schedule` blocks   |
-| M5 | Cabinet: program CRUD + `api/blocks.php` + Blockly editor + publish|
-| M6 | Simulator + step-trace viewer                                     |
-| M7 | Anti-cheat primitive blocks + publish-time validation             |
-| M8 | SDK `Logic` module (dotnet/unity first) + docs + llms.txt         |
+Status: ✅ = landed & verified (unit tests + PHPStan).
+
+| # | Deliverable                                                        | Status |
+|---|--------------------------------------------------------------------|--------|
+| M0 | Repo skeleton: bootstrap, schema.sql, composer, lint/test config  | ✅ |
+| M1 | Platform auth + primitives: dev register/login (email codes),     | ✅ |
+|    | games CRUD, `api/player.php`, `api/room.php`, `player_updates`    | |
+| M2 | Engine core: AST loader, executor, scopes, budgets, ~30 base ops  | ✅ |
+| M3 | `api/logic.php` runtime path + action log + tic-tac-toe fixture   | ✅ |
+| M4 | `scheduled_events` + `cron/tick.php` worker + `schedule` blocks   | ✅ |
+| M5 | Cabinet: program CRUD + `api/blocks.php` + Blockly editor + publish| ✅ |
+| M6 | Simulator + step-trace viewer                                     | ✅ (`api/simulate.php` + editor modal) |
+| M7 | Anti-cheat primitive blocks + publish-time validation             | ✅ |
+| M8 | SDK `Logic` module (dotnet/unity first) + docs + llms.txt         | pending — SDK repo |
 
 ## 12. Decisions & open questions
 
