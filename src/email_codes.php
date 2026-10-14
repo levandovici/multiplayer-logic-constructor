@@ -5,6 +5,7 @@
 // email ownership and opens a session. Loaded by bootstrap.php.
 
 require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/mailer.php';
 
 // Issue a fresh code: one active code per email, 15-minute expiry, stored
 // hashed. Callers handle rate limiting and anti-enumeration. The row is
@@ -23,11 +24,10 @@ function send_login_code($email) {
             created_at = NOW()
     ")->execute(['email' => $email, 'hash' => $digest]);
 
-    $sent = @mail(
+    $sent = send_mail(
         $email,
         "Your Multiplayer Logic Constructor login code",
-        "Your login code is: $code\n\nIt expires in 15 minutes.\nIf you didn't request this code, you can ignore this email.",
-        "From: " . env_val('EMAIL_FROM', '') . "\r\n"
+        "Your login code is: $code\n\nIt expires in 15 minutes.\nIf you didn't request this code, you can ignore this email."
     );
     if (!$sent) {
         // Dev convenience: with no MTA, APP_DEBUG installs get the code in
