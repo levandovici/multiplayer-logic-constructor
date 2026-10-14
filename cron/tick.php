@@ -57,13 +57,47 @@ if ($claimed > 0) {
         LIMIT 50
     ")->fetchAll(PDO::FETCH_ASSOC);
 
+    $runtime = new Mlc\Engine\Runtime($pdo);
+    $gameStmt = $pdo->prepare("SELECT * FROM games WHERE id = ?");
+    $playerStmt = $pdo->prepare("SELECT * FROM players WHERE id = ?");
+    $doneStmt = $pdo->prepare("UPDATE scheduled_events SET status = ?, processed_at = NOW() WHERE event_id = ?");
+
     foreach ($due as $event) {
-        // M4: Mlc\Engine\Runtime::fireTimer($event) — load published program,
-        // lock room, run matching on_timer triggers, mark done/failed.
-        // Until the engine lands, events are parked back to 'pending' so a
-        // deployed cron never silently drops them.
-        $pdo->prepare("UPDATE scheduled_events SET status = 'pending' WHERE event_id = ?")
-            ->execute([$event['event_id']]);
-        tick_log("parked {$event['event_id']} ({$event['trigger_name']}) — engine pending M4");
+        try {
+            $gameStmt->execute([(int)$event['game_id']]);
+            $game = $gameStmt->fetch(PDO::FETCH_ASSOC);
+            if (!$game) {
+                $doneStmt->execute(['failed', $event['event_id']]);
+                tick_log("{$event['event_id']}: game {$event['game_id']} gone — failed");
+                continue;
+            }
+
+            $player = null;
+            if ($event['player_id'] !== null) {
+                $playerStmt->execute([(int)$event['player_id']]);
+                $player = $playerStmt->fetch(PDO::FETCH_ASSOC) ?: null;
+            }
+
+            $payload = $event['payload'] !== null
+                ? (json_decode((string)$event['payload'], true) ?: [])
+                : [];
+
+            // If the room is gone the FK cascade already removed the row —
+            // a missing room mid-flight just means the trigger runs nowhere.
+            $result = $runtime->fire(
+                $game, $event['room_id'], $player,
+                'on_timer', $payload, $event['trigger_name']
+            );
+
+            // error → failed (retryable via re-claim tooling); ok, rejected
+            // and noop (no published program) all count as processed.
+            $status = $result['result'] === 'error' ? 'failed' : 'done';
+            $doneStmt->execute([$status, $event['event_id']]);
+            tick_log("{$event['event_id']} ({$event['trigger_name']}): {$result['result']}" .
+                ($result['reason'] ? " — {$result['reason']}" : ''));
+        } catch (Throwable $e) {
+            $doneStmt->execute(['failed', $event['event_id']]);
+            error_log('tick: event ' . $event['event_id'] . ' crashed: ' . redact_log_value($e->getMessage()));
+        }
     }
 }

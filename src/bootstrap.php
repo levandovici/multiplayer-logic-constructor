@@ -349,6 +349,7 @@ function send_security_headers() {
 // ====================== JSON API responses ======================
 
 // Standard API JSON reply + exit. Every api/ endpoint funnels through this.
+/** @return never */
 function respond_json($data, $statusCode = 200) {
     http_response_code($statusCode);
     header('Content-Type: application/json');

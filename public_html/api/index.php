@@ -17,9 +17,9 @@ $endpoints = [
     ['POST', 'api/room.php?action=leave',       'Leave room → fires on_player_leave'],
     ['GET',  'api/room.php?action=list',        'List open rooms'],
     ['GET',  'api/room.php?action=info',        'Current room + member list'],
-    ['GET',  'api/logic.php?action=meta',       'Published program version + triggers (M3)'],
-    ['POST', 'api/logic.php?action=<name>',     'Fire on_player_action — the trigger endpoint (M3)'],
-    ['GET',  'api/state.php',                   'Player-visible slice of room/player state (M3)'],
+    ['GET',  'api/logic.php?action=meta',       'Published program version + trigger table'],
+    ['POST', 'api/logic.php?action=do',         'Fire on_player_action — the gameplay trigger endpoint'],
+    ['POST', 'api/logic.php?action=message',    'Fire on_message — server-validated custom messages'],
 ];
 ?>
 <!DOCTYPE html>

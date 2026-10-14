@@ -77,9 +77,12 @@ if ($action === 'create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             'pid' => $player['id'], 'rid' => $roomId,
             'gid' => $game['id'], 'pname' => $player['name'],
         ]);
-        fire_lifecycle_event('on_room_created', [
+        $lr = fire_lifecycle_event('on_room_created', [
             'game' => $game, 'room_id' => $roomId, 'player' => $player,
         ]);
+        if (lifecycle_vetoed($lr)) {
+            exit; // respond_json already replied; engine rolled back the txn
+        }
         $pdo->commit();
     } catch (Throwable $e) {
         if ($pdo->inTransaction()) {
@@ -148,9 +151,12 @@ if ($action === 'join' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
         $pdo->prepare("UPDATE rooms SET last_activity = NOW() WHERE room_id = ?")
             ->execute([$room['room_id']]);
-        fire_lifecycle_event('on_player_join', [
+        $lr = fire_lifecycle_event('on_player_join', [
             'game' => $game, 'room_id' => $room['room_id'], 'player' => $player,
         ]);
+        if (lifecycle_vetoed($lr)) {
+            exit;
+        }
         $pdo->commit();
     } catch (Throwable $e) {
         if ($pdo->inTransaction()) {
@@ -205,9 +211,12 @@ if ($action === 'leave' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 ->execute([$newHost, $roomId]);
         }
         $pdo->prepare("UPDATE rooms SET last_activity = NOW() WHERE room_id = ?")->execute([$roomId]);
-        fire_lifecycle_event('on_player_leave', [
+        $lr = fire_lifecycle_event('on_player_leave', [
             'game' => $game, 'room_id' => $roomId, 'player' => $player,
         ]);
+        if (lifecycle_vetoed($lr)) {
+            exit;
+        }
         $pdo->commit();
     } catch (Throwable $e) {
         if ($pdo->inTransaction()) {
