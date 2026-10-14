@@ -172,7 +172,13 @@ final class Program
         }
         foreach ($node as $field => $v) {
             if (in_array($field, ['op', 'name', 'scope', 'as', 'index'], true)) {
-                continue; // block parameters, not code
+                // Normally a block parameter (var name, scope, foreach index
+                // name) — but index also carries exprs on list ops, so an
+                // op-shaped value still gets validated.
+                if (is_array($v) && isset($v['op'])) {
+                    $this->validateNode($v, $depth + 1, $count, false);
+                }
+                continue;
             }
             if (is_array($v)) {
                 if ($v !== [] && isset($v['op'])) {
