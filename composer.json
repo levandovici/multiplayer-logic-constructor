@@ -1,0 +1,42 @@
+{
+    "name": "michitai/multiplayer-logic-constructor",
+    "description": "Visual block-programming platform for server-authoritative multiplayer game backends",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Nichita Levandovici"
+        }
+    ],
+    "require": {
+        "php": ">=8.2 <8.6",
+        "ext-pdo": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.12",
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "phpunit/phpunit": "^11.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mlc\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mlc\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "platform-check": true,
+        "sort-packages": true
+    },
+    "scripts": {
+        "lint": "phpstan analyse --no-progress",
+        "cs": "php-cs-fixer fix --dry-run --diff",
+        "test": "phpunit --testsuite Unit,Contract",
+        "test:integration": "phpunit --testsuite Integration"
+    }
+}

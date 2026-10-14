@@ -1,0 +1,11 @@
+parameters:
+    level: 2
+    paths:
+        - src
+        - public_html
+        - bin
+        - cron
+        - tests
+    bootstrapFiles:
+        - tests/phpstan-bootstrap.php
+    phpVersion: 80200

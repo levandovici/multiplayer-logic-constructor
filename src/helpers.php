@@ -1,0 +1,290 @@
+<?php
+
+// Helpers — no session, no output, no DB. Safe to include from tests and
+// CLI tools. Loaded by src/bootstrap.php.
+// Ported subset of multiplayer-api helpers, trimmed to what MLC needs.
+
+function client_ip() {
+    return $_SERVER['REMOTE_ADDR'] ?? 'cli';
+}
+
+// $_GET values can be arrays via ?k[]=v — return null for non-strings so
+// downstream string ops (execute/hash_equals/trim) never see an array.
+function get_param($name) {
+    $v = $_GET[$name] ?? null;
+    return is_string($v) ? $v : null;
+}
+
+function post_param($name) {
+    $v = $_POST[$name] ?? null;
+    return is_string($v) ? $v : null;
+}
+
+// Decoded JSON request body (Content-Type: application/json). Returns the
+// decoded array, or [] when absent/malformed — callers validate fields.
+function json_input() {
+    static $cache = null;
+    if ($cache === null) {
+        $raw = file_get_contents('php://input');
+        $decoded = is_string($raw) && $raw !== '' ? json_decode($raw, true) : null;
+        $cache = is_array($decoded) ? $decoded : [];
+    }
+    return $cache;
+}
+
+// $_ENV is empty under SAPIs whose variables_order lacks 'E' (e.g. php -S,
+// some FPM setups), while getenv() misses dotenv-only vars — check both.
+function env_val($key, $default = null) {
+    $v = $_ENV[$key] ?? getenv($key);
+    return is_string($v) && $v !== '' ? $v : $default;
+}
+
+function api_token_pepper() {
+    return env_val('TOKEN_PEPPER', '');
+}
+
+// Canonical site origin for absolute URLs (canonical/OG tags, email links).
+// True when the request reached us over TLS — directly, or via the
+// TLS-terminating proxy (Hostinger) which sets X-Forwarded-Proto instead.
+function request_is_https() {
+    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        return true;
+    }
+    return ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+}
+
+// BASE_URL wins when configured — HTTP_HOST is client-controlled and would
+// otherwise let requests poison generated links.
+function site_base() {
+    $base = rtrim((string)env_val('BASE_URL', ''), '/');
+    if ($base !== '') {
+        return $base;
+    }
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    return (request_is_https() ? 'https://' : 'http://') . $host;
+}
+
+// Hex HMAC digest for storage/lookup, or null when hashing is not enabled.
+function token_digest($token) {
+    $pepper = api_token_pepper();
+    if ($pepper === '') {
+        return null;
+    }
+    return hash_hmac('sha256', (string)$token, $pepper);
+}
+
+// Per-request CSP nonce for inline <script> blocks. Reused across the page.
+function csp_nonce() {
+    static $nonce = null;
+    if ($nonce === null) {
+        $nonce = base64_encode(random_bytes(18));
+    }
+    return $nonce;
+}
+
+// UUID for API keys, room ids, update ids, scheduled events.
+function generate_uuid() {
+    $b = random_bytes(16);
+    $b[6] = chr((ord($b[6]) & 0x0f) | 0x40);
+    $b[8] = chr((ord($b[8]) & 0x3f) | 0x80);
+    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($b), 4));
+}
+
+function isoUtc($value) {
+    if (empty($value)) {
+        return null;
+    }
+    $dt = new DateTime($value, new DateTimeZone('UTC'));
+    return $dt->format('Y-m-d\TH:i:s\Z');
+}
+
+// Strip secrets out of strings before logging. MySQL duplicate-key errors
+// (1062) echo the offending value back in getMessage(), and raw request data
+// can ride along — redact the echoed value plus long hex/uuid-shaped tokens.
+function redact_log_value($value) {
+    $v = preg_replace("/(Duplicate entry )'[^']*'/i", "$1'[redacted]'", (string)$value);
+    return preg_replace('/\b[0-9a-f]{16,}(?:-[0-9a-f]{4,})*\b/i', '[redacted]', $v);
+}
+
+// Email login code: 4+4 chars from 0-9/A-Z, e.g. "XK4B-9P2R". 36^8 space is
+// wide enough given per-email attempt caps + 15-minute expiry.
+function login_code_generate() {
+    $alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $code = '';
+    for ($i = 0; $i < 8; $i++) {
+        if ($i === 4) {
+            $code .= '-';
+        }
+        $code .= $alphabet[random_int(0, 35)];
+    }
+    return $code;
+}
+
+// Canonical form for hashing/comparison: uppercase with separators stripped,
+// so "xk4b-9p2r", "XK4B9P2R" and "xk4b 9p2r" all match the issued code.
+function login_code_normalize($code) {
+    if (!is_string($code)) {
+        return '';
+    }
+    return strtoupper(preg_replace('/[^0-9A-Za-z]/', '', $code));
+}
+
+// Player must be online to use player endpoints — logged in (or freshly
+// registered), not marked offline by cron/cleanup.php. One predicate so the
+// rule has a single definition across all endpoints.
+function player_is_online($player) {
+    return !empty($player['is_online']);
+}
+
+// Trim a *.log file to entries from the last $keepSeconds, hard-capped at
+// $maxBytes (tail — default 1 MB). error_log lines look like
+// "[10-Oct-2026 12:34:56 UTC] msg"; untimestamped continuation lines (stack
+// traces) ride along with the preceding timestamped entry.
+function trim_log_file($file, $keepSeconds = 3600, $maxBytes = 1048576) {
+    if (!is_string($file) || !is_file($file) || !is_readable($file)) {
+        return;
+    }
+    $size = filesize($file);
+    if ($size === false || $size === 0) {
+        return;
+    }
+
+    // Way over budget — drop to a tail first, then time-filter that so a
+    // flooded log doesn't get read into memory whole.
+    $readCap = 4 * $maxBytes;
+    if ($size > $readCap) {
+        $fh = fopen($file, 'rb');
+        if (!$fh) {
+            return;
+        }
+        fseek($fh, -$readCap, SEEK_END);
+        $content = stream_get_contents($fh);
+        fclose($fh);
+        $nl = strpos($content, "\n");
+        $content = $nl === false ? '' : substr($content, $nl + 1);
+    } else {
+        $content = @file_get_contents($file);
+    }
+    if (!is_string($content) || $content === '') {
+        return;
+    }
+
+    $cutoff = time() - $keepSeconds;
+    $kept = [];
+    $keepContinuation = false;
+    foreach (explode("\n", $content) as $line) {
+        if (preg_match('/^\[(\d{2}-[A-Za-z]{3}-\d{4} \d{2}:\d{2}:\d{2})/', $line, $m)) {
+            $ts = strtotime($m[1]);
+            $keepContinuation = $ts !== false && $ts >= $cutoff;
+            if ($keepContinuation) {
+                $kept[] = $line;
+            }
+        } elseif ($keepContinuation && rtrim($line) !== '') {
+            $kept[] = $line;
+        }
+    }
+
+    $out = $kept === [] ? '' : implode("\n", $kept) . "\n";
+    if (strlen($out) > $maxBytes) {
+        $out = substr($out, -$maxBytes);
+        $nl = strpos($out, "\n");
+        if ($nl !== false) {
+            $out = substr($out, $nl + 1);
+        }
+    }
+    if ($out !== $content) {
+        @file_put_contents($file, $out, LOCK_EX);
+    }
+}
+
+// Split a .sql file into executable statements. Handles '...' and "..."
+// quoting (with backslash escapes), `backtick` identifiers, -- and # line
+// comments, and /* */ block comments. /*!...*/ versioned comments are kept
+// verbatim — MySQL executes those conditionally. '--' only starts a
+// comment when followed by whitespace/EOL, matching MySQL's own rule.
+function split_sql_statements($sql) {
+    $stmts = [];
+    $buf = '';
+    $inS = $inD = $inB = false;
+    $len = strlen($sql);
+    for ($i = 0; $i < $len; $i++) {
+        $c = $sql[$i];
+        if ($inS) {
+            $buf .= $c;
+            if ($c === '\\' && $i + 1 < $len) {
+                $buf .= $sql[++$i];
+            } elseif ($c === "'") {
+                if ($i + 1 < $len && $sql[$i + 1] === "'") {
+                    $buf .= $sql[++$i];
+                } else {
+                    $inS = false;
+                }
+            }
+            continue;
+        }
+        if ($inD) {
+            $buf .= $c;
+            if ($c === '"') {
+                $inD = false;
+            }
+            continue;
+        }
+        if ($inB) {
+            $buf .= $c;
+            if ($c === '`') {
+                if ($i + 1 < $len && $sql[$i + 1] === '`') {
+                    $buf .= $sql[++$i];
+                } else {
+                    $inB = false;
+                }
+            }
+            continue;
+        }
+        if ($c === '#' ||
+            ($c === '-' && $i + 1 < $len && $sql[$i + 1] === '-' &&
+                ($i + 2 >= $len || strpos(" \t\r\n\f\v", $sql[$i + 2]) !== false))) {
+            while ($i < $len && $sql[$i] !== "\n") {
+                $i++;
+            }
+            $buf .= "\n";
+            continue;
+        }
+        if ($c === '/' && $i + 1 < $len && $sql[$i + 1] === '*' &&
+            !($i + 2 < $len && $sql[$i + 2] === '!')) {
+            while ($i + 1 < $len && !($sql[$i] === '*' && $sql[$i + 1] === '/')) {
+                $i++;
+            }
+            $i++;
+            continue;
+        }
+        if ($c === "'") {
+            $inS = true;
+            $buf .= $c;
+            continue;
+        }
+        if ($c === '"') {
+            $inD = true;
+            $buf .= $c;
+            continue;
+        }
+        if ($c === '`') {
+            $inB = true;
+            $buf .= $c;
+            continue;
+        }
+        if ($c === ';') {
+            $t = trim($buf);
+            if ($t !== '') {
+                $stmts[] = $t;
+            }
+            $buf = '';
+            continue;
+        }
+        $buf .= $c;
+    }
+    $t = trim($buf);
+    if ($t !== '') {
+        $stmts[] = $t;
+    }
+    return $stmts;
+}
