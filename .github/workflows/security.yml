@@ -18,12 +18,21 @@ jobs:
             - uses: actions/checkout@v4
             - name: Semgrep (docker)
               run: |
+                  set -o pipefail
                   docker run --rm -v "$PWD:/src" -w /src semgrep/semgrep \
                     semgrep scan \
                       --config p/security-audit \
                       --metrics off \
                       --exclude vendor \
-                      --exclude tests/Fixtures
+                      --exclude tests/Fixtures 2>&1 | tee semgrep.log
+                  rc=$?
+                  {
+                    echo "## Semgrep — security audit"
+                    echo '```'
+                    tail -n 25 semgrep.log
+                    echo '```'
+                  } >> "$GITHUB_STEP_SUMMARY"
+                  exit $rc
 
     deps:
         name: dependency audit
@@ -35,7 +44,18 @@ jobs:
                   php-version: '8.3'
                   tools: composer
             - run: composer install --no-interaction --prefer-dist
-            - run: composer audit
+            - name: Composer audit
+              run: |
+                  set -o pipefail
+                  composer audit 2>&1 | tee audit.log
+                  rc=$?
+                  {
+                    echo "## Composer audit"
+                    echo '```'
+                    tail -n 15 audit.log
+                    echo '```'
+                  } >> "$GITHUB_STEP_SUMMARY"
+                  exit $rc
 
     gitleaks:
         name: secret scan
@@ -45,5 +65,15 @@ jobs:
               with:
                   fetch-depth: 0
             - uses: gitleaks/gitleaks-action@v2
+              id: gitleaks
               env:
                   GITLEAKS_CONFIG: .gitleaks.toml
+            - name: Gitleaks summary
+              if: always()
+              run: |
+                  {
+                    echo "## Gitleaks — secret scan"
+                    echo '```'
+                    echo "result: ${{ steps.gitleaks.outcome }}"
+                    echo '```'
+                  } >> "$GITHUB_STEP_SUMMARY"
