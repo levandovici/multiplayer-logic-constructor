@@ -77,3 +77,20 @@ actions. See `docs/DESIGN.md` — it is the architecture source of truth.
   minimal php.ini enabling `mbstring openssl curl pdo_mysql pdo_sqlite` and
   run tools as `PHPRC=<dir> php vendor/bin/phpunit|phpstan|php-cs-fixer` —
   PHPStan's spawned workers don't inherit `-d` flags, so PHPRC is required.
+
+## Brand & assets
+
+- Product name in user-facing text is always "Multiplayer Logic Constructor"
+  (never bare "MLC"/"Logic Constructor"); no third-party brand names in copy.
+- `public_html/assets/` — generated brand/marketing art, committed. Never
+  hand-edit binaries: `bin/make-icons.php` (logo/favicon/og) and
+  `bin/make-marketing.php` (landing genre cards) regenerate everything —
+  PHP + GD only (`PHPRC=.dev-php php bin/make-*.php` locally).
+- `brand_head_tags()` in src/helpers.php emits icons/manifest/OG/Twitter tags;
+  every HTML page calls it in <head>.
+
+## Roadmap context (so it's not forgotten)
+
+- docs/SDK.md = the client API contract the SDKs must implement.
+- M9 = client SDKs ×4 in the multiplayer-sdk repo (C#/.NET → Unity → Unreal → C++).
+- M10 = kid-friendly docs + per-genre starter programs (12+ audience).

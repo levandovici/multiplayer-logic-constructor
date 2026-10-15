@@ -355,6 +355,36 @@ Status: ✅ = landed & verified (unit tests + PHPStan).
 | M6 | Simulator + step-trace viewer                                     | ✅ (`api/simulate.php` + editor modal) |
 | M7 | Anti-cheat primitive blocks + publish-time validation             | ✅ |
 | M8 | SDK `Logic` module (dotnet/unity first) + docs + llms.txt         | pending — SDK repo |
+| M9 | Client SDKs ×4 (C#/.NET, Unity, C++, Unreal) per `docs/SDK.md`    | spec ✅ — code pending |
+| M10| Kid-friendly onboarding: simple docs, genre starter programs      | pending |
+| M11| Marketing assets: `bin/make-marketing.php` genre cards + landing   | ✅ generator + page |
+
+### M9 — Client SDKs (details in `docs/SDK.md`)
+
+One client contract across four SDKs so a 12-year-old learns it once:
+`RegisterPlayer` → `JoinRoom`/`CreateRoom` → `Do(action, args)` →
+`OnUpdate`/`PollUpdates` → `GetState` (reconnect). `rejected` is a normal
+result, not an error. Order: **C#/.NET first** (the same netstandard lib runs
+in Unity), then Unity `MonoBehaviour` poller + `UnityEvent`s, then Unreal
+(`UMlcClient` + Blueprint delegates), then plain C++ (libcurl/WinHTTP).
+Ships in the `multiplayer-sdk` repo — one `Logic` module per SDK.
+
+### M10 — Accessibility for young developers (12+)
+
+- Docs voice: short sentences, "you ask — the server decides" mental model,
+  every block page has one runnable example.
+- Starter programs per genre (clone-me templates in the cabinet):
+  tic-tac-toe (exists as fixture), clicker, quiz, racing laps, card draw.
+- Error messages stay plain ("cell already taken", "not your turn") — the
+  reject `reason` is shown to players verbatim.
+
+### M11 — Marketing/regenerable artwork
+
+`bin/make-marketing.php` draws every genre card + banner procedurally with
+GD into `public_html/assets/marketing/` — no source PSDs, no manual exports.
+To update artwork: edit the script, re-run, commit. `bin/make-icons.php`
+covers logo/favicon/og formats the same way. Landing page renders the cards
+in the "Build any multiplayer genre" section.
 
 ## 12. Decisions & open questions
 

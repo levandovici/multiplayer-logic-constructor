@@ -55,6 +55,55 @@ $description = "Visual block-programming platform for server-authoritative multi
             <a href="/api/" class="bg-purple-600 hover:bg-purple-500 px-6 py-3 rounded-xl font-semibold transition">API Reference</a>
             <a href="/login.php" class="border border-white/20 hover:bg-white/10 px-6 py-3 rounded-xl font-semibold transition">Developer Login</a>
         </div>
+
+        <!-- Genres you can build — artwork: bin/make-marketing.php -->
+        <section class="mt-24">
+            <h2 class="text-3xl font-bold mb-3">Build any multiplayer genre</h2>
+            <p class="text-gray-400 mb-8 max-w-2xl">Your game calls one function — <code class="text-purple-300">Do("action", …)</code> —
+                and our servers run your block rules, check the move, and update everyone. If a move is illegal,
+                you get <code class="text-purple-300">rejected</code> with the reason. That's the whole API.</p>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <?php
+                $genres = [
+                    ['genre-board.png',   'Board & turn-based', 'Do("move", {x: 1, y: 2})',  'Turn order, win detection, board state — all enforced server-side.'],
+                    ['genre-racing.png',  'Racing & laps',      'Do("checkpoint", {id: 7})', 'Checkpoints, lap times and positions verified — no fake finish lines.'],
+                    ['genre-clicker.png', 'Idle & economy',     'Do("claim", {})',           'Resources minted and spent on our servers — clients can\'t inflate gold.'],
+                    ['genre-quiz.png',    'Quiz & trivia',      'Do("answer", {q: 4, a: 2})','Correctness and timing scored by the room, not by whoever answered.'],
+                    ['genre-cards.png',   'Card battlers',      'Do("play_card", {card: 5})','Decks and hands stay secret until a card is legally played.'],
+                    ['genre-arena.png',   'Arena & battle',     'Do("use_item", {slot: 1})', 'Zone rules, cooldowns and last-one-standing logic enforced.'],
+                ];
+                foreach ($genres as [$img, $name, $call, $desc]): ?>
+                <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-purple-400/50 transition">
+                    <img src="/assets/marketing/<?= $img ?>" alt="<?= $name ?> example" class="w-full aspect-[8/5] object-cover">
+                    <div class="p-5">
+                        <h3 class="font-semibold mb-1"><?= $name ?></h3>
+                        <code class="text-xs text-cyan-300 mono block mb-2"><?= htmlspecialchars($call, ENT_QUOTES) ?></code>
+                        <p class="text-sm text-gray-400"><?= $desc ?></p>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </section>
+
+        <!-- Engines/SDKs -->
+        <section class="mt-20 mb-8">
+            <h2 class="text-3xl font-bold mb-3">Your engine, one API</h2>
+            <p class="text-gray-400 mb-6 max-w-2xl">The same five calls in every SDK — register, join a room,
+                <code class="text-purple-300">Do()</code>, updates, state. Players can build real multiplayer
+                games without writing a single line of server code.</p>
+            <div class="flex flex-wrap gap-3">
+                <?php foreach (['C# / .NET', 'Unity', 'Unreal Engine (C++ & Blueprints)', 'C++'] as $sdk): ?>
+                <span class="block-chip bg-white/10 text-gray-200 border border-white/10"><?= $sdk ?></span>
+                <?php endforeach; ?>
+            </div>
+            <pre class="mono text-sm text-gray-300 bg-black/30 border border-white/10 rounded-xl p-5 mt-6 overflow-x-auto"><code>// the entire client contract — works the same in every SDK
+var game = new MlcClient("https://mlc.michitai.com", GAME_API_KEY);
+await game.RegisterPlayer("nova");            // get a player token
+await game.JoinRoom(roomId);                  // or CreateRoom(...)
+var r = await game.Do("move", new { x = 1, y = 2 });
+if (r.Result == "rejected") ShowReason(r.Reason);   // "not your turn"
+game.OnUpdate += u => ApplyUpdate(u.Type, u.Data);  // server pushes what's visible</code></pre>
+        </section>
     </main>
 </body>
 </html>
