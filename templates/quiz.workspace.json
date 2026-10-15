@@ -1,0 +1,405 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "ev_room_created",
+        "id": "tjB4w_O;u;uo2Cu(5)7~",
+        "x": 0,
+        "y": 0,
+        "next": {
+          "block": {
+            "type": "set_var",
+            "id": ":#}koy`U)X=-EjdXI(6{",
+            "fields": {
+              "SCOPE": "room",
+              "NAME": "answer"
+            },
+            "inputs": {
+              "VALUE": {
+                "block": {
+                  "type": "lit_text",
+                  "id": "yL7GQZ$iU`cejc/:M^cC",
+                  "fields": {
+                    "V": "blue"
+                  }
+                }
+              }
+            },
+            "next": {
+              "block": {
+                "type": "send_room",
+                "id": ":[De3J7gcz(t0HYMrs7?",
+                "fields": {
+                  "TYPE": "question"
+                },
+                "inputs": {
+                  "DATA": {
+                    "block": {
+                      "type": "map_lit",
+                      "id": "6aq=9@V6`om~F|]X)-`.",
+                      "inputs": {
+                        "ENTRIES": {
+                          "block": {
+                            "type": "map_entry",
+                            "id": "A^z~LQED}:sine(IGNT|",
+                            "fields": {
+                              "K": "q"
+                            },
+                            "inputs": {
+                              "V": {
+                                "block": {
+                                  "type": "lit_text",
+                                  "id": "kFDG9]X_4!P^Si{_UX{V",
+                                  "fields": {
+                                    "V": "What colour is the sky?"
+                                  }
+                                }
+                              }
+                            },
+                            "next": {
+                              "block": {
+                                "type": "map_entry",
+                                "id": "}eHmY(R6-~N~,+TWtGK)",
+                                "fields": {
+                                  "K": "opts"
+                                },
+                                "inputs": {
+                                  "V": {
+                                    "block": {
+                                      "type": "list_lit",
+                                      "id": "ITS{?ioqd.%!8HYtZSq4",
+                                      "inputs": {
+                                        "ITEMS": {
+                                          "block": {
+                                            "type": "list_item",
+                                            "id": "F-xS#nqyDVVVT;S)5,UA",
+                                            "inputs": {
+                                              "V": {
+                                                "block": {
+                                                  "type": "lit_text",
+                                                  "id": "r1)Xe3nK)DUfV/Svj::~",
+                                                  "fields": {
+                                                    "V": "red"
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "next": {
+                                              "block": {
+                                                "type": "list_item",
+                                                "id": "L7S*_XGdT;O0E56(uM]R",
+                                                "inputs": {
+                                                  "V": {
+                                                    "block": {
+                                                      "type": "lit_text",
+                                                      "id": "x|t+mJJ`=^ZT_|Y+gI7$",
+                                                      "fields": {
+                                                        "V": "blue"
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "next": {
+                                                  "block": {
+                                                    "type": "list_item",
+                                                    "id": "wcH}nt}/?4|*bh=r@ET*",
+                                                    "inputs": {
+                                                      "V": {
+                                                        "block": {
+                                                          "type": "lit_text",
+                                                          "id": "[?95r)=6=NDo8p;ADIG4",
+                                                          "fields": {
+                                                            "V": "green"
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "ev_player_action",
+        "id": "l.[UTqCXSE+JryeVo.iD",
+        "x": 0,
+        "y": 0,
+        "fields": {
+          "ACTION": "answer"
+        },
+        "next": {
+          "block": {
+            "type": "ctl_if",
+            "id": "u)f)l^MbcD*m2]Sc4//+",
+            "inputs": {
+              "COND": {
+                "block": {
+                  "type": "cmp",
+                  "id": "jE.Dmop6IUM^X1yR`+mT",
+                  "fields": {
+                    "OP": "ge"
+                  },
+                  "inputs": {
+                    "A": {
+                      "block": {
+                        "type": "get_var",
+                        "id": "dccc7PKjHKwyF0;64zPR",
+                        "fields": {
+                          "SCOPE": "room",
+                          "NAME": "answered"
+                        }
+                      }
+                    },
+                    "B": {
+                      "block": {
+                        "type": "lit_num",
+                        "id": "W!FwKAi|MvTe(5hj*K!h",
+                        "fields": {
+                          "V": 3
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "THEN": {
+                "block": {
+                  "type": "act_reject",
+                  "id": "0.tmN@LxQJEnw3ayKhT0",
+                  "inputs": {
+                    "REASON": {
+                      "block": {
+                        "type": "lit_text",
+                        "id": "W%*OaVl)SAPu;Yv,yl?/",
+                        "fields": {
+                          "V": "question closed"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "next": {
+              "block": {
+                "type": "ctl_if_else",
+                "id": "WtzX`sS{I|Vk-.~1jS(-",
+                "inputs": {
+                  "COND": {
+                    "block": {
+                      "type": "cmp",
+                      "id": "#l](N$L5{GGM4znytJ`m",
+                      "fields": {
+                        "OP": "eq"
+                      },
+                      "inputs": {
+                        "A": {
+                          "block": {
+                            "type": "ex_payload",
+                            "id": "Eh8!WHb!2K/4cJ8fg907",
+                            "fields": {
+                              "KEY": "a"
+                            }
+                          }
+                        },
+                        "B": {
+                          "block": {
+                            "type": "get_var",
+                            "id": "d%{yF8TPuWJC2Hze(IM3",
+                            "fields": {
+                              "SCOPE": "room",
+                              "NAME": "answer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "THEN": {
+                    "block": {
+                      "type": "change_var",
+                      "id": "zVUS/l:Uch6OQbN~#JVy",
+                      "fields": {
+                        "SCOPE": "player",
+                        "NAME": "score"
+                      },
+                      "inputs": {
+                        "DELTA": {
+                          "block": {
+                            "type": "math_bin",
+                            "id": "wOiWs~`wp47sxG-%SdDt",
+                            "fields": {
+                              "OP": "sub"
+                            },
+                            "inputs": {
+                              "A": {
+                                "block": {
+                                  "type": "lit_num",
+                                  "id": "tMiI@RviO4UKpmBJD#Z`",
+                                  "fields": {
+                                    "V": 100
+                                  }
+                                }
+                              },
+                              "B": {
+                                "block": {
+                                  "type": "math_bin",
+                                  "id": "URE;o2Q+8oRy*BPeL5YZ",
+                                  "fields": {
+                                    "OP": "mul"
+                                  },
+                                  "inputs": {
+                                    "A": {
+                                      "block": {
+                                        "type": "get_var",
+                                        "id": "2~n(0FG!C@3C){4J0nYj",
+                                        "fields": {
+                                          "SCOPE": "room",
+                                          "NAME": "answered"
+                                        }
+                                      }
+                                    },
+                                    "B": {
+                                      "block": {
+                                        "type": "lit_num",
+                                        "id": "ePNP#Op3Mllh$v/AY%9{",
+                                        "fields": {
+                                          "V": 25
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "next": {
+                        "block": {
+                          "type": "change_var",
+                          "id": "JM$B[4CQ|[aC/[Oq,D7M",
+                          "fields": {
+                            "SCOPE": "room",
+                            "NAME": "answered"
+                          },
+                          "inputs": {
+                            "DELTA": {
+                              "block": {
+                                "type": "lit_num",
+                                "id": "ymZZj(O=[-;ZyzKwZ6l{",
+                                "fields": {
+                                  "V": 1
+                                }
+                              }
+                            }
+                          },
+                          "next": {
+                            "block": {
+                              "type": "send_room",
+                              "id": "sx#kM0-}tDf_,mYE(^^z",
+                              "fields": {
+                                "TYPE": "score"
+                              },
+                              "inputs": {
+                                "DATA": {
+                                  "block": {
+                                    "type": "map_lit",
+                                    "id": ":1v[IkvBC3uKRSs||VZ+",
+                                    "inputs": {
+                                      "ENTRIES": {
+                                        "block": {
+                                          "type": "map_entry",
+                                          "id": "!Y!XDb{x-(bGtzRsDAOr",
+                                          "fields": {
+                                            "K": "player"
+                                          },
+                                          "inputs": {
+                                            "V": {
+                                              "block": {
+                                                "type": "ex_ctx",
+                                                "id": "87c9}o{4W^Qmd.GRiV~g",
+                                                "fields": {
+                                                  "PROP": "ctx.player_name"
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "next": {
+                                            "block": {
+                                              "type": "map_entry",
+                                              "id": "cUzGjyAS8Vhuj4AZSv|m",
+                                              "fields": {
+                                                "K": "score"
+                                              },
+                                              "inputs": {
+                                                "V": {
+                                                  "block": {
+                                                    "type": "get_var",
+                                                    "id": "OJLn1BQhIa|co0T$cx}x",
+                                                    "fields": {
+                                                      "SCOPE": "player",
+                                                      "NAME": "score"
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "ELSE": {
+                    "block": {
+                      "type": "act_reject",
+                      "id": "!aCBNw@`.4F`KT,#S*lp",
+                      "inputs": {
+                        "REASON": {
+                          "block": {
+                            "type": "lit_text",
+                            "id": "Gl.y^;w]LD3lIG)D`)C[",
+                            "fields": {
+                              "V": "wrong answer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

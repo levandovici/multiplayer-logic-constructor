@@ -41,11 +41,34 @@ if ($action === 'create') {
         exit;
     }
 
+    // Optional template — instant playable game seeded from templates/.
+    $tplSlug = trim((string)($_POST['template'] ?? ''));
+    $tpl = null;
+    if ($tplSlug !== '') {
+        $tpl = template_files($tplSlug);
+        if ($tpl === null) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Unknown template']);
+            exit;
+        }
+        // Templates ship pre-validated, but re-validate — a broken template
+        // must fail loudly here rather than publish a dead program.
+        try {
+            \Mlc\Engine\Program::fromJson($tpl['ast']);
+        } catch (Throwable $e) {
+            error_log('template invalid: ' . $tplSlug . ' ' . redact_log_value($e->getMessage()));
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Template is broken — please report this']);
+            exit;
+        }
+    }
+
     $apiKey = generate_uuid();
     $privateKey = bin2hex(random_bytes(18));
     $digest = token_digest($privateKey);
 
     try {
+        $pdo->beginTransaction();
         $stmt = $pdo->prepare("
             INSERT INTO games (user_id, name, api_key, api_private_key,
                                api_private_key_hash, api_private_key_prefix,
@@ -61,18 +84,36 @@ if ($action === 'create') {
             'suffix' => substr($privateKey, -4),
             'enc' => secret_store($privateKey),
         ]);
+        $gameId = (int)$pdo->lastInsertId();
+
+        if ($tpl !== null) {
+            $pdo->prepare("INSERT INTO programs (game_id, name, draft_workspace, draft_ast) VALUES (?, 'main', ?, ?)")
+                ->execute([$gameId, $tpl['workspace'], $tpl['ast']]);
+            $programId = (int)$pdo->lastInsertId();
+            $pdo->prepare("
+                INSERT INTO program_versions (program_id, version, ast, checksum, published_by)
+                VALUES (?, 1, ?, ?, ?)
+            ")->execute([$programId, $tpl['ast'], hash('sha256', $tpl['ast']), $userId]);
+            $pdo->prepare("UPDATE games SET published_program_id = ? WHERE id = ?")
+                ->execute([(int)$pdo->lastInsertId(), $gameId]);
+        }
+        $pdo->commit();
 
         echo json_encode([
             'success' => true,
             'game' => [
-                'id' => (int)$pdo->lastInsertId(),
+                'id' => $gameId,
                 'name' => $name,
                 'api_key' => $apiKey,
                 // Returned once at creation; afterwards only via reveal.
                 'api_private_key' => $privateKey,
             ],
+            'template' => $tplSlug !== '' ? $tplSlug : null,
         ]);
     } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
         error_log('game create error: ' . redact_log_value($e->getMessage()));
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => 'Database error']);

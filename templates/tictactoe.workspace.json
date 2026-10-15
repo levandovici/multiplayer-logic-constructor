@@ -1,0 +1,1631 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "fn_def",
+        "id": "w9!ZIM6V^bI0A4Md0W#h",
+        "x": 0,
+        "y": 0,
+        "fields": {
+          "NAME": "checkWin",
+          "PARAMS": "s"
+        },
+        "inputs": {
+          "BODY": {
+            "block": {
+              "type": "ctl_foreach",
+              "id": "E$B%L^)^bgRW;}Zp8A6S",
+              "fields": {
+                "AS": "line"
+              },
+              "inputs": {
+                "LIST": {
+                  "block": {
+                    "type": "list_lit",
+                    "id": "q*Ei{G4kDoU1SmYUK}_X",
+                    "inputs": {
+                      "ITEMS": {
+                        "block": {
+                          "type": "list_item",
+                          "id": "Mun;#FzfG)lv0o_{D.iR",
+                          "inputs": {
+                            "V": {
+                              "block": {
+                                "type": "list_lit",
+                                "id": "x.nBJmZ+P1~R6[[1?1a|",
+                                "inputs": {
+                                  "ITEMS": {
+                                    "block": {
+                                      "type": "list_item",
+                                      "id": "BFWx;+B2j9fjAL-7wDw;",
+                                      "inputs": {
+                                        "V": {
+                                          "block": {
+                                            "type": "lit_num",
+                                            "id": "k63X~4wQDHv~SN4hqut~",
+                                            "fields": {
+                                              "V": 0
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "next": {
+                                        "block": {
+                                          "type": "list_item",
+                                          "id": "b(FWLDI*a(x?z|OPlYo3",
+                                          "inputs": {
+                                            "V": {
+                                              "block": {
+                                                "type": "lit_num",
+                                                "id": "e0PA~yX,JcNTUn`VBzn$",
+                                                "fields": {
+                                                  "V": 1
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "next": {
+                                            "block": {
+                                              "type": "list_item",
+                                              "id": "Y)~Bq=Cz$RjR56Ah`deb",
+                                              "inputs": {
+                                                "V": {
+                                                  "block": {
+                                                    "type": "lit_num",
+                                                    "id": "W(o:R*rdwNt|^9|:!;B?",
+                                                    "fields": {
+                                                      "V": 2
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "next": {
+                            "block": {
+                              "type": "list_item",
+                              "id": "KfnPTt8QOJkU(-6Cf2O)",
+                              "inputs": {
+                                "V": {
+                                  "block": {
+                                    "type": "list_lit",
+                                    "id": "r`7g,U.@#`,Y^:HTp9h2",
+                                    "inputs": {
+                                      "ITEMS": {
+                                        "block": {
+                                          "type": "list_item",
+                                          "id": "G=oFEw(*@0/(,MtaR*+y",
+                                          "inputs": {
+                                            "V": {
+                                              "block": {
+                                                "type": "lit_num",
+                                                "id": "tMI}@fA0bEQYYF`Yhtn/",
+                                                "fields": {
+                                                  "V": 3
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "next": {
+                                            "block": {
+                                              "type": "list_item",
+                                              "id": ":mgilE_$CJQsoG:rYn%V",
+                                              "inputs": {
+                                                "V": {
+                                                  "block": {
+                                                    "type": "lit_num",
+                                                    "id": "20/,55|I]QcOc)EGIoXs",
+                                                    "fields": {
+                                                      "V": 4
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "next": {
+                                                "block": {
+                                                  "type": "list_item",
+                                                  "id": "?+{s.,aHY+P/rD!o.j@u",
+                                                  "inputs": {
+                                                    "V": {
+                                                      "block": {
+                                                        "type": "lit_num",
+                                                        "id": "c+z,h6ts0Joj0EPh=E=K",
+                                                        "fields": {
+                                                          "V": 5
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "list_item",
+                                  "id": "bee!3O[dCnIks8(4?-ts",
+                                  "inputs": {
+                                    "V": {
+                                      "block": {
+                                        "type": "list_lit",
+                                        "id": "3{BUMBcCGNb0h}4_p(m5",
+                                        "inputs": {
+                                          "ITEMS": {
+                                            "block": {
+                                              "type": "list_item",
+                                              "id": "Akk|AggGNtt2x3CColZE",
+                                              "inputs": {
+                                                "V": {
+                                                  "block": {
+                                                    "type": "lit_num",
+                                                    "id": "R@fa,AhSn;f*1EsU4X/(",
+                                                    "fields": {
+                                                      "V": 6
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "next": {
+                                                "block": {
+                                                  "type": "list_item",
+                                                  "id": "u.q4RKGWQM0w!3xki{f)",
+                                                  "inputs": {
+                                                    "V": {
+                                                      "block": {
+                                                        "type": "lit_num",
+                                                        "id": "@jV^Vv)x!I`@s4,A9Lww",
+                                                        "fields": {
+                                                          "V": 7
+                                                        }
+                                                      }
+                                                    }
+                                                  },
+                                                  "next": {
+                                                    "block": {
+                                                      "type": "list_item",
+                                                      "id": "`H+#(La99q?B?L#rkHWi",
+                                                      "inputs": {
+                                                        "V": {
+                                                          "block": {
+                                                            "type": "lit_num",
+                                                            "id": "iDNZIq.Eow.tv3Yurrdg",
+                                                            "fields": {
+                                                              "V": 8
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "next": {
+                                    "block": {
+                                      "type": "list_item",
+                                      "id": "uvJMi574GKBK:}?2y4WR",
+                                      "inputs": {
+                                        "V": {
+                                          "block": {
+                                            "type": "list_lit",
+                                            "id": "=6:^*c{8puN2C.5.8=v|",
+                                            "inputs": {
+                                              "ITEMS": {
+                                                "block": {
+                                                  "type": "list_item",
+                                                  "id": "|+MnZS!Ev=ZLH:hkb|d$",
+                                                  "inputs": {
+                                                    "V": {
+                                                      "block": {
+                                                        "type": "lit_num",
+                                                        "id": "|5+,x_-}(?c.uN4bHjta",
+                                                        "fields": {
+                                                          "V": 0
+                                                        }
+                                                      }
+                                                    }
+                                                  },
+                                                  "next": {
+                                                    "block": {
+                                                      "type": "list_item",
+                                                      "id": "(+%xD*o{Fi!05|EtRay~",
+                                                      "inputs": {
+                                                        "V": {
+                                                          "block": {
+                                                            "type": "lit_num",
+                                                            "id": "h1vz6#(U#hXEL/$KheWQ",
+                                                            "fields": {
+                                                              "V": 3
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      "next": {
+                                                        "block": {
+                                                          "type": "list_item",
+                                                          "id": "$?4y}6,K3HC^7cg!S{K5",
+                                                          "inputs": {
+                                                            "V": {
+                                                              "block": {
+                                                                "type": "lit_num",
+                                                                "id": "`lo)=1ag5*NC4qm;1_cZ",
+                                                                "fields": {
+                                                                  "V": 6
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "next": {
+                                        "block": {
+                                          "type": "list_item",
+                                          "id": "c+(.`~~d[;eDS|X5tv1J",
+                                          "inputs": {
+                                            "V": {
+                                              "block": {
+                                                "type": "list_lit",
+                                                "id": "~n=-5b(EY863~(w|[TL2",
+                                                "inputs": {
+                                                  "ITEMS": {
+                                                    "block": {
+                                                      "type": "list_item",
+                                                      "id": "cS%UBDjOqY9QXBgZzd*G",
+                                                      "inputs": {
+                                                        "V": {
+                                                          "block": {
+                                                            "type": "lit_num",
+                                                            "id": "Bn#X)M(C3bAwka3;M$v|",
+                                                            "fields": {
+                                                              "V": 1
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      "next": {
+                                                        "block": {
+                                                          "type": "list_item",
+                                                          "id": "K:W7)tzIl.o0$F@PFs-p",
+                                                          "inputs": {
+                                                            "V": {
+                                                              "block": {
+                                                                "type": "lit_num",
+                                                                "id": "`1o7]DdSR,OXg^h[P)hH",
+                                                                "fields": {
+                                                                  "V": 4
+                                                                }
+                                                              }
+                                                            }
+                                                          },
+                                                          "next": {
+                                                            "block": {
+                                                              "type": "list_item",
+                                                              "id": "MN^s=#_*a:~Vhf.WS[fY",
+                                                              "inputs": {
+                                                                "V": {
+                                                                  "block": {
+                                                                    "type": "lit_num",
+                                                                    "id": "v-F[@vYERnF!oR=Ed%9!",
+                                                                    "fields": {
+                                                                      "V": 7
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "next": {
+                                            "block": {
+                                              "type": "list_item",
+                                              "id": "@y~ptu(glE(,gPz9.Y_3",
+                                              "inputs": {
+                                                "V": {
+                                                  "block": {
+                                                    "type": "list_lit",
+                                                    "id": "Juh.eU?RNHhznSM{/)*Y",
+                                                    "inputs": {
+                                                      "ITEMS": {
+                                                        "block": {
+                                                          "type": "list_item",
+                                                          "id": "[(cNpcZcP1#C|N_ss($i",
+                                                          "inputs": {
+                                                            "V": {
+                                                              "block": {
+                                                                "type": "lit_num",
+                                                                "id": "xByj.gO.3A;O/!f+tr_}",
+                                                                "fields": {
+                                                                  "V": 2
+                                                                }
+                                                              }
+                                                            }
+                                                          },
+                                                          "next": {
+                                                            "block": {
+                                                              "type": "list_item",
+                                                              "id": "jg{|M,oWF-60ceB}TX8;",
+                                                              "inputs": {
+                                                                "V": {
+                                                                  "block": {
+                                                                    "type": "lit_num",
+                                                                    "id": "K;5UgEo??yL#):{1]dzM",
+                                                                    "fields": {
+                                                                      "V": 5
+                                                                    }
+                                                                  }
+                                                                }
+                                                              },
+                                                              "next": {
+                                                                "block": {
+                                                                  "type": "list_item",
+                                                                  "id": "?uD2_ZVdG+Tyn1GzrBhi",
+                                                                  "inputs": {
+                                                                    "V": {
+                                                                      "block": {
+                                                                        "type": "lit_num",
+                                                                        "id": "BPP~J)S^+b/N_i82]U~;",
+                                                                        "fields": {
+                                                                          "V": 8
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "next": {
+                                                "block": {
+                                                  "type": "list_item",
+                                                  "id": "Chs9x}B%2lXRtc$7Zhhz",
+                                                  "inputs": {
+                                                    "V": {
+                                                      "block": {
+                                                        "type": "list_lit",
+                                                        "id": "|Cjr3uE5tWvkZ+KPs]:F",
+                                                        "inputs": {
+                                                          "ITEMS": {
+                                                            "block": {
+                                                              "type": "list_item",
+                                                              "id": "R6k5%ZQ_Uw$o@ZX}q66d",
+                                                              "inputs": {
+                                                                "V": {
+                                                                  "block": {
+                                                                    "type": "lit_num",
+                                                                    "id": "OYV6J1#dtJVefiz[?_-|",
+                                                                    "fields": {
+                                                                      "V": 0
+                                                                    }
+                                                                  }
+                                                                }
+                                                              },
+                                                              "next": {
+                                                                "block": {
+                                                                  "type": "list_item",
+                                                                  "id": ".:!jxwNmzT#I7GB-UwsT",
+                                                                  "inputs": {
+                                                                    "V": {
+                                                                      "block": {
+                                                                        "type": "lit_num",
+                                                                        "id": "%?fw)J(dsT2GIgR=QRA7",
+                                                                        "fields": {
+                                                                          "V": 4
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  "next": {
+                                                                    "block": {
+                                                                      "type": "list_item",
+                                                                      "id": "G^5`QPcKs5(k6916!!p,",
+                                                                      "inputs": {
+                                                                        "V": {
+                                                                          "block": {
+                                                                            "type": "lit_num",
+                                                                            "id": "NRD^uni7wR:5`jx{N{7`",
+                                                                            "fields": {
+                                                                              "V": 8
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  },
+                                                  "next": {
+                                                    "block": {
+                                                      "type": "list_item",
+                                                      "id": "vzd))DtO}@*r}ti;6$T~",
+                                                      "inputs": {
+                                                        "V": {
+                                                          "block": {
+                                                            "type": "list_lit",
+                                                            "id": "4$H+]#]{8gb-LmX,jT6Y",
+                                                            "inputs": {
+                                                              "ITEMS": {
+                                                                "block": {
+                                                                  "type": "list_item",
+                                                                  "id": "eIt5Z1,K%`O/LZ+bM]h%",
+                                                                  "inputs": {
+                                                                    "V": {
+                                                                      "block": {
+                                                                        "type": "lit_num",
+                                                                        "id": "GaUZB.^j8/e|#aMK*TyX",
+                                                                        "fields": {
+                                                                          "V": 2
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  "next": {
+                                                                    "block": {
+                                                                      "type": "list_item",
+                                                                      "id": "j]9LX0t)DJVu.`/$U2H-",
+                                                                      "inputs": {
+                                                                        "V": {
+                                                                          "block": {
+                                                                            "type": "lit_num",
+                                                                            "id": "lN-w.P*XQqQdi^9=OPbz",
+                                                                            "fields": {
+                                                                              "V": 4
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      },
+                                                                      "next": {
+                                                                        "block": {
+                                                                          "type": "list_item",
+                                                                          "id": "lMDe1:J~5/bgYJ9H,#^v",
+                                                                          "inputs": {
+                                                                            "V": {
+                                                                              "block": {
+                                                                                "type": "lit_num",
+                                                                                "id": ")MG%:[QinPBcoF-F+}uO",
+                                                                                "fields": {
+                                                                                  "V": 6
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "BODY": {
+                  "block": {
+                    "type": "ctl_if",
+                    "id": "1f!_W#p@VJTzeHi?lkg-",
+                    "inputs": {
+                      "COND": {
+                        "block": {
+                          "type": "logic_bin",
+                          "id": "h1;6Qg*-~l}Hg}-Y@1K4",
+                          "fields": {
+                            "OP": "and"
+                          },
+                          "inputs": {
+                            "A": {
+                              "block": {
+                                "type": "cmp",
+                                "id": "R8yr*mRC*2zf%I}H.i]-",
+                                "fields": {
+                                  "OP": "eq"
+                                },
+                                "inputs": {
+                                  "A": {
+                                    "block": {
+                                      "type": "list_get",
+                                      "id": "]LFoyUTDA[N!v}hI`f8R",
+                                      "inputs": {
+                                        "INDEX": {
+                                          "block": {
+                                            "type": "list_get",
+                                            "id": "U-l88qUX:d}d|nJ;q3Ap",
+                                            "inputs": {
+                                              "INDEX": {
+                                                "block": {
+                                                  "type": "lit_num",
+                                                  "id": ",S$]0y,,S*FAX_^u^6lX",
+                                                  "fields": {
+                                                    "V": 0
+                                                  }
+                                                }
+                                              },
+                                              "LIST": {
+                                                "block": {
+                                                  "type": "get_var",
+                                                  "id": "wfF6C?Opn-V21dxIyKeQ",
+                                                  "fields": {
+                                                    "SCOPE": "local",
+                                                    "NAME": "line"
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "LIST": {
+                                          "block": {
+                                            "type": "get_var",
+                                            "id": "Hgh,jB1u2d6S$tgMnPt6",
+                                            "fields": {
+                                              "SCOPE": "room",
+                                              "NAME": "board"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "B": {
+                                    "block": {
+                                      "type": "get_var",
+                                      "id": "Q1F$gT!88=ei9iRV?6`l",
+                                      "fields": {
+                                        "SCOPE": "local",
+                                        "NAME": "s"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "B": {
+                              "block": {
+                                "type": "logic_bin",
+                                "id": "y]N`Vp1vrY%WPs=W=-qo",
+                                "fields": {
+                                  "OP": "and"
+                                },
+                                "inputs": {
+                                  "A": {
+                                    "block": {
+                                      "type": "cmp",
+                                      "id": ")h)i~!U0nsFo_R|_/S_^",
+                                      "fields": {
+                                        "OP": "eq"
+                                      },
+                                      "inputs": {
+                                        "A": {
+                                          "block": {
+                                            "type": "list_get",
+                                            "id": "qa(_o5504Sxs{JO{$Y}w",
+                                            "inputs": {
+                                              "INDEX": {
+                                                "block": {
+                                                  "type": "list_get",
+                                                  "id": "2wei~|efNXGG,Jl}n1GV",
+                                                  "inputs": {
+                                                    "INDEX": {
+                                                      "block": {
+                                                        "type": "lit_num",
+                                                        "id": "bVbYZoHi`^2``7_A8+V,",
+                                                        "fields": {
+                                                          "V": 1
+                                                        }
+                                                      }
+                                                    },
+                                                    "LIST": {
+                                                      "block": {
+                                                        "type": "get_var",
+                                                        "id": "HdS.bhk_t4|#tdI5Gs[8",
+                                                        "fields": {
+                                                          "SCOPE": "local",
+                                                          "NAME": "line"
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "LIST": {
+                                                "block": {
+                                                  "type": "get_var",
+                                                  "id": "Qm(Hs2}YriFw}]Ox{KN3",
+                                                  "fields": {
+                                                    "SCOPE": "room",
+                                                    "NAME": "board"
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "B": {
+                                          "block": {
+                                            "type": "get_var",
+                                            "id": "z,iIBy;bGDVBV,PIdSh[",
+                                            "fields": {
+                                              "SCOPE": "local",
+                                              "NAME": "s"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "B": {
+                                    "block": {
+                                      "type": "cmp",
+                                      "id": "E}n0A],]B)(F;OnF+5o-",
+                                      "fields": {
+                                        "OP": "eq"
+                                      },
+                                      "inputs": {
+                                        "A": {
+                                          "block": {
+                                            "type": "list_get",
+                                            "id": "xbrEW+g5kXxm=Li~4S]v",
+                                            "inputs": {
+                                              "INDEX": {
+                                                "block": {
+                                                  "type": "list_get",
+                                                  "id": "lu6XH4CD:+_~+pgWNBzA",
+                                                  "inputs": {
+                                                    "INDEX": {
+                                                      "block": {
+                                                        "type": "lit_num",
+                                                        "id": "veGy(~ge+)8$YY?+T,jm",
+                                                        "fields": {
+                                                          "V": 2
+                                                        }
+                                                      }
+                                                    },
+                                                    "LIST": {
+                                                      "block": {
+                                                        "type": "get_var",
+                                                        "id": "On`[[*aAc9~Y(ZxPowIk",
+                                                        "fields": {
+                                                          "SCOPE": "local",
+                                                          "NAME": "line"
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "LIST": {
+                                                "block": {
+                                                  "type": "get_var",
+                                                  "id": "1wEIVvDDf4lCJhEg.$,]",
+                                                  "fields": {
+                                                    "SCOPE": "room",
+                                                    "NAME": "board"
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "B": {
+                                          "block": {
+                                            "type": "get_var",
+                                            "id": "x)4yR3A^C=GE!HhnMoqW",
+                                            "fields": {
+                                              "SCOPE": "local",
+                                              "NAME": "s"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "THEN": {
+                        "block": {
+                          "type": "set_var",
+                          "id": "[oF!KZO*yA,6Xb2g|T.7",
+                          "fields": {
+                            "SCOPE": "room",
+                            "NAME": "winner"
+                          },
+                          "inputs": {
+                            "VALUE": {
+                              "block": {
+                                "type": "get_var",
+                                "id": "W7BCecL~_F`RY)`JZm8Q",
+                                "fields": {
+                                  "SCOPE": "local",
+                                  "NAME": "s"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "ev_player_join",
+        "id": "-q`=Qq.FW5t8[l`dFK,*",
+        "x": 0,
+        "y": 0,
+        "next": {
+          "block": {
+            "type": "set_var",
+            "id": "X1,6OeA#r%JKRmsX8exQ",
+            "fields": {
+              "SCOPE": "player",
+              "NAME": "symbol"
+            },
+            "inputs": {
+              "VALUE": {
+                "block": {
+                  "type": "logic_choose",
+                  "id": "B+F|Cke$w`hZmC=2^rg(",
+                  "inputs": {
+                    "COND": {
+                      "block": {
+                        "type": "cmp",
+                        "id": "M%F1CX5r}!Rhwhaa0~Y?",
+                        "fields": {
+                          "OP": "eq"
+                        },
+                        "inputs": {
+                          "A": {
+                            "block": {
+                              "type": "ex_ctx",
+                              "id": ".|]}+ie70Ow3d?fY12.H",
+                              "fields": {
+                                "PROP": "ctx.player_seat"
+                              }
+                            }
+                          },
+                          "B": {
+                            "block": {
+                              "type": "lit_num",
+                              "id": "Sahq.ChvTSi8!i$eSt_M",
+                              "fields": {
+                                "V": 0
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "THEN": {
+                      "block": {
+                        "type": "lit_text",
+                        "id": "vM_@VEu#Ep(9fAVjg`3]",
+                        "fields": {
+                          "V": "X"
+                        }
+                      }
+                    },
+                    "ELSE": {
+                      "block": {
+                        "type": "logic_choose",
+                        "id": "{zKb:.i*]HP~%5qw9:;k",
+                        "inputs": {
+                          "COND": {
+                            "block": {
+                              "type": "cmp",
+                              "id": "U[:ra!_1?/flOUbp+fmG",
+                              "fields": {
+                                "OP": "eq"
+                              },
+                              "inputs": {
+                                "A": {
+                                  "block": {
+                                    "type": "ex_ctx",
+                                    "id": "rcEq3@DCeTXD[dP+p(`a",
+                                    "fields": {
+                                      "PROP": "ctx.player_seat"
+                                    }
+                                  }
+                                },
+                                "B": {
+                                  "block": {
+                                    "type": "lit_num",
+                                    "id": "kPFr!Ha:rkz1hP)O/GEf",
+                                    "fields": {
+                                      "V": 1
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "THEN": {
+                            "block": {
+                              "type": "lit_text",
+                              "id": "@7a3ae(H6wL4ox`;C1V4",
+                              "fields": {
+                                "V": "O"
+                              }
+                            }
+                          },
+                          "ELSE": {
+                            "block": {
+                              "type": "lit_text",
+                              "id": "UmOPydb8t-}2n~Vs%z4`",
+                              "fields": {
+                                "V": "spectator"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "next": {
+              "block": {
+                "type": "send_others",
+                "id": "=%GPc%Rc@%8LV/hU_{U{",
+                "fields": {
+                  "TYPE": "player_joined"
+                },
+                "inputs": {
+                  "DATA": {
+                    "block": {
+                      "type": "map_lit",
+                      "id": "`rZ|Q{N;*y:7Vk8)l#4f",
+                      "inputs": {
+                        "ENTRIES": {
+                          "block": {
+                            "type": "map_entry",
+                            "id": "@S?8GL?F*4@8W:=YX)nV",
+                            "fields": {
+                              "K": "name"
+                            },
+                            "inputs": {
+                              "V": {
+                                "block": {
+                                  "type": "ex_ctx",
+                                  "id": "Md]~0D-_/i0vIq+_yPzi",
+                                  "fields": {
+                                    "PROP": "ctx.player_name"
+                                  }
+                                }
+                              }
+                            },
+                            "next": {
+                              "block": {
+                                "type": "map_entry",
+                                "id": "]b|yp^#ntMMM6OBtBE=n",
+                                "fields": {
+                                  "K": "seat"
+                                },
+                                "inputs": {
+                                  "V": {
+                                    "block": {
+                                      "type": "ex_ctx",
+                                      "id": "RP.i-fj+h=~5#;[*g6cJ",
+                                      "fields": {
+                                        "PROP": "ctx.player_seat"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "ev_player_action",
+        "id": ";w6A+On+R_i(Ua$iED5j",
+        "x": 0,
+        "y": 0,
+        "fields": {
+          "ACTION": "move"
+        },
+        "next": {
+          "block": {
+            "type": "ctl_if",
+            "id": "E_q0oko_FzJ(/;LC;F?q",
+            "inputs": {
+              "COND": {
+                "block": {
+                  "type": "cmp",
+                  "id": "?}:mI~BD_o@-ob*zQBI?",
+                  "fields": {
+                    "OP": "ne"
+                  },
+                  "inputs": {
+                    "A": {
+                      "block": {
+                        "type": "get_var",
+                        "id": "ArItc{)*EkTugJLGFpr{",
+                        "fields": {
+                          "SCOPE": "room",
+                          "NAME": "winner"
+                        }
+                      }
+                    },
+                    "B": {
+                      "block": {
+                        "type": "lit_text",
+                        "id": "d-6(TaK[QF4C{z!ZBT7m",
+                        "fields": {
+                          "V": ""
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "THEN": {
+                "block": {
+                  "type": "act_reject",
+                  "id": "Y`g=CI1~~4tJzW$Oxl%i",
+                  "inputs": {
+                    "REASON": {
+                      "block": {
+                        "type": "lit_text",
+                        "id": "jwk;r0]imJ,@lb^@7?mC",
+                        "fields": {
+                          "V": "game is over"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "next": {
+              "block": {
+                "type": "ctl_if",
+                "id": "nSl9C?:V5PfF5qYD?|~5",
+                "inputs": {
+                  "COND": {
+                    "block": {
+                      "type": "cmp",
+                      "id": "AqaXFT6_Ox$_L()Te;t-",
+                      "fields": {
+                        "OP": "ne"
+                      },
+                      "inputs": {
+                        "A": {
+                          "block": {
+                            "type": "ex_ctx",
+                            "id": "%?b{y_%7Uzf~]4Qpn-Ok",
+                            "fields": {
+                              "PROP": "ctx.player_seat"
+                            }
+                          }
+                        },
+                        "B": {
+                          "block": {
+                            "type": "get_var",
+                            "id": "MailF+l3`(0_ovdz{,}N",
+                            "fields": {
+                              "SCOPE": "room",
+                              "NAME": "turn"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "THEN": {
+                    "block": {
+                      "type": "act_reject",
+                      "id": "Pu@$I*(QokU!p}ssl%=~",
+                      "inputs": {
+                        "REASON": {
+                          "block": {
+                            "type": "lit_text",
+                            "id": "yjM@_;+z:f.RwJB#%[uj",
+                            "fields": {
+                              "V": "not your turn"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "next": {
+                  "block": {
+                    "type": "set_var",
+                    "id": "XmA5PEb1%{KlomzVeJ,,",
+                    "fields": {
+                      "SCOPE": "local",
+                      "NAME": "idx"
+                    },
+                    "inputs": {
+                      "VALUE": {
+                        "block": {
+                          "type": "math_bin",
+                          "id": "+0nde^o#|-:24f!AaPQx",
+                          "fields": {
+                            "OP": "add"
+                          },
+                          "inputs": {
+                            "A": {
+                              "block": {
+                                "type": "math_bin",
+                                "id": "l=XLfdW6s0?q;_Tu$Ydc",
+                                "fields": {
+                                  "OP": "mul"
+                                },
+                                "inputs": {
+                                  "A": {
+                                    "block": {
+                                      "type": "ex_payload",
+                                      "id": "b}_dtIbW.J}b%;Q8c|LS",
+                                      "fields": {
+                                        "KEY": "x"
+                                      }
+                                    }
+                                  },
+                                  "B": {
+                                    "block": {
+                                      "type": "lit_num",
+                                      "id": "+w@Y-2mZ]0e~UfQ+SPZL",
+                                      "fields": {
+                                        "V": 3
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "B": {
+                              "block": {
+                                "type": "ex_payload",
+                                "id": "F^G)YJ,9Fb}_MXK24|0{",
+                                "fields": {
+                                  "KEY": "y"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "next": {
+                      "block": {
+                        "type": "ctl_if",
+                        "id": "8Lo9j-h!GXcJW]B_pd)%",
+                        "inputs": {
+                          "COND": {
+                            "block": {
+                              "type": "cmp",
+                              "id": "ga;},bG=iyei$a#2g4uB",
+                              "fields": {
+                                "OP": "ne"
+                              },
+                              "inputs": {
+                                "A": {
+                                  "block": {
+                                    "type": "list_get",
+                                    "id": "_fH/7V)XjO5GTY$jdl=*",
+                                    "inputs": {
+                                      "INDEX": {
+                                        "block": {
+                                          "type": "get_var",
+                                          "id": "vY(|~}TDMBvhp+tjvj|!",
+                                          "fields": {
+                                            "SCOPE": "local",
+                                            "NAME": "idx"
+                                          }
+                                        }
+                                      },
+                                      "LIST": {
+                                        "block": {
+                                          "type": "get_var",
+                                          "id": "($Jm~Exr|v4fSghU$/cA",
+                                          "fields": {
+                                            "SCOPE": "room",
+                                            "NAME": "board"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                "B": {
+                                  "block": {
+                                    "type": "lit_num",
+                                    "id": "4JlkSjWW6g_1JJXrHQ(,",
+                                    "fields": {
+                                      "V": 0
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "THEN": {
+                            "block": {
+                              "type": "act_reject",
+                              "id": "(QH-jdia#[K||{ecTo3,",
+                              "inputs": {
+                                "REASON": {
+                                  "block": {
+                                    "type": "lit_text",
+                                    "id": "!2Eil}|uX7:S#G_vnpcV",
+                                    "fields": {
+                                      "V": "cell already taken"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "next": {
+                          "block": {
+                            "type": "list_set_at",
+                            "id": "?A=%?csd4eSn$dZAo%E5",
+                            "fields": {
+                              "SCOPE": "room",
+                              "NAME": "board"
+                            },
+                            "inputs": {
+                              "INDEX": {
+                                "block": {
+                                  "type": "get_var",
+                                  "id": "^?cN2Cqp8Z)d1e_~BC6;",
+                                  "fields": {
+                                    "SCOPE": "local",
+                                    "NAME": "idx"
+                                  }
+                                }
+                              },
+                              "VALUE": {
+                                "block": {
+                                  "type": "get_var",
+                                  "id": "l0z!f;,#TfA!p,NzihDP",
+                                  "fields": {
+                                    "SCOPE": "player",
+                                    "NAME": "symbol"
+                                  }
+                                }
+                              }
+                            },
+                            "next": {
+                              "block": {
+                                "type": "change_var",
+                                "id": "N)pn6H!ofi25aeoS5x}F",
+                                "fields": {
+                                  "SCOPE": "room",
+                                  "NAME": "moves"
+                                },
+                                "inputs": {
+                                  "DELTA": {
+                                    "block": {
+                                      "type": "lit_num",
+                                      "id": "_q3M?o.bPTIuF`@zX8nX",
+                                      "fields": {
+                                        "V": 1
+                                      }
+                                    }
+                                  }
+                                },
+                                "next": {
+                                  "block": {
+                                    "type": "call_fn",
+                                    "id": "yN2]olo[m`3_q1YN#^Tr",
+                                    "fields": {
+                                      "NAME": "checkWin"
+                                    },
+                                    "inputs": {
+                                      "ARGS": {
+                                        "block": {
+                                          "type": "get_var",
+                                          "id": "3XT0}u}*zdd;uW?o44bN",
+                                          "fields": {
+                                            "SCOPE": "player",
+                                            "NAME": "symbol"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "next": {
+                                      "block": {
+                                        "type": "ctl_if",
+                                        "id": "N*^xe9NkGeV+(m5)D[`2",
+                                        "inputs": {
+                                          "COND": {
+                                            "block": {
+                                              "type": "logic_bin",
+                                              "id": "+2v:FS@TlZIHY_~8n%!=",
+                                              "fields": {
+                                                "OP": "and"
+                                              },
+                                              "inputs": {
+                                                "A": {
+                                                  "block": {
+                                                    "type": "cmp",
+                                                    "id": "A4[O47z]44k51L`2+AFA",
+                                                    "fields": {
+                                                      "OP": "eq"
+                                                    },
+                                                    "inputs": {
+                                                      "A": {
+                                                        "block": {
+                                                          "type": "get_var",
+                                                          "id": "DH?pp})d],/8wE]C~).E",
+                                                          "fields": {
+                                                            "SCOPE": "room",
+                                                            "NAME": "winner"
+                                                          }
+                                                        }
+                                                      },
+                                                      "B": {
+                                                        "block": {
+                                                          "type": "lit_text",
+                                                          "id": "fi0fEo(frvlLopVXH!B?",
+                                                          "fields": {
+                                                            "V": ""
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "B": {
+                                                  "block": {
+                                                    "type": "cmp",
+                                                    "id": "DAY]d,C_sE3a9Xc@nZ1!",
+                                                    "fields": {
+                                                      "OP": "eq"
+                                                    },
+                                                    "inputs": {
+                                                      "A": {
+                                                        "block": {
+                                                          "type": "get_var",
+                                                          "id": "@nT?Nd}KUo28EeFH:;r}",
+                                                          "fields": {
+                                                            "SCOPE": "room",
+                                                            "NAME": "moves"
+                                                          }
+                                                        }
+                                                      },
+                                                      "B": {
+                                                        "block": {
+                                                          "type": "lit_num",
+                                                          "id": "9si1f})~pODB1B+p.lYl",
+                                                          "fields": {
+                                                            "V": 9
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "THEN": {
+                                            "block": {
+                                              "type": "set_var",
+                                              "id": "EdM1b6s4JjSC-T)F*4S#",
+                                              "fields": {
+                                                "SCOPE": "room",
+                                                "NAME": "winner"
+                                              },
+                                              "inputs": {
+                                                "VALUE": {
+                                                  "block": {
+                                                    "type": "lit_text",
+                                                    "id": "k8_M`V$wQUd1QfxpF@F?",
+                                                    "fields": {
+                                                      "V": "draw"
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "next": {
+                                          "block": {
+                                            "type": "set_var",
+                                            "id": "kT{hi_[P:h_]K8,Q^sI:",
+                                            "fields": {
+                                              "SCOPE": "room",
+                                              "NAME": "turn"
+                                            },
+                                            "inputs": {
+                                              "VALUE": {
+                                                "block": {
+                                                  "type": "math_bin",
+                                                  "id": "SuFa3chy$KJ%j0=CiUcb",
+                                                  "fields": {
+                                                    "OP": "sub"
+                                                  },
+                                                  "inputs": {
+                                                    "A": {
+                                                      "block": {
+                                                        "type": "lit_num",
+                                                        "id": "Yl0]zokhB+Y~p[3K7S-o",
+                                                        "fields": {
+                                                          "V": 1
+                                                        }
+                                                      }
+                                                    },
+                                                    "B": {
+                                                      "block": {
+                                                        "type": "get_var",
+                                                        "id": "SX?#hr_T8Qe5BrfabY9e",
+                                                        "fields": {
+                                                          "SCOPE": "room",
+                                                          "NAME": "turn"
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "next": {
+                                              "block": {
+                                                "type": "send_room",
+                                                "id": "l8wamJM68WLJXr3hIk~X",
+                                                "fields": {
+                                                  "TYPE": "board"
+                                                },
+                                                "inputs": {
+                                                  "DATA": {
+                                                    "block": {
+                                                      "type": "map_lit",
+                                                      "id": ".S-JizjkQu/x#m-O3a_n",
+                                                      "inputs": {
+                                                        "ENTRIES": {
+                                                          "block": {
+                                                            "type": "map_entry",
+                                                            "id": "BZx/GuJGXOUA[Fm~4n$4",
+                                                            "fields": {
+                                                              "K": "board"
+                                                            },
+                                                            "inputs": {
+                                                              "V": {
+                                                                "block": {
+                                                                  "type": "get_var",
+                                                                  "id": "c/QmX#blIv)mNSHI^FIO",
+                                                                  "fields": {
+                                                                    "SCOPE": "room",
+                                                                    "NAME": "board"
+                                                                  }
+                                                                }
+                                                              }
+                                                            },
+                                                            "next": {
+                                                              "block": {
+                                                                "type": "map_entry",
+                                                                "id": "|_YH6#S],]7wK_hv$uTB",
+                                                                "fields": {
+                                                                  "K": "turn"
+                                                                },
+                                                                "inputs": {
+                                                                  "V": {
+                                                                    "block": {
+                                                                      "type": "get_var",
+                                                                      "id": "|vVQoeY?M,mi6D33f#_|",
+                                                                      "fields": {
+                                                                        "SCOPE": "room",
+                                                                        "NAME": "turn"
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                },
+                                                                "next": {
+                                                                  "block": {
+                                                                    "type": "map_entry",
+                                                                    "id": "v](Su4^eHXTLBc;30IUa",
+                                                                    "fields": {
+                                                                      "K": "winner"
+                                                                    },
+                                                                    "inputs": {
+                                                                      "V": {
+                                                                        "block": {
+                                                                          "type": "get_var",
+                                                                          "id": "Z;nkZ`~rW/D4hs=|1YLo",
+                                                                          "fields": {
+                                                                            "SCOPE": "room",
+                                                                            "NAME": "winner"
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "next": {
+                                                  "block": {
+                                                    "type": "act_respond",
+                                                    "id": "|t_Ux[bC)Vt5g4nnLNBt",
+                                                    "inputs": {
+                                                      "VALUE": {
+                                                        "block": {
+                                                          "type": "map_lit",
+                                                          "id": "QX];XArS~n8bp1gIH!j|",
+                                                          "inputs": {
+                                                            "ENTRIES": {
+                                                              "block": {
+                                                                "type": "map_entry",
+                                                                "id": "m]n8EHpT3Hqq;gMQ]icD",
+                                                                "fields": {
+                                                                  "K": "ok"
+                                                                },
+                                                                "inputs": {
+                                                                  "V": {
+                                                                    "block": {
+                                                                      "type": "lit_bool",
+                                                                      "id": "*~^6.-T9d(s1mWY=Z}D5",
+                                                                      "fields": {
+                                                                        "V": "TRUE"
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                },
+                                                                "next": {
+                                                                  "block": {
+                                                                    "type": "map_entry",
+                                                                    "id": "BrS0]n.6S/QDBG]7tBp_",
+                                                                    "fields": {
+                                                                      "K": "board"
+                                                                    },
+                                                                    "inputs": {
+                                                                      "V": {
+                                                                        "block": {
+                                                                          "type": "get_var",
+                                                                          "id": ":^,E-Xk2)uR!j7jdyW!B",
+                                                                          "fields": {
+                                                                            "SCOPE": "room",
+                                                                            "NAME": "board"
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    },
+                                                                    "next": {
+                                                                      "block": {
+                                                                        "type": "map_entry",
+                                                                        "id": "cM56C)KjOdRGZgTaJ*DW",
+                                                                        "fields": {
+                                                                          "K": "winner"
+                                                                        },
+                                                                        "inputs": {
+                                                                          "V": {
+                                                                            "block": {
+                                                                              "type": "get_var",
+                                                                              "id": "lwFuGsV{bo;KgV0(n=MV",
+                                                                              "fields": {
+                                                                                "SCOPE": "room",
+                                                                                "NAME": "winner"
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

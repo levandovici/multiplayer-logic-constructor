@@ -1,0 +1,12 @@
+{
+  "name": "multiplayer-logic-constructor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Visual constructor for server-authoritative multiplayer game backends — dev tooling for template/marketing generation",
+  "scripts": {
+    "build:templates": "node bin/build-templates.mjs"
+  },
+  "devDependencies": {
+    "blockly": "^10.4.3"
+  }
+}

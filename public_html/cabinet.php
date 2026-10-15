@@ -64,6 +64,22 @@ $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <div id="flash" class="hidden mb-6 rounded-lg px-4 py-3 text-sm"></div>
 
+        <!-- Start from a template — real programs, playable instantly -->
+        <section class="mb-10">
+            <h2 class="text-xl font-semibold mb-1">Start from a template</h2>
+            <p class="text-sm text-gray-400 mb-4">Pick one, get a playable game + editable blocks in the editor.</p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <?php foreach (program_templates() as $slug => $t): ?>
+                <button class="tpl-btn glass rounded-xl p-3 text-left hover:border-purple-400/60 transition group" data-slug="<?= $slug ?>">
+                    <img src="<?= $t['image'] ?>" alt="<?= htmlspecialchars($t['name'], ENT_QUOTES) ?>"
+                         class="w-full aspect-[8/5] object-cover rounded-lg mb-2 border border-white/10">
+                    <p class="text-sm font-semibold leading-tight"><?= htmlspecialchars($t['name'], ENT_QUOTES) ?></p>
+                    <p class="text-xs text-purple-300"><?= htmlspecialchars($t['genre'], ENT_QUOTES) ?></p>
+                </button>
+                <?php endforeach; ?>
+            </div>
+        </section>
+
         <?php if (!$games): ?>
             <div class="glass rounded-2xl p-12 text-center text-gray-300">
                 <p class="text-lg mb-2">No games yet.</p>
@@ -142,6 +158,17 @@ $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
     document.querySelectorAll('.reveal-btn').forEach(b => b.addEventListener('click', async () => {
         const r = await post({ action: 'reveal', game_id: b.dataset.game });
         flash(r.success ? 'Private key: ' + r.api_private_key : (r.error || 'Failed'), r.success);
+    }));
+    document.querySelectorAll('.tpl-btn').forEach(b => b.addEventListener('click', async () => {
+        const name = prompt('Name your game:', b.querySelector('p').textContent);
+        if (!name) return;
+        const r = await post({ action: 'create', name, template: b.dataset.slug });
+        if (r.success) {
+            flash('Game created — logic already published and playable. Private key (copy now): ' + r.game.api_private_key, true);
+            setTimeout(() => location.reload(), 2000);
+        } else {
+            flash(r.error || 'Failed', false);
+        }
     }));
     document.querySelectorAll('.regen-btn').forEach(b => b.addEventListener('click', async () => {
         if (!confirm('Regenerate the private key? The old one stops working immediately.')) return;

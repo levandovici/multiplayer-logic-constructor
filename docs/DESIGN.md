@@ -356,7 +356,7 @@ Status: ✅ = landed & verified (unit tests + PHPStan).
 | M7 | Anti-cheat primitive blocks + publish-time validation             | ✅ |
 | M8 | SDK `Logic` module (dotnet/unity first) + docs + llms.txt         | pending — SDK repo |
 | M9 | Client SDKs ×4 (C#/.NET, Unity, C++, Unreal) per `docs/SDK.md`    | spec ✅ — code pending |
-| M10| Kid-friendly onboarding: simple docs, genre starter programs      | pending |
+| M10| Kid-friendly onboarding: simple docs, genre starter programs      | templates ✅ — docs pending |
 | M11| Marketing assets: `bin/make-marketing.php` genre cards + landing   | ✅ generator + page |
 
 ### M9 — Client SDKs (details in `docs/SDK.md`)
@@ -373,18 +373,24 @@ Ships in the `multiplayer-sdk` repo — one `Logic` module per SDK.
 
 - Docs voice: short sentences, "you ask — the server decides" mental model,
   every block page has one runnable example.
-- Starter programs per genre (clone-me templates in the cabinet):
-  tic-tac-toe (exists as fixture), clicker, quiz, racing laps, card draw.
+- ✅ Starter programs per genre ship as cabinet templates
+  (`templates/<slug>.{workspace,ast}.json` — 6 genres: tic-tac-toe, clicker,
+  quiz, racing, cards, arena). Authored as Blockly API calls in
+  `bin/build-templates.mjs` and compiled with the real `generateAst`, so
+  workspace↔AST can't drift. `games.php create?template=` seeds the draft
+  AND publishes v1 — template games are playable immediately.
 - Error messages stay plain ("cell already taken", "not your turn") — the
   reject `reason` is shown to players verbatim.
+- Docs voice still pending: block reference pages, per-language quickstarts.
 
 ### M11 — Marketing/regenerable artwork
 
-`bin/make-marketing.php` draws every genre card + banner procedurally with
-GD into `public_html/assets/marketing/` — no source PSDs, no manual exports.
-To update artwork: edit the script, re-run, commit. `bin/make-icons.php`
-covers logo/favicon/og formats the same way. Landing page renders the cards
-in the "Build any multiplayer genre" section.
+`bin/make-marketing.php` renders REAL constructor block stacks (puzzle
+tabs/sockets, hat domes, C-blocks, the mlc-blocks.js hue palette) with GD
+into `public_html/assets/marketing/` — the genre cards show the same logic
+the matching template ships. Landing hero shows a mini editor scene
+(`hero-constructor.png`). To update artwork: edit the script, re-run,
+commit. `bin/make-icons.php` covers logo/favicon/og formats the same way.
 
 ## 12. Decisions & open questions
 

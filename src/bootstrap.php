@@ -16,6 +16,8 @@ require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/email_codes.php';
 // Lifecycle → engine bridge (fire_lifecycle_event). No-ops until M3.
 require_once __DIR__ . '/lifecycle.php';
+// Game templates — cabinet "new game from template" (templates/*.json).
+require_once __DIR__ . '/templates.php';
 
 // Suppress error output immediately — before session_start()/autoload can
 // emit a warning into the response (which would flip headers_sent() and

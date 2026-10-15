@@ -1,0 +1,180 @@
+{
+  "version": 1,
+  "variables": {
+    "player": {
+      "hand": []
+    },
+    "room": {
+      "turn": 0,
+      "pile": []
+    },
+    "game": {}
+  },
+  "functions": [],
+  "triggers": [
+    {
+      "event": "on_player_join",
+      "body": [
+        {
+          "op": "repeat",
+          "times": 5,
+          "body": [
+            {
+              "op": "list.add",
+              "scope": "player",
+              "name": "hand",
+              "value": {
+                "op": "random_int",
+                "min": 1,
+                "max": 52
+              }
+            }
+          ]
+        },
+        {
+          "op": "send.player",
+          "player": {
+            "op": "ctx.player_id"
+          },
+          "type": {
+            "op": "lit",
+            "value": "hand"
+          },
+          "data": {
+            "op": "map_lit",
+            "entries": [
+              {
+                "key": "hand",
+                "value": {
+                  "op": "var.player",
+                  "name": "hand"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "event": "on_player_action",
+      "body": [
+        {
+          "op": "if",
+          "cond": {
+            "op": "ne",
+            "a": {
+              "op": "ctx.player_seat"
+            },
+            "b": {
+              "op": "var.room",
+              "name": "turn"
+            }
+          },
+          "then": [
+            {
+              "op": "reject",
+              "reason": "not your turn"
+            }
+          ]
+        },
+        {
+          "op": "require",
+          "cond": {
+            "op": "list_contains",
+            "list": {
+              "op": "var.player",
+              "name": "hand"
+            },
+            "value": {
+              "op": "payload",
+              "key": "card"
+            }
+          },
+          "reason": "you do not hold that card"
+        },
+        {
+          "op": "list.remove_at",
+          "scope": "player",
+          "name": "hand",
+          "index": {
+            "op": "list_index_of",
+            "list": {
+              "op": "var.player",
+              "name": "hand"
+            },
+            "value": {
+              "op": "payload",
+              "key": "card"
+            }
+          }
+        },
+        {
+          "op": "list.add",
+          "scope": "room",
+          "name": "pile",
+          "value": {
+            "op": "payload",
+            "key": "card"
+          }
+        },
+        {
+          "op": "set.room",
+          "name": "turn",
+          "value": {
+            "op": "sub",
+            "a": 1,
+            "b": {
+              "op": "var.room",
+              "name": "turn"
+            }
+          }
+        },
+        {
+          "op": "send.others",
+          "type": {
+            "op": "lit",
+            "value": "card_played"
+          },
+          "data": {
+            "op": "map_lit",
+            "entries": [
+              {
+                "key": "player",
+                "value": {
+                  "op": "ctx.player_name"
+                }
+              },
+              {
+                "key": "card",
+                "value": {
+                  "op": "payload",
+                  "key": "card"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "op": "respond",
+          "value": {
+            "op": "map_lit",
+            "entries": [
+              {
+                "key": "ok",
+                "value": true
+              },
+              {
+                "key": "hand",
+                "value": {
+                  "op": "var.player",
+                  "name": "hand"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "action": "play"
+    }
+  ]
+}

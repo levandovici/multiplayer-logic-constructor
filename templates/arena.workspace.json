@@ -1,0 +1,476 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "ev_match_start",
+        "id": ".__Z/?,c?kZ|zpea~5}*",
+        "x": 0,
+        "y": 0,
+        "next": {
+          "block": {
+            "type": "tm_schedule",
+            "id": "S/}bdclr0XL?kk#|1)Y!",
+            "fields": {
+              "TIMER": "shrink"
+            },
+            "inputs": {
+              "DELAY": {
+                "block": {
+                  "type": "lit_num",
+                  "id": "ZD:FuBZdEF%c+_iC8mMg",
+                  "fields": {
+                    "V": 60
+                  }
+                }
+              },
+              "PAYLOAD": {
+                "block": {
+                  "type": "map_lit",
+                  "id": ",3*B;@%:X2U0q=SeD2z,",
+                  "inputs": {
+                    "ENTRIES": {
+                      "block": {
+                        "type": "map_entry",
+                        "id": "M*H+UAvWM+d/~]}cd:rl",
+                        "fields": {
+                          "K": "round"
+                        },
+                        "inputs": {
+                          "V": {
+                            "block": {
+                              "type": "lit_num",
+                              "id": "c@o5t$4ixI{lp-0Gf!Ka",
+                              "fields": {
+                                "V": 1
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "ev_timer",
+        "id": ";sEvQl_ZU,pkVWjlH6{g",
+        "x": 0,
+        "y": 0,
+        "fields": {
+          "TIMER": "shrink"
+        },
+        "next": {
+          "block": {
+            "type": "set_var",
+            "id": ".(?*5uT2D*pweu-JG#h#",
+            "fields": {
+              "SCOPE": "room",
+              "NAME": "zone"
+            },
+            "inputs": {
+              "VALUE": {
+                "block": {
+                  "type": "math_bin",
+                  "id": "55UszxyR#qsiH+hZc)Ug",
+                  "fields": {
+                    "OP": "mul"
+                  },
+                  "inputs": {
+                    "A": {
+                      "block": {
+                        "type": "get_var",
+                        "id": "R7]eZ9KnVGph+UI)otu3",
+                        "fields": {
+                          "SCOPE": "room",
+                          "NAME": "zone"
+                        }
+                      }
+                    },
+                    "B": {
+                      "block": {
+                        "type": "lit_num",
+                        "id": "MIXG-GQ2Y^Axi06J[}S9",
+                        "fields": {
+                          "V": 0.7
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "next": {
+              "block": {
+                "type": "change_var",
+                "id": "T+*L,aYI2gM]|)$v:Ev%",
+                "fields": {
+                  "SCOPE": "room",
+                  "NAME": "round"
+                },
+                "inputs": {
+                  "DELTA": {
+                    "block": {
+                      "type": "lit_num",
+                      "id": "E?s?e9~tg,5fLc$q8,X^",
+                      "fields": {
+                        "V": 1
+                      }
+                    }
+                  }
+                },
+                "next": {
+                  "block": {
+                    "type": "send_room",
+                    "id": "S~s}T*Jl8JmuCx=c4!~j",
+                    "fields": {
+                      "TYPE": "zone"
+                    },
+                    "inputs": {
+                      "DATA": {
+                        "block": {
+                          "type": "map_lit",
+                          "id": "6H$I0Bo]gf2.e;qpf2CV",
+                          "inputs": {
+                            "ENTRIES": {
+                              "block": {
+                                "type": "map_entry",
+                                "id": "b[{/mr17No+?I;HusB8v",
+                                "fields": {
+                                  "K": "radius"
+                                },
+                                "inputs": {
+                                  "V": {
+                                    "block": {
+                                      "type": "get_var",
+                                      "id": "-uTwPLVO915$3yW4G-N)",
+                                      "fields": {
+                                        "SCOPE": "room",
+                                        "NAME": "zone"
+                                      }
+                                    }
+                                  }
+                                },
+                                "next": {
+                                  "block": {
+                                    "type": "map_entry",
+                                    "id": "#-yYdC16qOuqQz,0pg}p",
+                                    "fields": {
+                                      "K": "round"
+                                    },
+                                    "inputs": {
+                                      "V": {
+                                        "block": {
+                                          "type": "get_var",
+                                          "id": "jPaza{,8/Q^@+NsDl/mY",
+                                          "fields": {
+                                            "SCOPE": "room",
+                                            "NAME": "round"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "next": {
+                      "block": {
+                        "type": "tm_schedule",
+                        "id": "BFP-^e[7W)cWga+5lG_Z",
+                        "fields": {
+                          "TIMER": "shrink"
+                        },
+                        "inputs": {
+                          "DELAY": {
+                            "block": {
+                              "type": "lit_num",
+                              "id": "$[Jo+41Ybm!{OWI]q0E,",
+                              "fields": {
+                                "V": 60
+                              }
+                            }
+                          },
+                          "PAYLOAD": {
+                            "block": {
+                              "type": "map_lit",
+                              "id": "Tuf?bAh2|;!6d:ew6d[.",
+                              "inputs": {
+                                "ENTRIES": {
+                                  "block": {
+                                    "type": "map_entry",
+                                    "id": "mU;BR2Qx5cL=AK}z,@:p",
+                                    "fields": {
+                                      "K": "round"
+                                    },
+                                    "inputs": {
+                                      "V": {
+                                        "block": {
+                                          "type": "get_var",
+                                          "id": "c(6DD8yyJMEh[A[?o*Iu",
+                                          "fields": {
+                                            "SCOPE": "room",
+                                            "NAME": "round"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "ev_player_action",
+        "id": "5#m4*`QB/X`Awi?MU3X3",
+        "x": 0,
+        "y": 0,
+        "fields": {
+          "ACTION": "move"
+        },
+        "next": {
+          "block": {
+            "type": "ac_verify_move",
+            "id": "K;DiQbhW}o_smvig0vqu",
+            "inputs": {
+              "FROM": {
+                "block": {
+                  "type": "list_lit",
+                  "id": "8_;~KWXvEzfjz7*-wkH|",
+                  "inputs": {
+                    "ITEMS": {
+                      "block": {
+                        "type": "list_item",
+                        "id": "KvGxkf?MN9.!ic$=svVv",
+                        "inputs": {
+                          "V": {
+                            "block": {
+                              "type": "get_var",
+                              "id": "/Cx};BLifV3=r$^B}iN~",
+                              "fields": {
+                                "SCOPE": "player",
+                                "NAME": "x"
+                              }
+                            }
+                          }
+                        },
+                        "next": {
+                          "block": {
+                            "type": "list_item",
+                            "id": "|i{IwA]{TDSGD]xH#iqz",
+                            "inputs": {
+                              "V": {
+                                "block": {
+                                  "type": "get_var",
+                                  "id": "D#Jm.CIw#*Pa]=s+Vzk~",
+                                  "fields": {
+                                    "SCOPE": "player",
+                                    "NAME": "y"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "TO": {
+                "block": {
+                  "type": "list_lit",
+                  "id": "Xj8=,K983P}U#PJricSN",
+                  "inputs": {
+                    "ITEMS": {
+                      "block": {
+                        "type": "list_item",
+                        "id": "F;=B=T$}p,yJchHT4n_8",
+                        "inputs": {
+                          "V": {
+                            "block": {
+                              "type": "ex_payload",
+                              "id": "$S@dCHl3|!;FnmkQ+onc",
+                              "fields": {
+                                "KEY": "x"
+                              }
+                            }
+                          }
+                        },
+                        "next": {
+                          "block": {
+                            "type": "list_item",
+                            "id": "nvY*c6cd,Yc{_kKJg/1#",
+                            "inputs": {
+                              "V": {
+                                "block": {
+                                  "type": "ex_payload",
+                                  "id": "u.0Q4*nK~-i`b#W$N5pU",
+                                  "fields": {
+                                    "KEY": "y"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "MAX": {
+                "block": {
+                  "type": "lit_num",
+                  "id": "0=^!4b@l0Bcvt1:On8Ow",
+                  "fields": {
+                    "V": 10
+                  }
+                }
+              }
+            },
+            "next": {
+              "block": {
+                "type": "set_var",
+                "id": "OZEX~[E)S5Eo^|G+S`#b",
+                "fields": {
+                  "SCOPE": "player",
+                  "NAME": "x"
+                },
+                "inputs": {
+                  "VALUE": {
+                    "block": {
+                      "type": "ex_payload",
+                      "id": "rr|yz)$e@K}pp[n]zy+6",
+                      "fields": {
+                        "KEY": "x"
+                      }
+                    }
+                  }
+                },
+                "next": {
+                  "block": {
+                    "type": "set_var",
+                    "id": "%+1#^Y#|WH*so8_GGzaC",
+                    "fields": {
+                      "SCOPE": "player",
+                      "NAME": "y"
+                    },
+                    "inputs": {
+                      "VALUE": {
+                        "block": {
+                          "type": "ex_payload",
+                          "id": "iA3}8aj*8l*,qGpu:3sk",
+                          "fields": {
+                            "KEY": "y"
+                          }
+                        }
+                      }
+                    },
+                    "next": {
+                      "block": {
+                        "type": "send_others",
+                        "id": "E$J}FK90joB9Ekr*u[EN",
+                        "fields": {
+                          "TYPE": "moved"
+                        },
+                        "inputs": {
+                          "DATA": {
+                            "block": {
+                              "type": "map_lit",
+                              "id": "@V:;7~c-Uya_cy)UdrY?",
+                              "inputs": {
+                                "ENTRIES": {
+                                  "block": {
+                                    "type": "map_entry",
+                                    "id": "4W*jhegL=X_hDpTl0cA.",
+                                    "fields": {
+                                      "K": "player"
+                                    },
+                                    "inputs": {
+                                      "V": {
+                                        "block": {
+                                          "type": "ex_ctx",
+                                          "id": "JwP@cW#.tx.$E=Qgf05B",
+                                          "fields": {
+                                            "PROP": "ctx.player_name"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "next": {
+                                      "block": {
+                                        "type": "map_entry",
+                                        "id": "IjFul[~Kmjrr2gwlfFL/",
+                                        "fields": {
+                                          "K": "x"
+                                        },
+                                        "inputs": {
+                                          "V": {
+                                            "block": {
+                                              "type": "ex_payload",
+                                              "id": "s,5oHe8F47Z2bRAkHhrP",
+                                              "fields": {
+                                                "KEY": "x"
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "next": {
+                                          "block": {
+                                            "type": "map_entry",
+                                            "id": "4_y(athHc33c~e(1D#bZ",
+                                            "fields": {
+                                              "K": "y"
+                                            },
+                                            "inputs": {
+                                              "V": {
+                                                "block": {
+                                                  "type": "ex_payload",
+                                                  "id": "6YrWxdC^P({Z916}0QJ}",
+                                                  "fields": {
+                                                    "KEY": "y"
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

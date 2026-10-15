@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "variables": {
+    "player": {
+      "lap": 0,
+      "next_cp": 1
+    },
+    "room": {
+      "total_laps": 3,
+      "checkpoints": 4,
+      "winner": ""
+    },
+    "game": {}
+  },
+  "functions": [],
+  "triggers": [
+    {
+      "event": "on_player_action",
+      "body": [
+        {
+          "op": "if",
+          "cond": {
+            "op": "ne",
+            "a": {
+              "op": "var.room",
+              "name": "winner"
+            },
+            "b": ""
+          },
+          "then": [
+            {
+              "op": "reject",
+              "reason": "race is over"
+            }
+          ]
+        },
+        {
+          "op": "require",
+          "cond": {
+            "op": "eq",
+            "a": {
+              "op": "payload",
+              "key": "id"
+            },
+            "b": {
+              "op": "var.player",
+              "name": "next_cp"
+            }
+          },
+          "reason": "wrong checkpoint — hit them in order"
+        },
+        {
+          "op": "set.player",
+          "name": "next_cp",
+          "value": {
+            "op": "add",
+            "a": {
+              "op": "mod",
+              "a": {
+                "op": "var.player",
+                "name": "next_cp"
+              },
+              "b": {
+                "op": "var.room",
+                "name": "checkpoints"
+              }
+            },
+            "b": 1
+          }
+        },
+        {
+          "op": "if",
+          "cond": {
+            "op": "eq",
+            "a": {
+              "op": "payload",
+              "key": "id"
+            },
+            "b": {
+              "op": "var.room",
+              "name": "checkpoints"
+            }
+          },
+          "then": [
+            {
+              "op": "change.player",
+              "name": "lap",
+              "delta": 1
+            },
+            {
+              "op": "if",
+              "cond": {
+                "op": "ge",
+                "a": {
+                  "op": "var.player",
+                  "name": "lap"
+                },
+                "b": {
+                  "op": "var.room",
+                  "name": "total_laps"
+                }
+              },
+              "then": [
+                {
+                  "op": "set.room",
+                  "name": "winner",
+                  "value": {
+                    "op": "ctx.player_name"
+                  }
+                },
+                {
+                  "op": "match.end",
+                  "result": {
+                    "op": "map_lit",
+                    "entries": [
+                      {
+                        "key": "winner",
+                        "value": {
+                          "op": "var.room",
+                          "name": "winner"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "op": "send.room",
+              "type": {
+                "op": "lit",
+                "value": "lap"
+              },
+              "data": {
+                "op": "map_lit",
+                "entries": [
+                  {
+                    "key": "player",
+                    "value": {
+                      "op": "ctx.player_name"
+                    }
+                  },
+                  {
+                    "key": "lap",
+                    "value": {
+                      "op": "var.player",
+                      "name": "lap"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "op": "respond",
+          "value": {
+            "op": "map_lit",
+            "entries": [
+              {
+                "key": "ok",
+                "value": true
+              },
+              {
+                "key": "lap",
+                "value": {
+                  "op": "var.player",
+                  "name": "lap"
+                }
+              },
+              {
+                "key": "next",
+                "value": {
+                  "op": "var.player",
+                  "name": "next_cp"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "action": "checkpoint"
+    }
+  ]
+}

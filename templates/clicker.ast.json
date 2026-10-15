@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "variables": {
+    "player": {
+      "gold": 0,
+      "harvest": 1,
+      "level": 0
+    },
+    "room": {
+      "upgrades": 0
+    },
+    "game": {}
+  },
+  "functions": [],
+  "triggers": [
+    {
+      "event": "on_player_join",
+      "body": [
+        {
+          "op": "set.player",
+          "name": "gold",
+          "value": 0
+        },
+        {
+          "op": "set.player",
+          "name": "harvest",
+          "value": 1
+        },
+        {
+          "op": "send.others",
+          "type": {
+            "op": "lit",
+            "value": "player_joined"
+          },
+          "data": {
+            "op": "map_lit",
+            "entries": [
+              {
+                "key": "name",
+                "value": {
+                  "op": "ctx.player_name"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "event": "on_player_action",
+      "body": [
+        {
+          "op": "ratelimit",
+          "limit": 2,
+          "per": 1,
+          "key": "claim"
+        },
+        {
+          "op": "change.player",
+          "name": "gold",
+          "delta": {
+            "op": "var.player",
+            "name": "harvest"
+          }
+        },
+        {
+          "op": "respond",
+          "value": {
+            "op": "map_lit",
+            "entries": [
+              {
+                "key": "gold",
+                "value": {
+                  "op": "var.player",
+                  "name": "gold"
+                }
+              },
+              {
+                "key": "harvest",
+                "value": {
+                  "op": "var.player",
+                  "name": "harvest"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "action": "claim"
+    },
+    {
+      "event": "on_player_action",
+      "body": [
+        {
+          "op": "consume",
+          "scope": "player",
+          "name": "gold",
+          "amount": {
+            "op": "mul",
+            "a": 10,
+            "b": {
+              "op": "add",
+              "a": {
+                "op": "var.player",
+                "name": "level"
+              },
+              "b": 1
+            }
+          }
+        },
+        {
+          "op": "change.player",
+          "name": "harvest",
+          "delta": 1
+        },
+        {
+          "op": "change.player",
+          "name": "level",
+          "delta": 1
+        },
+        {
+          "op": "send.room",
+          "type": {
+            "op": "lit",
+            "value": "upgrade"
+          },
+          "data": {
+            "op": "map_lit",
+            "entries": [
+              {
+                "key": "player",
+                "value": {
+                  "op": "ctx.player_name"
+                }
+              },
+              {
+                "key": "level",
+                "value": {
+                  "op": "var.player",
+                  "name": "level"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "op": "respond",
+          "value": {
+            "op": "map_lit",
+            "entries": [
+              {
+                "key": "ok",
+                "value": true
+              },
+              {
+                "key": "gold",
+                "value": {
+                  "op": "var.player",
+                  "name": "gold"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "action": "upgrade"
+    }
+  ]
+}

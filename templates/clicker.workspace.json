@@ -1,0 +1,448 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "ev_player_join",
+        "id": "v^z3yJWP_b`qfYh:7]DQ",
+        "x": 0,
+        "y": 0,
+        "next": {
+          "block": {
+            "type": "set_var",
+            "id": "m@*|:Wg|L/}9}Zo0?hIC",
+            "fields": {
+              "SCOPE": "player",
+              "NAME": "gold"
+            },
+            "inputs": {
+              "VALUE": {
+                "block": {
+                  "type": "lit_num",
+                  "id": "s{a@|}@7~!Rb%:uQ8|}e",
+                  "fields": {
+                    "V": 0
+                  }
+                }
+              }
+            },
+            "next": {
+              "block": {
+                "type": "set_var",
+                "id": "OiFds%EJEDu-h9|50TG~",
+                "fields": {
+                  "SCOPE": "player",
+                  "NAME": "harvest"
+                },
+                "inputs": {
+                  "VALUE": {
+                    "block": {
+                      "type": "lit_num",
+                      "id": "nr{7zW8F}yS|}6~1F9`D",
+                      "fields": {
+                        "V": 1
+                      }
+                    }
+                  }
+                },
+                "next": {
+                  "block": {
+                    "type": "send_others",
+                    "id": "W0HED1.8Nde?xGKH`cCq",
+                    "fields": {
+                      "TYPE": "player_joined"
+                    },
+                    "inputs": {
+                      "DATA": {
+                        "block": {
+                          "type": "map_lit",
+                          "id": "Sh1EL60ldsv%J%RXw(8:",
+                          "inputs": {
+                            "ENTRIES": {
+                              "block": {
+                                "type": "map_entry",
+                                "id": "w]DLlmdT9R1UV2t3D]V;",
+                                "fields": {
+                                  "K": "name"
+                                },
+                                "inputs": {
+                                  "V": {
+                                    "block": {
+                                      "type": "ex_ctx",
+                                      "id": "N5~XnzIrS.o):z?XyUXl",
+                                      "fields": {
+                                        "PROP": "ctx.player_name"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "ev_player_action",
+        "id": "$^WPeLO%eUaSA9*xoZ[b",
+        "x": 0,
+        "y": 0,
+        "fields": {
+          "ACTION": "claim"
+        },
+        "next": {
+          "block": {
+            "type": "ac_ratelimit",
+            "id": ".IXRTjp:9)HucbvG5h7$",
+            "inputs": {
+              "LIMIT": {
+                "block": {
+                  "type": "lit_num",
+                  "id": "7u6GBMN$(S^^wsVj+*-o",
+                  "fields": {
+                    "V": 2
+                  }
+                }
+              },
+              "PER": {
+                "block": {
+                  "type": "lit_num",
+                  "id": "[Dr5n9/|d.bJ@YRHajv6",
+                  "fields": {
+                    "V": 1
+                  }
+                }
+              },
+              "KEY": {
+                "block": {
+                  "type": "lit_text",
+                  "id": "lk#c/heVy/tDq)n@5*-c",
+                  "fields": {
+                    "V": "claim"
+                  }
+                }
+              }
+            },
+            "next": {
+              "block": {
+                "type": "change_var",
+                "id": "BW|[FdK]F8S-M!q_eWo:",
+                "fields": {
+                  "SCOPE": "player",
+                  "NAME": "gold"
+                },
+                "inputs": {
+                  "DELTA": {
+                    "block": {
+                      "type": "get_var",
+                      "id": "r4N~DIA923Nz-7*kJ%57",
+                      "fields": {
+                        "SCOPE": "player",
+                        "NAME": "harvest"
+                      }
+                    }
+                  }
+                },
+                "next": {
+                  "block": {
+                    "type": "act_respond",
+                    "id": "103cF;VfTq%I`zs5QMR3",
+                    "inputs": {
+                      "VALUE": {
+                        "block": {
+                          "type": "map_lit",
+                          "id": "R~z=J~S(2r;0x@5F.;sV",
+                          "inputs": {
+                            "ENTRIES": {
+                              "block": {
+                                "type": "map_entry",
+                                "id": "B$ywfvnEYP3/Rj4#3Ek(",
+                                "fields": {
+                                  "K": "gold"
+                                },
+                                "inputs": {
+                                  "V": {
+                                    "block": {
+                                      "type": "get_var",
+                                      "id": "qw|QyQP],!mc/K^`.s)|",
+                                      "fields": {
+                                        "SCOPE": "player",
+                                        "NAME": "gold"
+                                      }
+                                    }
+                                  }
+                                },
+                                "next": {
+                                  "block": {
+                                    "type": "map_entry",
+                                    "id": "$:7]-5+]EnmM}T5EMV1h",
+                                    "fields": {
+                                      "K": "harvest"
+                                    },
+                                    "inputs": {
+                                      "V": {
+                                        "block": {
+                                          "type": "get_var",
+                                          "id": "fmK_SM:Cio?$6b[CNY}Q",
+                                          "fields": {
+                                            "SCOPE": "player",
+                                            "NAME": "harvest"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "ev_player_action",
+        "id": "j(c.WAKj{@!kI_#02c7M",
+        "x": 0,
+        "y": 0,
+        "fields": {
+          "ACTION": "upgrade"
+        },
+        "next": {
+          "block": {
+            "type": "ac_consume",
+            "id": "0OajvM=4D;;/.D_.B#iC",
+            "fields": {
+              "SCOPE": "player",
+              "NAME": "gold"
+            },
+            "inputs": {
+              "AMOUNT": {
+                "block": {
+                  "type": "math_bin",
+                  "id": "H2:8JeSP}}`[VnKW_Qb*",
+                  "fields": {
+                    "OP": "mul"
+                  },
+                  "inputs": {
+                    "A": {
+                      "block": {
+                        "type": "lit_num",
+                        "id": "5zQO`N{Cv~v%T5MG2~g2",
+                        "fields": {
+                          "V": 10
+                        }
+                      }
+                    },
+                    "B": {
+                      "block": {
+                        "type": "math_bin",
+                        "id": "5^s|_]7c@f*V^fM{HIK=",
+                        "fields": {
+                          "OP": "add"
+                        },
+                        "inputs": {
+                          "A": {
+                            "block": {
+                              "type": "get_var",
+                              "id": "Ud:Z}mt#$}6JsVMO-.p$",
+                              "fields": {
+                                "SCOPE": "player",
+                                "NAME": "level"
+                              }
+                            }
+                          },
+                          "B": {
+                            "block": {
+                              "type": "lit_num",
+                              "id": "Uex,ut{|oZSkDNn!oj#Z",
+                              "fields": {
+                                "V": 1
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "next": {
+              "block": {
+                "type": "change_var",
+                "id": "^D@3@LFL*(GsrB?nB*AT",
+                "fields": {
+                  "SCOPE": "player",
+                  "NAME": "harvest"
+                },
+                "inputs": {
+                  "DELTA": {
+                    "block": {
+                      "type": "lit_num",
+                      "id": "_.JMM@:sAoD=IxOrs-IL",
+                      "fields": {
+                        "V": 1
+                      }
+                    }
+                  }
+                },
+                "next": {
+                  "block": {
+                    "type": "change_var",
+                    "id": "p0j_1y`qc=O^iVqA2WCy",
+                    "fields": {
+                      "SCOPE": "player",
+                      "NAME": "level"
+                    },
+                    "inputs": {
+                      "DELTA": {
+                        "block": {
+                          "type": "lit_num",
+                          "id": "iF9kk`v]P3B`PzN~+XiH",
+                          "fields": {
+                            "V": 1
+                          }
+                        }
+                      }
+                    },
+                    "next": {
+                      "block": {
+                        "type": "send_room",
+                        "id": "HaQ42ZDq3RG~=0upf8hR",
+                        "fields": {
+                          "TYPE": "upgrade"
+                        },
+                        "inputs": {
+                          "DATA": {
+                            "block": {
+                              "type": "map_lit",
+                              "id": "[/).jS$5`e]0BP=nU+jK",
+                              "inputs": {
+                                "ENTRIES": {
+                                  "block": {
+                                    "type": "map_entry",
+                                    "id": "F@]zGmmUIy55[?UbG(TQ",
+                                    "fields": {
+                                      "K": "player"
+                                    },
+                                    "inputs": {
+                                      "V": {
+                                        "block": {
+                                          "type": "ex_ctx",
+                                          "id": "FORqU8-xALILtPY{uDjb",
+                                          "fields": {
+                                            "PROP": "ctx.player_name"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "next": {
+                                      "block": {
+                                        "type": "map_entry",
+                                        "id": "~yS)fe^p!LSLL5#zqOXA",
+                                        "fields": {
+                                          "K": "level"
+                                        },
+                                        "inputs": {
+                                          "V": {
+                                            "block": {
+                                              "type": "get_var",
+                                              "id": "=_$Q!4p3xI%x9:CG[2}v",
+                                              "fields": {
+                                                "SCOPE": "player",
+                                                "NAME": "level"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "next": {
+                          "block": {
+                            "type": "act_respond",
+                            "id": "1yW!6Jfs-Q9;nk84i8);",
+                            "inputs": {
+                              "VALUE": {
+                                "block": {
+                                  "type": "map_lit",
+                                  "id": "YSJQRhW,=Z2F;O8PHUyS",
+                                  "inputs": {
+                                    "ENTRIES": {
+                                      "block": {
+                                        "type": "map_entry",
+                                        "id": "s7Bg*Xof[6kRF_7Yj_,F",
+                                        "fields": {
+                                          "K": "ok"
+                                        },
+                                        "inputs": {
+                                          "V": {
+                                            "block": {
+                                              "type": "lit_bool",
+                                              "id": "QW!yvb}4o`LRWUR?;u0B",
+                                              "fields": {
+                                                "V": "TRUE"
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "next": {
+                                          "block": {
+                                            "type": "map_entry",
+                                            "id": "hP@kO{)$`0Tx^ad2at2*",
+                                            "fields": {
+                                              "K": "gold"
+                                            },
+                                            "inputs": {
+                                              "V": {
+                                                "block": {
+                                                  "type": "get_var",
+                                                  "id": "CYRNzObScHv`@olQc9BI",
+                                                  "fields": {
+                                                    "SCOPE": "player",
+                                                    "NAME": "gold"
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

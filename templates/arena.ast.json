@@ -1,0 +1,193 @@
+{
+  "version": 1,
+  "variables": {
+    "player": {
+      "x": 0,
+      "y": 0,
+      "alive": true
+    },
+    "room": {
+      "zone": 100,
+      "round": 0
+    },
+    "game": {}
+  },
+  "functions": [],
+  "triggers": [
+    {
+      "event": "on_match_start",
+      "body": [
+        {
+          "op": "schedule",
+          "timer": {
+            "op": "lit",
+            "value": "shrink"
+          },
+          "delay": 60,
+          "payload": {
+            "op": "map_lit",
+            "entries": [
+              {
+                "key": "round",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "event": "on_timer",
+      "body": [
+        {
+          "op": "set.room",
+          "name": "zone",
+          "value": {
+            "op": "mul",
+            "a": {
+              "op": "var.room",
+              "name": "zone"
+            },
+            "b": 0.7
+          }
+        },
+        {
+          "op": "change.room",
+          "name": "round",
+          "delta": 1
+        },
+        {
+          "op": "send.room",
+          "type": {
+            "op": "lit",
+            "value": "zone"
+          },
+          "data": {
+            "op": "map_lit",
+            "entries": [
+              {
+                "key": "radius",
+                "value": {
+                  "op": "var.room",
+                  "name": "zone"
+                }
+              },
+              {
+                "key": "round",
+                "value": {
+                  "op": "var.room",
+                  "name": "round"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "op": "schedule",
+          "timer": {
+            "op": "lit",
+            "value": "shrink"
+          },
+          "delay": 60,
+          "payload": {
+            "op": "map_lit",
+            "entries": [
+              {
+                "key": "round",
+                "value": {
+                  "op": "var.room",
+                  "name": "round"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "timer": "shrink"
+    },
+    {
+      "event": "on_player_action",
+      "body": [
+        {
+          "op": "verify.move",
+          "from": {
+            "op": "list_lit",
+            "items": [
+              {
+                "op": "var.player",
+                "name": "x"
+              },
+              {
+                "op": "var.player",
+                "name": "y"
+              }
+            ]
+          },
+          "to": {
+            "op": "list_lit",
+            "items": [
+              {
+                "op": "payload",
+                "key": "x"
+              },
+              {
+                "op": "payload",
+                "key": "y"
+              }
+            ]
+          },
+          "max": 10
+        },
+        {
+          "op": "set.player",
+          "name": "x",
+          "value": {
+            "op": "payload",
+            "key": "x"
+          }
+        },
+        {
+          "op": "set.player",
+          "name": "y",
+          "value": {
+            "op": "payload",
+            "key": "y"
+          }
+        },
+        {
+          "op": "send.others",
+          "type": {
+            "op": "lit",
+            "value": "moved"
+          },
+          "data": {
+            "op": "map_lit",
+            "entries": [
+              {
+                "key": "player",
+                "value": {
+                  "op": "ctx.player_name"
+                }
+              },
+              {
+                "key": "x",
+                "value": {
+                  "op": "payload",
+                  "key": "x"
+                }
+              },
+              {
+                "key": "y",
+                "value": {
+                  "op": "payload",
+                  "key": "y"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "action": "move"
+    }
+  ]
+}

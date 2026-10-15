@@ -7,3 +7,4 @@
 .dev-php/
 composer.phar
 composer-setup.php
+node_modules/

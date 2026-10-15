@@ -43,13 +43,9 @@ $description = "Visual block-programming platform for server-authoritative multi
             and resource spend. No backend code. No cheating clients.
         </p>
 
-        <div class="flex flex-wrap gap-2 mb-12">
-            <span class="block-chip bg-yellow-500/20 text-yellow-300">when player plays card</span>
-            <span class="block-chip bg-purple-500/20 text-purple-300">if it's their turn</span>
-            <span class="block-chip bg-blue-500/20 text-blue-300">deal 5 cards to player</span>
-            <span class="block-chip bg-green-500/20 text-green-300">broadcast to room</span>
-            <span class="block-chip bg-red-500/20 text-red-300">else reject move</span>
-        </div>
+        <img src="/assets/marketing/hero-constructor.png"
+             alt="Multiplayer Logic Constructor — assembled block program in the editor"
+             class="rounded-2xl border border-white/10 shadow-2xl mb-12 w-full max-w-4xl">
 
         <div class="flex gap-4">
             <a href="/api/" class="bg-purple-600 hover:bg-purple-500 px-6 py-3 rounded-xl font-semibold transition">API Reference</a>
@@ -59,9 +55,12 @@ $description = "Visual block-programming platform for server-authoritative multi
         <!-- Genres you can build — artwork: bin/make-marketing.php -->
         <section class="mt-24">
             <h2 class="text-3xl font-bold mb-3">Build any multiplayer genre</h2>
-            <p class="text-gray-400 mb-8 max-w-2xl">Your game calls one function — <code class="text-purple-300">Do("action", …)</code> —
-                and our servers run your block rules, check the move, and update everyone. If a move is illegal,
-                you get <code class="text-purple-300">rejected</code> with the reason. That's the whole API.</p>
+            <p class="text-gray-400 mb-8 max-w-2xl">Each card below shows the <em>actual block program</em> —
+                and every one ships as a template in the cabinet: pick it, get a playable game,
+                then open the editor and change the rules. Your game calls one function —
+                <code class="text-purple-300">Do("action", …)</code> — and our servers run your block rules,
+                check the move, and update everyone. An illegal move comes back
+                <code class="text-purple-300">rejected</code> with the reason. That's the whole API.</p>
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <?php
                 $genres = [

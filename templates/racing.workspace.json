@@ -1,0 +1,475 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "ev_player_action",
+        "id": "fwJF8%u396oI:Y_z`zW%",
+        "x": 0,
+        "y": 0,
+        "fields": {
+          "ACTION": "checkpoint"
+        },
+        "next": {
+          "block": {
+            "type": "ctl_if",
+            "id": "P,.g(ZM$*]{ER}Pck=_/",
+            "inputs": {
+              "COND": {
+                "block": {
+                  "type": "cmp",
+                  "id": "KOw!nKj^I.%Yc^+d@;:X",
+                  "fields": {
+                    "OP": "ne"
+                  },
+                  "inputs": {
+                    "A": {
+                      "block": {
+                        "type": "get_var",
+                        "id": "ltI`]oEtOm,!-,0?GcjQ",
+                        "fields": {
+                          "SCOPE": "room",
+                          "NAME": "winner"
+                        }
+                      }
+                    },
+                    "B": {
+                      "block": {
+                        "type": "lit_text",
+                        "id": "0VK+f|=aW!K7Roi]+~*g",
+                        "fields": {
+                          "V": ""
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "THEN": {
+                "block": {
+                  "type": "act_reject",
+                  "id": "yK[s_fnf|o-33jHShFE=",
+                  "inputs": {
+                    "REASON": {
+                      "block": {
+                        "type": "lit_text",
+                        "id": "M@W*dsp*Sj(A)HL1.xf!",
+                        "fields": {
+                          "V": "race is over"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "next": {
+              "block": {
+                "type": "ac_require",
+                "id": "{1CN00Np%I3c,J+,BE)c",
+                "inputs": {
+                  "COND": {
+                    "block": {
+                      "type": "cmp",
+                      "id": "{3I=%kh-*@py+eabA?i1",
+                      "fields": {
+                        "OP": "eq"
+                      },
+                      "inputs": {
+                        "A": {
+                          "block": {
+                            "type": "ex_payload",
+                            "id": "`q:$sQbZK#@~%BsY(9k;",
+                            "fields": {
+                              "KEY": "id"
+                            }
+                          }
+                        },
+                        "B": {
+                          "block": {
+                            "type": "get_var",
+                            "id": "DHHyAg~MXZ3fb5dP*9=z",
+                            "fields": {
+                              "SCOPE": "player",
+                              "NAME": "next_cp"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "REASON": {
+                    "block": {
+                      "type": "lit_text",
+                      "id": "v9nbznwsJV,kJjm2rXB}",
+                      "fields": {
+                        "V": "wrong checkpoint — hit them in order"
+                      }
+                    }
+                  }
+                },
+                "next": {
+                  "block": {
+                    "type": "set_var",
+                    "id": "5;zme-MX|}r~%]:jkP;f",
+                    "fields": {
+                      "SCOPE": "player",
+                      "NAME": "next_cp"
+                    },
+                    "inputs": {
+                      "VALUE": {
+                        "block": {
+                          "type": "math_bin",
+                          "id": "jP=|/$0kqulKL+uDok,`",
+                          "fields": {
+                            "OP": "add"
+                          },
+                          "inputs": {
+                            "A": {
+                              "block": {
+                                "type": "math_bin",
+                                "id": "iU*7C#c}lCzvf#IWc/^g",
+                                "fields": {
+                                  "OP": "mod"
+                                },
+                                "inputs": {
+                                  "A": {
+                                    "block": {
+                                      "type": "get_var",
+                                      "id": "T9iYumu_4[Gnn|i])7EN",
+                                      "fields": {
+                                        "SCOPE": "player",
+                                        "NAME": "next_cp"
+                                      }
+                                    }
+                                  },
+                                  "B": {
+                                    "block": {
+                                      "type": "get_var",
+                                      "id": "V~G`kudAVxnaEl/|@BR4",
+                                      "fields": {
+                                        "SCOPE": "room",
+                                        "NAME": "checkpoints"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "B": {
+                              "block": {
+                                "type": "lit_num",
+                                "id": "Cn*EeobjNZFVKSy!)M2y",
+                                "fields": {
+                                  "V": 1
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "next": {
+                      "block": {
+                        "type": "ctl_if",
+                        "id": "Vb+grcDI9!.Hh;]E@rRX",
+                        "inputs": {
+                          "COND": {
+                            "block": {
+                              "type": "cmp",
+                              "id": "=SX@$A-C(NU]U;P,.h?n",
+                              "fields": {
+                                "OP": "eq"
+                              },
+                              "inputs": {
+                                "A": {
+                                  "block": {
+                                    "type": "ex_payload",
+                                    "id": "-wG`v]7g.!:=XZfzW5Vf",
+                                    "fields": {
+                                      "KEY": "id"
+                                    }
+                                  }
+                                },
+                                "B": {
+                                  "block": {
+                                    "type": "get_var",
+                                    "id": "b)3t:rgvBucc6G|4vm+W",
+                                    "fields": {
+                                      "SCOPE": "room",
+                                      "NAME": "checkpoints"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "THEN": {
+                            "block": {
+                              "type": "change_var",
+                              "id": "8b{h^/q}V.u1Fi[GFsr,",
+                              "fields": {
+                                "SCOPE": "player",
+                                "NAME": "lap"
+                              },
+                              "inputs": {
+                                "DELTA": {
+                                  "block": {
+                                    "type": "lit_num",
+                                    "id": "9UyWe[)K7xYf+-O,yJyK",
+                                    "fields": {
+                                      "V": 1
+                                    }
+                                  }
+                                }
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "ctl_if",
+                                  "id": ":t5)UA6|op?Cle9m`G-g",
+                                  "inputs": {
+                                    "COND": {
+                                      "block": {
+                                        "type": "cmp",
+                                        "id": ";$OR;;QX?6z^YK;33Y07",
+                                        "fields": {
+                                          "OP": "ge"
+                                        },
+                                        "inputs": {
+                                          "A": {
+                                            "block": {
+                                              "type": "get_var",
+                                              "id": "+1%*930O{KA(W1Py2Pi;",
+                                              "fields": {
+                                                "SCOPE": "player",
+                                                "NAME": "lap"
+                                              }
+                                            }
+                                          },
+                                          "B": {
+                                            "block": {
+                                              "type": "get_var",
+                                              "id": "[R!j`]c0@kbfTlRJ2c7x",
+                                              "fields": {
+                                                "SCOPE": "room",
+                                                "NAME": "total_laps"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "THEN": {
+                                      "block": {
+                                        "type": "set_var",
+                                        "id": "q3=ofgbq!k;Gu=)#?uiT",
+                                        "fields": {
+                                          "SCOPE": "room",
+                                          "NAME": "winner"
+                                        },
+                                        "inputs": {
+                                          "VALUE": {
+                                            "block": {
+                                              "type": "ex_ctx",
+                                              "id": "Sw91JanlF.erknL=erIJ",
+                                              "fields": {
+                                                "PROP": "ctx.player_name"
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "next": {
+                                          "block": {
+                                            "type": "ac_match_end",
+                                            "id": "jE@^;:hev[sSXDw`}fxv",
+                                            "inputs": {
+                                              "RESULT": {
+                                                "block": {
+                                                  "type": "map_lit",
+                                                  "id": "z6f}{q?ZmKDF3b)}mY(V",
+                                                  "inputs": {
+                                                    "ENTRIES": {
+                                                      "block": {
+                                                        "type": "map_entry",
+                                                        "id": "#v@rFnX+(]_a@s(C|$df",
+                                                        "fields": {
+                                                          "K": "winner"
+                                                        },
+                                                        "inputs": {
+                                                          "V": {
+                                                            "block": {
+                                                              "type": "get_var",
+                                                              "id": "3xcx@[Yzr5l*K{~kNJEs",
+                                                              "fields": {
+                                                                "SCOPE": "room",
+                                                                "NAME": "winner"
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "next": {
+                                    "block": {
+                                      "type": "send_room",
+                                      "id": "=JMas$Bf4QPx[(`hq[:1",
+                                      "fields": {
+                                        "TYPE": "lap"
+                                      },
+                                      "inputs": {
+                                        "DATA": {
+                                          "block": {
+                                            "type": "map_lit",
+                                            "id": "7rh7gfeI_-I*aR^rUcVk",
+                                            "inputs": {
+                                              "ENTRIES": {
+                                                "block": {
+                                                  "type": "map_entry",
+                                                  "id": "e#|0YXaRnPECkJ;.3?),",
+                                                  "fields": {
+                                                    "K": "player"
+                                                  },
+                                                  "inputs": {
+                                                    "V": {
+                                                      "block": {
+                                                        "type": "ex_ctx",
+                                                        "id": "K$ZjPvBIK(yNvs^nuDUC",
+                                                        "fields": {
+                                                          "PROP": "ctx.player_name"
+                                                        }
+                                                      }
+                                                    }
+                                                  },
+                                                  "next": {
+                                                    "block": {
+                                                      "type": "map_entry",
+                                                      "id": "~isZ(#AjkHxmxZd~zj)D",
+                                                      "fields": {
+                                                        "K": "lap"
+                                                      },
+                                                      "inputs": {
+                                                        "V": {
+                                                          "block": {
+                                                            "type": "get_var",
+                                                            "id": "sP^gX$`tD!Y)u,2kXk@q",
+                                                            "fields": {
+                                                              "SCOPE": "player",
+                                                              "NAME": "lap"
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "next": {
+                          "block": {
+                            "type": "act_respond",
+                            "id": "f0Id$r)L4#7ShZ#O**ft",
+                            "inputs": {
+                              "VALUE": {
+                                "block": {
+                                  "type": "map_lit",
+                                  "id": "g$Sqr5Zvhq**V#F-LDQR",
+                                  "inputs": {
+                                    "ENTRIES": {
+                                      "block": {
+                                        "type": "map_entry",
+                                        "id": "Vh21xbEk*=:gpMh-u=J^",
+                                        "fields": {
+                                          "K": "ok"
+                                        },
+                                        "inputs": {
+                                          "V": {
+                                            "block": {
+                                              "type": "lit_bool",
+                                              "id": "S3P8th`+X=Ql`qSa7j6,",
+                                              "fields": {
+                                                "V": "TRUE"
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "next": {
+                                          "block": {
+                                            "type": "map_entry",
+                                            "id": "Oai*I+H4-(jYCn~|Lu%z",
+                                            "fields": {
+                                              "K": "lap"
+                                            },
+                                            "inputs": {
+                                              "V": {
+                                                "block": {
+                                                  "type": "get_var",
+                                                  "id": "frtWC.Dx,NsX)BC0`%_%",
+                                                  "fields": {
+                                                    "SCOPE": "player",
+                                                    "NAME": "lap"
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "next": {
+                                              "block": {
+                                                "type": "map_entry",
+                                                "id": "oGCEf+X[0Cx3.oA;e@V@",
+                                                "fields": {
+                                                  "K": "next"
+                                                },
+                                                "inputs": {
+                                                  "V": {
+                                                    "block": {
+                                                      "type": "get_var",
+                                                      "id": "/Cj^AeSO~@3wo#rt/$=P",
+                                                      "fields": {
+                                                        "SCOPE": "player",
+                                                        "NAME": "next_cp"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

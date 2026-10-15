@@ -94,3 +94,15 @@ actions. See `docs/DESIGN.md` — it is the architecture source of truth.
 - docs/SDK.md = the client API contract the SDKs must implement.
 - M9 = client SDKs ×4 in the multiplayer-sdk repo (C#/.NET → Unity → Unreal → C++).
 - M10 = kid-friendly docs + per-genre starter programs (12+ audience).
+
+## Templates (new game from template)
+
+- `templates/<slug>.{workspace,ast}.json` — committed pairs: Blockly
+  serialization (editor draft) + canonical AST (published v1 on create).
+- NEVER hand-edit `*.ast.json` or `*.workspace.json`: author programs in
+  `bin/build-templates.mjs` (Blockly API calls, real headless Blockly),
+  then `node bin/build-templates.mjs` regenerates both files.
+- Requires dev dep: `npm install --save-dev blockly@10.4.3` (package.json).
+- Cabinet `?template=slug` on games.php create → seeds program + publishes v1.
+- `TemplatesContractTest` guards: ASTs publishable, ws/ast pairs exist,
+  workspace block types ⊆ mlc-blocks.js registry.

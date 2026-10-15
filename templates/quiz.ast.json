@@ -1,0 +1,145 @@
+{
+  "version": 1,
+  "variables": {
+    "player": {
+      "score": 0
+    },
+    "room": {
+      "answer": "blue",
+      "answered": 0,
+      "question_no": 0
+    },
+    "game": {}
+  },
+  "functions": [],
+  "triggers": [
+    {
+      "event": "on_room_created",
+      "body": [
+        {
+          "op": "set.room",
+          "name": "answer",
+          "value": "blue"
+        },
+        {
+          "op": "send.room",
+          "type": {
+            "op": "lit",
+            "value": "question"
+          },
+          "data": {
+            "op": "map_lit",
+            "entries": [
+              {
+                "key": "q",
+                "value": "What colour is the sky?"
+              },
+              {
+                "key": "opts",
+                "value": {
+                  "op": "list_lit",
+                  "items": [
+                    "red",
+                    "blue",
+                    "green"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "event": "on_player_action",
+      "body": [
+        {
+          "op": "if",
+          "cond": {
+            "op": "ge",
+            "a": {
+              "op": "var.room",
+              "name": "answered"
+            },
+            "b": 3
+          },
+          "then": [
+            {
+              "op": "reject",
+              "reason": "question closed"
+            }
+          ]
+        },
+        {
+          "op": "if",
+          "cond": {
+            "op": "eq",
+            "a": {
+              "op": "payload",
+              "key": "a"
+            },
+            "b": {
+              "op": "var.room",
+              "name": "answer"
+            }
+          },
+          "then": [
+            {
+              "op": "change.player",
+              "name": "score",
+              "delta": {
+                "op": "sub",
+                "a": 100,
+                "b": {
+                  "op": "mul",
+                  "a": {
+                    "op": "var.room",
+                    "name": "answered"
+                  },
+                  "b": 25
+                }
+              }
+            },
+            {
+              "op": "change.room",
+              "name": "answered",
+              "delta": 1
+            },
+            {
+              "op": "send.room",
+              "type": {
+                "op": "lit",
+                "value": "score"
+              },
+              "data": {
+                "op": "map_lit",
+                "entries": [
+                  {
+                    "key": "player",
+                    "value": {
+                      "op": "ctx.player_name"
+                    }
+                  },
+                  {
+                    "key": "score",
+                    "value": {
+                      "op": "var.player",
+                      "name": "score"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "else": [
+            {
+              "op": "reject",
+              "reason": "wrong answer"
+            }
+          ]
+        }
+      ],
+      "action": "answer"
+    }
+  ]
+}

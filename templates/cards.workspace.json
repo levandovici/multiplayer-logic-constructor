@@ -1,0 +1,443 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "ev_player_join",
+        "id": "d9BMDc|o?jPE84_KP8W;",
+        "x": 0,
+        "y": 0,
+        "next": {
+          "block": {
+            "type": "ctl_repeat",
+            "id": "}p_)`zvrb!VG+G#RmgJS",
+            "inputs": {
+              "TIMES": {
+                "block": {
+                  "type": "lit_num",
+                  "id": "O7QV#}o?b?*81.b|{A9o",
+                  "fields": {
+                    "V": 5
+                  }
+                }
+              },
+              "BODY": {
+                "block": {
+                  "type": "list_add",
+                  "id": "T21w.ZTR*cCB^_Jq@GDI",
+                  "fields": {
+                    "SCOPE": "player",
+                    "NAME": "hand"
+                  },
+                  "inputs": {
+                    "VALUE": {
+                      "block": {
+                        "type": "math_rand_int",
+                        "id": "+aaG^V+(|[kb4.TL#O;I",
+                        "inputs": {
+                          "MIN": {
+                            "block": {
+                              "type": "lit_num",
+                              "id": "9/3;F2cqU6`8iIb^7#eA",
+                              "fields": {
+                                "V": 1
+                              }
+                            }
+                          },
+                          "MAX": {
+                            "block": {
+                              "type": "lit_num",
+                              "id": "Lo(nPUS!Lr8BF.6,0mz@",
+                              "fields": {
+                                "V": 52
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "next": {
+              "block": {
+                "type": "send_player",
+                "id": "Jhm5UQ`1.2FkXuIJb~#U",
+                "fields": {
+                  "TYPE": "hand"
+                },
+                "inputs": {
+                  "PLAYER": {
+                    "block": {
+                      "type": "ex_ctx",
+                      "id": "l1(vupP.Osg~`EEAuj#;",
+                      "fields": {
+                        "PROP": "ctx.player_id"
+                      }
+                    }
+                  },
+                  "DATA": {
+                    "block": {
+                      "type": "map_lit",
+                      "id": "?(5QKP527]7UYG1A/!ax",
+                      "inputs": {
+                        "ENTRIES": {
+                          "block": {
+                            "type": "map_entry",
+                            "id": "l+_6}Z~C{ej~RDlEj5Uv",
+                            "fields": {
+                              "K": "hand"
+                            },
+                            "inputs": {
+                              "V": {
+                                "block": {
+                                  "type": "get_var",
+                                  "id": "+XUZ}[xxY{JS5eHD|L4)",
+                                  "fields": {
+                                    "SCOPE": "player",
+                                    "NAME": "hand"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "ev_player_action",
+        "id": "d%5l2Jh3p,k@r:Qx_pJa",
+        "x": 0,
+        "y": 0,
+        "fields": {
+          "ACTION": "play"
+        },
+        "next": {
+          "block": {
+            "type": "ctl_if",
+            "id": "n}NSWDsJ]+^k?9]qL_z@",
+            "inputs": {
+              "COND": {
+                "block": {
+                  "type": "cmp",
+                  "id": ".te3~fo)+m6[|WvME.-X",
+                  "fields": {
+                    "OP": "ne"
+                  },
+                  "inputs": {
+                    "A": {
+                      "block": {
+                        "type": "ex_ctx",
+                        "id": "@z?;#h7_WCv^lw8wS~=Y",
+                        "fields": {
+                          "PROP": "ctx.player_seat"
+                        }
+                      }
+                    },
+                    "B": {
+                      "block": {
+                        "type": "get_var",
+                        "id": "S21T(crPYW2DW`Lw+]q,",
+                        "fields": {
+                          "SCOPE": "room",
+                          "NAME": "turn"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "THEN": {
+                "block": {
+                  "type": "act_reject",
+                  "id": "1i~6`.2TxTI#RXc;:Ke(",
+                  "inputs": {
+                    "REASON": {
+                      "block": {
+                        "type": "lit_text",
+                        "id": "+$@!r9(g+QD]ecV$w!Xl",
+                        "fields": {
+                          "V": "not your turn"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "next": {
+              "block": {
+                "type": "ac_require",
+                "id": "3NsL$K^qehtOhr2#Z7=g",
+                "inputs": {
+                  "COND": {
+                    "block": {
+                      "type": "list_contains",
+                      "id": "4v0WC%2}#iOzM-rj(H_E",
+                      "inputs": {
+                        "LIST": {
+                          "block": {
+                            "type": "get_var",
+                            "id": "]Ng=kBzMu!ccc?r)H8O0",
+                            "fields": {
+                              "SCOPE": "player",
+                              "NAME": "hand"
+                            }
+                          }
+                        },
+                        "VALUE": {
+                          "block": {
+                            "type": "ex_payload",
+                            "id": "dj0w)*nup$U-*g~qSG98",
+                            "fields": {
+                              "KEY": "card"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "REASON": {
+                    "block": {
+                      "type": "lit_text",
+                      "id": "@tTJ-!(?qj!|/RpAdstj",
+                      "fields": {
+                        "V": "you do not hold that card"
+                      }
+                    }
+                  }
+                },
+                "next": {
+                  "block": {
+                    "type": "list_remove_at",
+                    "id": "3WKGZzR;ubaN^={p$Cl;",
+                    "fields": {
+                      "SCOPE": "player",
+                      "NAME": "hand"
+                    },
+                    "inputs": {
+                      "INDEX": {
+                        "block": {
+                          "type": "list_index_of",
+                          "id": "%`n2ErZc{a5t^SgS)=KA",
+                          "inputs": {
+                            "VALUE": {
+                              "block": {
+                                "type": "ex_payload",
+                                "id": "pl,Yd|TD~});DQE,.wn[",
+                                "fields": {
+                                  "KEY": "card"
+                                }
+                              }
+                            },
+                            "LIST": {
+                              "block": {
+                                "type": "get_var",
+                                "id": "$y%C@$?L=;%(uGNB{_o,",
+                                "fields": {
+                                  "SCOPE": "player",
+                                  "NAME": "hand"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "next": {
+                      "block": {
+                        "type": "list_add",
+                        "id": "{V_IIjay*wqJgU,g19y*",
+                        "fields": {
+                          "SCOPE": "room",
+                          "NAME": "pile"
+                        },
+                        "inputs": {
+                          "VALUE": {
+                            "block": {
+                              "type": "ex_payload",
+                              "id": "FfD;!S8S[)c:h~H{fEb0",
+                              "fields": {
+                                "KEY": "card"
+                              }
+                            }
+                          }
+                        },
+                        "next": {
+                          "block": {
+                            "type": "set_var",
+                            "id": "n7:+rDs%Kj!~R?^Gw[$A",
+                            "fields": {
+                              "SCOPE": "room",
+                              "NAME": "turn"
+                            },
+                            "inputs": {
+                              "VALUE": {
+                                "block": {
+                                  "type": "math_bin",
+                                  "id": "ivB2.*nzynu{}8Yx(d!:",
+                                  "fields": {
+                                    "OP": "sub"
+                                  },
+                                  "inputs": {
+                                    "A": {
+                                      "block": {
+                                        "type": "lit_num",
+                                        "id": "W_s)oPu.67a.4hf]o(az",
+                                        "fields": {
+                                          "V": 1
+                                        }
+                                      }
+                                    },
+                                    "B": {
+                                      "block": {
+                                        "type": "get_var",
+                                        "id": "ylBec2;JLa^6_@ci=.r4",
+                                        "fields": {
+                                          "SCOPE": "room",
+                                          "NAME": "turn"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "next": {
+                              "block": {
+                                "type": "send_others",
+                                "id": "w;E4xdTXtIzWb^+2Z}e1",
+                                "fields": {
+                                  "TYPE": "card_played"
+                                },
+                                "inputs": {
+                                  "DATA": {
+                                    "block": {
+                                      "type": "map_lit",
+                                      "id": "F._(hJ!cwT@9:Q;lKzo!",
+                                      "inputs": {
+                                        "ENTRIES": {
+                                          "block": {
+                                            "type": "map_entry",
+                                            "id": "d/+Aqf3y^w-Vmq{d/Hy:",
+                                            "fields": {
+                                              "K": "player"
+                                            },
+                                            "inputs": {
+                                              "V": {
+                                                "block": {
+                                                  "type": "ex_ctx",
+                                                  "id": "AZ@pZByW?Pf/KY*Bu?:.",
+                                                  "fields": {
+                                                    "PROP": "ctx.player_name"
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "next": {
+                                              "block": {
+                                                "type": "map_entry",
+                                                "id": "Y5tz~N_97(W9LmQGj{l6",
+                                                "fields": {
+                                                  "K": "card"
+                                                },
+                                                "inputs": {
+                                                  "V": {
+                                                    "block": {
+                                                      "type": "ex_payload",
+                                                      "id": "t1!Wo5bm+3~b,a[i?tUI",
+                                                      "fields": {
+                                                        "KEY": "card"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                "next": {
+                                  "block": {
+                                    "type": "act_respond",
+                                    "id": "wD}iN#2[W(gN`y7gO4JX",
+                                    "inputs": {
+                                      "VALUE": {
+                                        "block": {
+                                          "type": "map_lit",
+                                          "id": "m2YsRkb`=UkXYBmZ-XU2",
+                                          "inputs": {
+                                            "ENTRIES": {
+                                              "block": {
+                                                "type": "map_entry",
+                                                "id": "I}ls^h1@v7d*p?D]b]N8",
+                                                "fields": {
+                                                  "K": "ok"
+                                                },
+                                                "inputs": {
+                                                  "V": {
+                                                    "block": {
+                                                      "type": "lit_bool",
+                                                      "id": "T`vvl=z(3CSW{GJt|HM8",
+                                                      "fields": {
+                                                        "V": "TRUE"
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "next": {
+                                                  "block": {
+                                                    "type": "map_entry",
+                                                    "id": "+.,b)i_7~!KqUkWIhrb;",
+                                                    "fields": {
+                                                      "K": "hand"
+                                                    },
+                                                    "inputs": {
+                                                      "V": {
+                                                        "block": {
+                                                          "type": "get_var",
+                                                          "id": "GZdvB/b*w^eFaB/ifsjd",
+                                                          "fields": {
+                                                            "SCOPE": "player",
+                                                            "NAME": "hand"
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}
