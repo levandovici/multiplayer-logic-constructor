@@ -86,6 +86,14 @@ class WebExposureTest extends TestCase {
         }
     }
 
+    /** SDK downloads are cabinet-only — anonymous gets redirected, no zip. */
+    public function testSdkDownloadRequiresSession(): void {
+        $r = $this->get('/php/download.php?sdk=dotnet');
+        $this->assertContains($r['status'], [301, 302, 303, 401, 403],
+            "download.php anonymous (HTTP {$r['status']})");
+        $this->assertStringNotContainsString('PK', (string)$r['body']);
+    }
+
     /** Simulator is cabinet-only — game tokens must NOT unlock it. */
     public function testSimulateRejectsAnonymousAndGameTokens(): void {
         $r = $this->requestRaw(self::$base . '/api/simulate.php', 'POST', '{"ast":{},"event":"on_player_action"}');

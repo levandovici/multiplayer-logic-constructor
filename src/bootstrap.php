@@ -18,6 +18,8 @@ require_once __DIR__ . '/email_codes.php';
 require_once __DIR__ . '/lifecycle.php';
 // Game templates — cabinet "new game from template" (templates/*.json).
 require_once __DIR__ . '/templates.php';
+// SDK packaging — builds downloadable zips from sdks/ at request time.
+require_once __DIR__ . '/sdk_package.php';
 
 // Suppress error output immediately — before session_start()/autoload can
 // emit a warning into the response (which would flip headers_sent() and

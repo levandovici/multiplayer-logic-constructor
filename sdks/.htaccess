@@ -1,0 +1,3 @@
+# SDK sources — read server-side by src/sdk_package.php only.
+# Downloads go through php/download.php (session-gated), never direct.
+Require all denied

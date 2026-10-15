@@ -21,6 +21,13 @@ actions. See `docs/DESIGN.md` — it is the architecture source of truth.
   No migration files — import it directly or `php bin/migrate.php init`.
 - `tests/` — PHPUnit (`Unit`, `Contract`, `Integration` suites).
 - `docs/` — design documentation.
+- `sdks/` — shipped client SDK sources (dotnet / unity / unreal / cpp).
+  Unity's zip shares `sdks/dotnet/MlcClient.cs` — keep them in sync via
+  `src/sdk_package.php` file maps, not copies. `php bin/package-sdks.php`
+  builds zips into `downloads/` (gitignored); `public_html/php/download.php`
+  serves the same zips session-gated — built fresh per request, never stale.
+  `tests/Sdk/DotNetCheck/` compiles the C# sources + smoke-tests MiniJSON
+  (`dotnet run` — CI job `sdk-check`).
 
 ## Conventions
 

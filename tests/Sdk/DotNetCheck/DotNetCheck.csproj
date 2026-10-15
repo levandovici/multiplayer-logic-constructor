@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Compile + smoke check for the shipped SDK sources — CI runs
+    `dotnet run` here; it builds the real sdks/dotnet/MlcClient.cs and
+    sdks/unity/MiniJSON.cs (UnityEngine-dependent files are covered by
+    contract tests instead — Unity can't be compiled outside the engine).
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>MlcSdkCheck</RootNamespace>
+    <AssemblyName>MlcSdkCheck</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../../sdks/dotnet/MlcClient.cs" />
+    <Compile Include="../../../sdks/unity/MiniJSON.cs" />
+  </ItemGroup>
+</Project>

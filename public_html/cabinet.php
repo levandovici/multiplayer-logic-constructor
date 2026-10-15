@@ -68,6 +68,21 @@ $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </section>
 
+        <!-- Client SDKs — zips are built from sdks/ at download time -->
+        <section class="mb-10">
+            <h2 class="text-xl font-semibold mb-1">Client SDKs</h2>
+            <p class="text-sm text-gray-400 mb-4">Download a zip, drop it into your engine — five calls is the whole API.</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <?php foreach (MLC_SDKS as $slug => $title): ?>
+                <a href="/php/download.php?sdk=<?= $slug ?>"
+                   class="glass rounded-xl p-4 text-center hover:border-purple-400/60 transition block">
+                    <p class="font-semibold text-sm"><?= htmlspecialchars($title, ENT_QUOTES) ?></p>
+                    <p class="text-xs text-purple-300 mt-1">v<?= MLC_SDK_VERSION ?> — .zip</p>
+                </a>
+                <?php endforeach; ?>
+            </div>
+        </section>
+
         <?php if (!$games): ?>
             <div class="glass rounded-2xl p-12 text-center text-gray-300">
                 <p class="text-lg mb-2">No games yet.</p>

@@ -28,12 +28,13 @@ cd "$ROOT"
 composer install --no-dev --optimize-autoloader
 
 echo "==> Uploading internals to ~/"
-ssh -p "$PORT" "$HOST" "mkdir -p ~/src ~/bin ~/cron ~/database ~/logs"
+ssh -p "$PORT" "$HOST" "mkdir -p ~/src ~/bin ~/cron ~/database ~/logs ~/sdks"
 rsync -az --delete -e "ssh -p $PORT" src "$HOST:~/"
 rsync -az --delete -e "ssh -p $PORT" bin "$HOST:~/"
 rsync -az --delete -e "ssh -p $PORT" cron "$HOST:~/"
 rsync -az --delete -e "ssh -p $PORT" database "$HOST:~/"
 rsync -az --delete -e "ssh -p $PORT" templates "$HOST:~/"
+rsync -az --delete -e "ssh -p $PORT" sdks "$HOST:~/"
 rsync -az --delete -e "ssh -p $PORT" vendor "$HOST:~/"
 rsync -az -e "ssh -p $PORT" composer.json "$HOST:~/"
 [ -f composer.lock ] && rsync -az -e "ssh -p $PORT" composer.lock "$HOST:~/" || true

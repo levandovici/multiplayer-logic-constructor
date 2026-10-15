@@ -120,3 +120,38 @@ jobs:
           TEST_DB_NAME: test_mlc
           TEST_DB_USER: root
           TEST_DB_PASS: root
+
+  sdk-check:
+    name: SDK — C# compile + smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: dotnet run (compile SDK sources + smoke checks)
+        run: |
+          set -o pipefail
+          cd tests/Sdk/DotNetCheck
+          dotnet run -c Release 2>&1 | tee sdk.log
+          rc=$?
+          {
+            echo "## SDK compile check — C# / .NET"
+            echo '```'
+            tail -n 20 sdk.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $rc
+
+      - name: Package all SDKs (zip builder sanity)
+        run: |
+          php bin/package-sdks.php
+          {
+            echo "## SDK zips"
+            echo '```'
+            ls -la downloads/
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
