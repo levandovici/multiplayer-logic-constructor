@@ -64,6 +64,7 @@ $error = is_string($_GET['error'] ?? null) ? $_GET['error'] : '';
             <div>
                 <label class="block text-sm text-gray-300 mb-1" for="code">Login code</label>
                 <input id="code" name="code" type="text" required autofocus autocomplete="one-time-code"
+                       autocapitalize="characters" spellcheck="false"
                        placeholder="XXXX-XXXX" maxlength="9"
                        class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 tracking-widest text-center font-mono text-lg focus:outline-none focus:border-purple-400">
             </div>
@@ -78,5 +79,18 @@ $error = is_string($_GET['error'] ?? null) ? $_GET['error'] : '';
 
         <p class="text-center mt-6 text-sm"><a href="/" class="text-gray-400 hover:text-white">&larr; Home</a></p>
     </div>
+    <?php if ($sent): ?>
+    <script nonce="<?= csp_nonce() ?>">
+    (function () {
+        var code = document.getElementById('code');
+        if (!code) { return; }
+        code.addEventListener('input', function () {
+            // Keep [0-9A-Z], uppercase, auto-dash after the 4th symbol.
+            var raw = code.value.replace(/[^0-9a-zA-Z]/g, '').toUpperCase().slice(0, 8);
+            code.value = raw.length > 4 ? raw.slice(0, 4) + '-' + raw.slice(4) : raw;
+        });
+    })();
+    </script>
+    <?php endif; ?>
 </body>
 </html>
