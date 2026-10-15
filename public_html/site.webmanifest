@@ -1,0 +1,13 @@
+{
+    "name": "Multiplayer Logic Constructor",
+    "short_name": "MLC",
+    "description": "Visual block-programming platform for server-authoritative multiplayer game logic.",
+    "icons": [
+        { "src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    ],
+    "theme_color": "#2d1e4a",
+    "background_color": "#1e1e2d",
+    "display": "standalone",
+    "start_url": "/"
+}

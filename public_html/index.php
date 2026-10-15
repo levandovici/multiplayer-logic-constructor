@@ -12,6 +12,7 @@ $description = "Visual block-programming platform for server-authoritative multi
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8') ?></title>
     <meta name="description" content="<?= htmlspecialchars($description, ENT_QUOTES, 'UTF-8') ?>">
+    <?php brand_head_tags($title, $description); ?>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -30,6 +31,7 @@ $description = "Visual block-programming platform for server-authoritative multi
 </head>
 <body class="hero-gradient min-h-screen text-white">
     <main class="max-w-5xl mx-auto px-6 py-24">
+        <img src="/assets/logo.svg" alt="MLC logo" class="w-20 h-20 mb-6 drop-shadow-xl">
         <p class="text-sm uppercase tracking-[0.3em] text-purple-300 mb-4">Multiplayer Logic Constructor</p>
         <h1 class="text-5xl md:text-6xl font-black leading-tight mb-6">
             Your game's backend,<br>

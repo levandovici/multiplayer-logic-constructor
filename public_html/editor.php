@@ -49,6 +49,7 @@ $workspaceJson = $program['draft_workspace'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor — <?= htmlspecialchars($game['name'], ENT_QUOTES) ?> — MLC</title>
+    <?php brand_head_tags('Editor — Multiplayer Logic Constructor'); ?>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/blockly@10.4.3/blockly.min.js"></script>
     <script src="/js/mlc-blocks.js"></script>
