@@ -4,7 +4,7 @@ namespace Mlc\Engine;
 
 // The complete opcode whitelist — single source of truth for Program
 // validation and the editor's block registry (api/blocks.php maps these to
-// Blockly blocks). An op absent from both lists is unexecutable by
+// editor blocks). An op absent from both lists is unexecutable by
 // construction.
 final class Ops
 {

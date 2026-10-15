@@ -1,6 +1,6 @@
 # Multiplayer Logic Constructor
 
-**Scratch for multiplayer game backends.** Game developers assemble
+**A visual constructor for server-authoritative multiplayer game backends.** Game developers assemble
 server-authoritative rules from visual blocks — players only trigger named
 API actions; every move, roll and resource spend is verified on our platform.
 No backend code for developers, no cheating clients.
@@ -9,7 +9,7 @@ See **[docs/DESIGN.md](docs/DESIGN.md)** for the full architecture.
 
 ## How it works
 
-1. A developer builds a **program** in the web editor (Blockly): trigger
+1. A developer builds a **program** in the visual block editor: trigger
    blocks (`when player plays card`), control flow, scoped variables
    (`local`/`player`/`room`/`game`), game primitives (turns, broadcasts,
    timers) and anti-cheat blocks (`require`, `consume`, server-side RNG).
@@ -26,7 +26,7 @@ See **[docs/DESIGN.md](docs/DESIGN.md)** for the full architecture.
 
 - PHP 8.2–8.5, vanilla + PDO (no framework) — Hostinger shared hosting.
 - MySQL; `database/schema.sql` is the single source of truth.
-- Blockly (web cabinet) — editor; canonical program AST is editor-agnostic.
+- Visual block editor (web cabinet); canonical program AST is editor-agnostic.
 
 ## Dev setup
 

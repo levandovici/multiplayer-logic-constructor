@@ -4,7 +4,7 @@ Status: draft v0.1 · Target: PHP 8.2–8.5 (Hostinger), MySQL, Node.js realtime
 
 ## 1. Vision
 
-**MLC is "Scratch for multiplayer game backends".** A game developer assembles
+**MLC is a visual constructor for server-authoritative multiplayer game backends.** A game developer assembles
 their game's server-side rules from visual blocks — no PHP, no servers, no
 anti-cheat code to write. Player devices only *trigger* named actions over the
 API; every rule, state change, and random roll is executed and verified on our
@@ -14,7 +14,7 @@ guarantee and the core selling point.
 ```
 ┌──────────────┐   block program (JSON)   ┌──────────────────────────────┐
 │  Game dev    │ ───────────────────────▶ │  MLC cabinet (web editor)    │
-│  (browser)   │                          │  Blockly + publish/version   │
+│  (browser)   │                          │  Block editor + publish      │
 └──────────────┘                          └──────────────┬───────────────┘
                                                         │
 ┌──────────────┐   POST /api/logic.php   ┌──────────────▼───────────────┐
@@ -52,7 +52,7 @@ Consequences:
 ## 3. The program model
 
 The unit of user logic is a **program**: one per game, versioned, with a
-draft → publish lifecycle. The editor stores Blockly workspace JSON; on save
+draft → publish lifecycle. The editor stores block-workspace JSON; on save
 the server compiles it into a **canonical AST** that the runtime executes.
 The canonical form is editor-agnostic — a future Unity/BlocksEngine2-based
 editor can emit the same format.
@@ -252,8 +252,8 @@ headers only — same model as multiplayer-api.
 
 ## 7. Editor & program lifecycle
 
-- **Editor**: [Blockly](https://developers.google.com/blockly) embedded in a
-  cabinet page — mature, MIT-licensed, serializes workspaces to JSON, and the
+- **Editor**: a visual block editor embedded in a
+  cabinet page — MIT-licensed library, serializes workspaces to JSON, and the
   toolbox is driven by `api/blocks.php` so the block catalogue has a single
   server-side source of truth (blocks ship with tooltip, input types,
   colour, scope badge).
@@ -351,7 +351,7 @@ Status: ✅ = landed & verified (unit tests + PHPStan).
 | M2 | Engine core: AST loader, executor, scopes, budgets, ~30 base ops  | ✅ |
 | M3 | `api/logic.php` runtime path + action log + tic-tac-toe fixture   | ✅ |
 | M4 | `scheduled_events` + `cron/tick.php` worker + `schedule` blocks   | ✅ |
-| M5 | Cabinet: program CRUD + `api/blocks.php` + Blockly editor + publish| ✅ |
+| M5 | Cabinet: program CRUD + `api/blocks.php` + block editor + publish | ✅ |
 | M6 | Simulator + step-trace viewer                                     | ✅ (`api/simulate.php` + editor modal) |
 | M7 | Anti-cheat primitive blocks + publish-time validation             | ✅ |
 | M8 | SDK `Logic` module (dotnet/unity first) + docs + llms.txt         | pending — SDK repo |
@@ -361,7 +361,7 @@ Status: ✅ = landed & verified (unit tests + PHPStan).
 Decided:
 
 - ✅ **Standalone** — no runtime dependency on multiplayer-api.
-- ✅ **Blockly** web editor in the MLC cabinet; canonical AST stays
+- ✅ **Visual block** web editor in the MLC cabinet; canonical AST stays
   editor-agnostic so a BlocksEngine2-based editor can emit it later.
 - ✅ **Action-driven + scheduled timers** for v1; no continuous tick loop
   (needs a persistent worker — revisit post-MVP).

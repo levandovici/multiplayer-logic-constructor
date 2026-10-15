@@ -3,7 +3,7 @@ require_once dirname(__DIR__) . '/src/bootstrap.php';
 send_security_headers();
 
 $title = "Multiplayer Logic Constructor";
-$description = "Visual block-programming platform for server-authoritative multiplayer game logic. Design your game's backend like Scratch — we run it, we verify it.";
+$description = "Visual block-programming platform for server-authoritative multiplayer game logic. Design your game's backend visually — we run it, we verify it.";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,7 +36,7 @@ $description = "Visual block-programming platform for server-authoritative multi
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">built from blocks.</span>
         </h1>
         <p class="text-xl text-gray-300 max-w-2xl mb-10">
-            Assemble server-authoritative multiplayer rules visually — like Scratch, but every block
+            Assemble server-authoritative multiplayer rules from visual blocks — every block
             runs on our servers. Players trigger actions; the platform verifies every move, roll,
             and resource spend. No backend code. No cheating clients.
         </p>

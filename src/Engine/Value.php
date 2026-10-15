@@ -4,7 +4,7 @@ namespace Mlc\Engine;
 
 // Value coercion for the block language. Values are JSON types: null, bool,
 // int/float, string, list (sequential array), map (assoc array). Coercion
-// rules are deliberately Scratch-like and total — blocks never crash on
+// rules are deliberately forgiving and total — blocks never crash on
 // type mismatch unless a value is structurally unusable.
 final class Value
 {

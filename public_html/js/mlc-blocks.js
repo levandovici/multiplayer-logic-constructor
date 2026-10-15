@@ -1,4 +1,4 @@
-// MLC Blockly blocks + canonical-AST generator.
+// MLC block definitions + canonical-AST generator.
 // Block field/input names map 1:1 onto AST node fields — the generator
 // walks the workspace and emits the same JSON the PHP engine validates.
 (function () {
