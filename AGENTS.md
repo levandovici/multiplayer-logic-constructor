@@ -106,3 +106,9 @@ actions. See `docs/DESIGN.md` — it is the architecture source of truth.
 - Cabinet `?template=slug` on games.php create → seeds program + publishes v1.
 - `TemplatesContractTest` guards: ASTs publishable, ws/ast pairs exist,
   workspace block types ⊆ mlc-blocks.js registry.
+
+## Commits
+
+- NEVER reference Devin (or any AI agent) in commit messages — no
+  "Generated with", no Co-Authored-By trailers, no co-authors at all.
+  Commit messages: imperative, why-focused, plain text only.
