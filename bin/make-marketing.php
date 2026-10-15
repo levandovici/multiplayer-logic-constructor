@@ -28,7 +28,9 @@ const H = 400;
 
 // ---------- canvas / palette ----------
 
-function canvas(int $w = W, int $h = H): GdImage {
+function canvas(?int $w = null, ?int $h = null): GdImage {
+    $w ??= W;
+    $h ??= H;
     $im = imagecreatetruecolor($w, $h);
     imagealphablending($im, true);
     imagesavealpha($im, true);
