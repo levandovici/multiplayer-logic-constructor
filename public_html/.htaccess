@@ -1,0 +1,33 @@
+# Multiplayer Logic Constructor — public docroot (Hostinger).
+# This is the ONLY directory the web server should expose.
+
+# If the docroot is ever misconfigured to the project root, the root
+# .htaccess denies everything — re-grant for the real docroot here.
+Require all granted
+
+# No directory listings, no server signature.
+Options -Indexes
+ServerSignature Off
+
+# Dotfiles and dev/config files must never be downloadable.
+# (.env, .git, .htaccess, composer.*, package*.json, sql, log, md, ini, yml…)
+<FilesMatch "(^\.|composer\.(json|lock)|package(-lock)?\.json|phpunit\.xml|phpstan\.neon|\.(env|sql|log|md|neon|ya?ml|toml|ini|sh|phar|bak|orig|swp|dist)$)">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block any URL whose path contains a dot-segment (.git/config, .env…)
+    # EXCEPT .well-known — Hostinger SSL renewal (ACME HTTP-01) lives there.
+    RewriteRule (^|/)\.(?!well-known(/|$)) - [R=404,L]
+
+    # TRACE/TRACK are never needed — kill them (XSS surface).
+    RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK) [NC]
+    RewriteRule .* - [R=405,L]
+
+    # Force HTTPS — HSTS is already sent by send_security_headers(); this
+    # catches the first visit. Hostinger issues free SSL automatically.
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>

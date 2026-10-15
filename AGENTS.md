@@ -41,6 +41,13 @@ actions. See `docs/DESIGN.md` — it is the architecture source of truth.
   `eval`, never SQL from a program, no filesystem/network access.
 - Transactions: every trigger execution = one DB transaction with the room
   row `SELECT … FOR UPDATE` first. A rejected/failed run rolls back fully.
+- `.htaccess` files are part of the security model — keep them in sync:
+  repo root + `src/` `bin/` `cron/` `database/` `templates/` deny all
+  (deploy.sh also writes deny files into `~/vendor` and `~/logs`);
+  `public_html/.htaccess` re-grants, forces HTTPS, 404s dot-segments
+  (`.well-known` is exempt — ACME SSL renewal), blocks dev files;
+  `assets/` and `js/` refuse script execution. Any NEW non-public
+  top-level dir needs its own `Require all denied` .htaccess.
 
 ## Tests
 

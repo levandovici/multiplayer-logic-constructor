@@ -41,6 +41,10 @@ rsync -az -e "ssh -p $PORT" composer.json "$HOST:~/"
 echo "==> Uploading docroot to $DOCROOT"
 rsync -az --delete -e "ssh -p $PORT" public_html/ "$HOST:$DOCROOT/"
 
+echo "==> Hardening non-public dirs (vendor/logs .htaccess deny)"
+ssh -p "$PORT" "$HOST" \
+    "printf 'Require all denied\n' > ~/vendor/.htaccess && printf 'Require all denied\n' > ~/logs/.htaccess"
+
 echo "==> Secrets"
 if ssh -p "$PORT" "$HOST" "test -f ~/.env"; then
     echo "    ~/.env already present"

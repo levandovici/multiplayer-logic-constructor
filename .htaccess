@@ -1,0 +1,4 @@
+# The project root is NOT a web directory — only public_html/ is.
+# If a docroot is ever pointed at the repo root by mistake, deny everything.
+# public_html/.htaccess re-grants access for the real docroot.
+Require all denied

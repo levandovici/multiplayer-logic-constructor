@@ -41,9 +41,12 @@ class WebExposureTest extends TestCase {
 
     /** Internal files must not be web-reachable (docroot = public_html/). */
     public function testInternalFilesReturn404(): void {
-        foreach (['/.env', '/.gitignore', '/database/schema.sql', '/composer.json',
-                  '/composer.lock', '/src/bootstrap.php', '/src/Engine/Ops.php',
+        foreach (['/.env', '/.gitignore', '/.git/config', '/.htaccess',
+                  '/database/schema.sql', '/composer.json', '/composer.lock',
+                  '/package.json', '/src/bootstrap.php', '/src/Engine/Ops.php',
                   '/cron/tick.php', '/bin/migrate.php', '/bin/seed-demo.php',
+                  '/vendor/autoload.php', '/logs/php_errors.log',
+                  '/templates/tictactoe.ast.json', '/templates/tictactoe.workspace.json',
                   '/docs/DESIGN.md', '/phpunit.xml', '/AGENTS.md'] as $path) {
             $r = $this->get($path);
             $this->assertContains($r['status'], [403, 404], "$path exposed (HTTP {$r['status']})");

@@ -1,0 +1,3 @@
+# Cron worker — never web-reachable (web cron goes through
+# public_html/cron-tick.php, which is token-gated).
+Require all denied

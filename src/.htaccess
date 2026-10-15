@@ -1,0 +1,2 @@
+# Application code — never web-reachable (loaded via bootstrap.php only).
+Require all denied
