@@ -75,6 +75,31 @@ treat as a bug report, never as gameplay.
 - **Unreal** — `UMlcClient : UObject`, HTTP via `IHttpRequest`, updates via a
   `FTicker` poll + `DECLARE_DYNAMIC_MULTICAST_DELEGATE` so Blueprints can bind.
 
+## JSON — the one real difference between SDKs
+
+The **wire format is identical everywhere** (plain JSON); only how the client
+*materializes* free-form payloads differs. `Do(action, args)` and `u.data` are
+arbitrary JSON — the platform can't ship typed DTOs for program-defined data.
+
+| SDK | Outgoing `args` | Incoming `data` | Why |
+|---|---|---|---|
+| **.NET** | `object` / `Dictionary<string,object>` / anonymous — free-form native | `JsonElement` on `u.Data` | `System.Text.Json` handles arbitrary JSON |
+| **Unity** | `[Serializable]` arg classes OR `Dictionary` via bundled **MiniJSON.cs** | `u.DataJson` raw string → `JsonUtility.FromJson<T>` or MiniJSON dict | `JsonUtility` can't serialize `Dictionary` and can't parse untyped trees |
+| **C++** | `nlohmann::json` object literal | `nlohmann::json` on `u.data` | free-form native |
+| **Unreal** | `TSharedPtr<FJsonObject>` / `FString` raw | `FString` raw + `JsonObjectConverter` helpers | UHT can't serialize open maps into DTOs |
+
+**Unity rule** (same as the multiplayer-api Unity SDK's `data_json` pattern):
+payload always arrives as a raw `DataJson` string; game code either calls
+`JsonUtility.FromJson<MyType>(u.DataJson)` with a `[Serializable]` class it
+declared, or parses with the bundled `MiniJSON` for `Dictionary` access. For
+outgoing args, both paths work: `Do("move", new MoveArgs{x=1,y=2})`
+(`JsonUtility.ToJson` — teaches typed classes, inspector-visible) or
+`Do("move", new Dictionary<string,object>{{"x",1},{"y",2}})` (MiniJSON —
+mirrors the .NET samples so docs can show one shape across SDKs).
+
+The SDK embeds `MiniJSON.cs` (~200 lines, MIT, no dependency) rather than
+pulling Newtonsoft — Unity 2021+ package friction isn't worth it for one file.
+
 ## Update delivery in v1
 
 Polling (`?action=updates`, ~1–2s interval, rate-limit 120/min/head). SDKs
