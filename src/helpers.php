@@ -197,10 +197,10 @@ function site_header(string $active = ''): void {
         $account = '<a href="/login.php" class="bg-purple-600 hover:bg-purple-500 rounded-lg px-4 py-1.5 font-semibold transition">Developer Login</a>';
     }
     echo <<<HTML
-    <header class="border-b border-white/10 bg-[#16161f]/85 backdrop-blur">
-        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-            <a href="/" class="font-bold flex items-center gap-2 shrink-0"><img src="/assets/logo.svg" alt="" class="w-8 h-8">Multiplayer Logic Constructor</a>
-            <nav class="flex items-center gap-5 text-sm">{$nav}{$account}</nav>
+    <header class="border-b border-white/10 bg-[#16161f]/85 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+            <a href="/" class="font-bold flex items-center gap-2 shrink-0 min-w-0"><img src="/assets/logo.svg" alt="" class="w-8 h-8 shrink-0"><span class="truncate hidden min-[430px]:inline">Multiplayer Logic Constructor</span><span class="min-[430px]:hidden">MLC</span></a>
+            <nav class="flex items-center gap-3 sm:gap-5 text-sm whitespace-nowrap">{$nav}{$account}</nav>
         </div>
     </header>
 

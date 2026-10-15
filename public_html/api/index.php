@@ -51,7 +51,8 @@ $endpoints = [
             <code class="text-purple-300">X-Player-Token</code> (player, scoped to the game).
         </p>
 
-        <table class="w-full text-left border-collapse">
+        <div class="overflow-x-auto -mx-5 px-5 sm:mx-0 sm:px-0">
+        <table class="w-full min-w-[560px] text-left border-collapse">
             <thead>
                 <tr class="border-b border-white/10 text-gray-400 text-sm">
                     <th class="py-3 pr-4">Method</th>
@@ -69,6 +70,7 @@ $endpoints = [
             <?php endforeach; ?>
             </tbody>
         </table>
+        </div>
     </main>
     <?php site_footer(); ?>
 </body>

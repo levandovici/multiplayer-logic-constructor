@@ -38,15 +38,15 @@ $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body class="bg-page min-h-screen text-white flex flex-col">
     <?php site_header('cabinet'); ?>
 
-    <main class="max-w-6xl mx-auto px-6 py-10 flex-1 w-full">
-        <div class="flex items-center justify-between mb-8">
-            <h1 class="text-3xl font-bold">Your Games</h1>
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 flex-1 w-full">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <h1 class="text-2xl sm:text-3xl font-bold">Your Games</h1>
             <form method="POST" action="/php/games.php" id="create-game" class="flex gap-2">
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="create">
                 <input name="name" required maxlength="100" placeholder="New game name"
-                       class="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-sm w-64 focus:outline-none focus:border-purple-400">
-                <button class="bg-purple-600 hover:bg-purple-500 rounded-lg px-5 py-2 text-sm font-semibold transition">Create</button>
+                       class="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-sm w-full sm:w-64 focus:outline-none focus:border-purple-400">
+                <button class="bg-purple-600 hover:bg-purple-500 rounded-lg px-5 py-2 text-sm font-semibold transition shrink-0">Create</button>
             </form>
         </div>
 
@@ -77,10 +77,10 @@ $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="grid gap-4">
                 <?php foreach ($games as $g):
                     $masked = ($g['api_private_key_prefix'] ?: '????') . '…' . ($g['api_private_key_suffix'] ?: '????'); ?>
-                <div class="glass rounded-2xl p-6" data-game-id="<?= (int)$g['id'] ?>">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <h2 class="text-xl font-semibold"><?= htmlspecialchars($g['name'], ENT_QUOTES) ?></h2>
+                <div class="glass rounded-2xl p-4 sm:p-6" data-game-id="<?= (int)$g['id'] ?>">
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+                        <div class="min-w-0">
+                            <h2 class="text-xl font-semibold break-words"><?= htmlspecialchars($g['name'], ENT_QUOTES) ?></h2>
                             <p class="text-sm text-gray-400 mt-1">
                                 <?= (int)$g['players'] ?> players · <?= (int)$g['active_rooms'] ?> active rooms ·
                                 <?= (int)$g['programs'] ?> program<?= (int)$g['programs'] === 1 ? '' : 's' ?>
@@ -90,7 +90,7 @@ $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <a href="/editor.php?game=<?= (int)$g['id'] ?>"
                            class="bg-cyan-600 hover:bg-cyan-500 rounded-lg px-4 py-2 text-sm font-semibold transition shrink-0">Open Editor</a>
                     </div>
-                    <div class="mt-4 grid sm:grid-cols-2 gap-3 text-sm">
+                    <div class="mt-4 grid sm:grid-cols-2 gap-3 text-sm min-w-0">
                         <div class="bg-black/30 rounded-lg px-4 py-3">
                             <p class="text-gray-400 text-xs mb-1">API Key (public — goes in game clients)</p>
                             <code class="text-cyan-300 select-all break-all"><?= htmlspecialchars($g['api_key'], ENT_QUOTES) ?></code>

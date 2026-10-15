@@ -31,14 +31,14 @@ $description = "Visual block-programming platform for server-authoritative multi
 </head>
 <body class="hero-gradient min-h-screen text-white flex flex-col">
     <?php site_header('home'); ?>
-    <main class="max-w-5xl mx-auto px-6 py-24 flex-1 w-full">
-        <img src="/assets/logo.svg" alt="Multiplayer Logic Constructor" class="w-20 h-20 mb-6 drop-shadow-xl">
-        <p class="text-sm uppercase tracking-[0.3em] text-purple-300 mb-4">Multiplayer Logic Constructor</p>
-        <h1 class="text-5xl md:text-6xl font-black leading-tight mb-6">
+    <main class="max-w-5xl mx-auto px-5 sm:px-6 py-16 sm:py-24 flex-1 w-full">
+        <img src="/assets/logo.svg" alt="Multiplayer Logic Constructor" class="w-16 h-16 sm:w-20 sm:h-20 mb-6 drop-shadow-xl">
+        <p class="text-xs sm:text-sm uppercase tracking-[0.3em] text-purple-300 mb-4">Multiplayer Logic Constructor</p>
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-black leading-tight mb-6">
             Your game's backend,<br>
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">built from blocks.</span>
         </h1>
-        <p class="text-xl text-gray-300 max-w-2xl mb-10">
+        <p class="text-lg sm:text-xl text-gray-300 max-w-2xl mb-10">
             Assemble server-authoritative multiplayer rules from visual blocks — every block
             runs on our servers. Players trigger actions; the platform verifies every move, roll,
             and resource spend. No backend code. No cheating clients.
@@ -48,14 +48,14 @@ $description = "Visual block-programming platform for server-authoritative multi
              alt="Multiplayer Logic Constructor — assembled block program in the editor"
              class="rounded-2xl border border-white/10 shadow-2xl mb-12 w-full max-w-4xl">
 
-        <div class="flex gap-4">
+        <div class="flex flex-wrap gap-4">
             <a href="/api/" class="bg-purple-600 hover:bg-purple-500 px-6 py-3 rounded-xl font-semibold transition">API Reference</a>
             <a href="/login.php" class="border border-white/20 hover:bg-white/10 px-6 py-3 rounded-xl font-semibold transition">Developer Login</a>
         </div>
 
         <!-- Genres you can build — artwork: bin/make-marketing.php -->
         <section class="mt-24">
-            <h2 class="text-3xl font-bold mb-3">Build any multiplayer genre</h2>
+            <h2 class="text-2xl sm:text-3xl font-bold mb-3">Build any multiplayer genre</h2>
             <p class="text-gray-400 mb-8 max-w-2xl">Each card below shows the <em>actual block program</em> —
                 and every one ships as a template in the cabinet: pick it, get a playable game,
                 then open the editor and change the rules. Your game calls one function —
@@ -87,7 +87,7 @@ $description = "Visual block-programming platform for server-authoritative multi
 
         <!-- Engines/SDKs -->
         <section class="mt-20 mb-8">
-            <h2 class="text-3xl font-bold mb-3">Your engine, one API</h2>
+            <h2 class="text-2xl sm:text-3xl font-bold mb-3">Your engine, one API</h2>
             <p class="text-gray-400 mb-6 max-w-2xl">The same five calls in every SDK — register, join a room,
                 <code class="text-purple-300">Do()</code>, updates, state. Players can build real multiplayer
                 games without writing a single line of server code.</p>

@@ -63,14 +63,14 @@ $workspaceJson = $program['draft_workspace'];
 </head>
 <body class="bg-[#1e1e2d] text-white h-screen flex flex-col overflow-hidden">
     <header class="border-b border-white/10 shrink-0">
-        <div class="px-4 h-14 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <a href="/" title="Multiplayer Logic Constructor"><img src="/assets/logo.svg" alt="" class="w-8 h-8"></a>
-                <a href="/cabinet.php" class="text-gray-400 hover:text-white text-sm">← Cabinet</a>
-                <h1 class="font-semibold"><?= htmlspecialchars($game['name'], ENT_QUOTES) ?></h1>
-                <span class="text-xs text-gray-500 mono">program: <?= htmlspecialchars($program['name'] ?? 'main', ENT_QUOTES) ?></span>
+        <div class="px-4 h-14 flex items-center justify-between gap-2 overflow-x-auto">
+            <div class="flex items-center gap-4 min-w-0">
+                <a href="/" title="Multiplayer Logic Constructor" class="shrink-0"><img src="/assets/logo.svg" alt="" class="w-8 h-8"></a>
+                <a href="/cabinet.php" class="text-gray-400 hover:text-white text-sm shrink-0">← Cabinet</a>
+                <h1 class="font-semibold truncate"><?= htmlspecialchars($game['name'], ENT_QUOTES) ?></h1>
+                <span class="text-xs text-gray-500 mono hidden sm:inline">program: <?= htmlspecialchars($program['name'] ?? 'main', ENT_QUOTES) ?></span>
             </div>
-            <div class="flex items-center gap-2 text-sm">
+            <div class="flex items-center gap-2 text-sm whitespace-nowrap shrink-0">
                 <span id="status" class="text-gray-400 mr-2"></span>
                 <?php if ($versionList): ?>
                 <select id="versions" class="bg-white/10 rounded px-2 py-1.5 text-xs text-gray-300">
