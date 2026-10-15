@@ -187,7 +187,7 @@ function site_header(string $active = ''): void {
     $nav = $navItem('home', '/', 'Home') . $navItem('api', '/api/', 'API');
     if ($email !== '') {
         $nav .= $navItem('cabinet', '/cabinet.php', 'Cabinet');
-        $account = '<span class="text-gray-500 hidden sm:inline">'
+        $account = '<span class="text-gray-500 hidden md:inline-block max-w-[160px] truncate align-middle">'
             . htmlspecialchars($email, ENT_QUOTES, 'UTF-8') . '</span>'
             . '<form method="POST" action="/php/auth.php" class="inline">'
             . csrf_field()
@@ -199,8 +199,8 @@ function site_header(string $active = ''): void {
     echo <<<HTML
     <header class="border-b border-white/10 bg-[#16161f]/85 backdrop-blur sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-            <a href="/" class="font-bold flex items-center gap-2 shrink-0 min-w-0"><img src="/assets/logo.svg" alt="" class="w-8 h-8 shrink-0"><span class="truncate hidden min-[430px]:inline">Multiplayer Logic Constructor</span><span class="min-[430px]:hidden">MLC</span></a>
-            <nav class="flex items-center gap-3 sm:gap-5 text-sm whitespace-nowrap">{$nav}{$account}</nav>
+            <a href="/" class="font-bold flex items-center gap-2 min-w-0"><img src="/assets/logo.svg" alt="" class="w-8 h-8 shrink-0"><span class="truncate hidden md:inline">Multiplayer Logic Constructor</span><span class="md:hidden">MLC</span></a>
+            <nav class="flex items-center gap-3 sm:gap-5 text-sm whitespace-nowrap shrink-0">{$nav}{$account}</nav>
         </div>
     </header>
 
