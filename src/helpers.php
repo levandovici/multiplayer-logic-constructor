@@ -225,6 +225,7 @@ function site_footer(): void {
                 <a href="/" class="hover:text-white transition">Home</a>
                 <a href="/api/" class="hover:text-white transition">API</a>
                 <a href="/cabinet.php" class="hover:text-white transition">Cabinet</a>
+                <a href="mailto:support@michitai.com" class="hover:text-white transition">support@michitai.com</a>
             </nav>
         </div>
         <div class="text-center text-xs text-gray-600 pb-6">
