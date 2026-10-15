@@ -28,7 +28,7 @@ const H = 400;
 
 // ---------- canvas / palette ----------
 
-function canvas(?int $w = null, ?int $h = null): GdImage {
+function mk_canvas(?int $w = null, ?int $h = null): GdImage {
     $w ??= W;
     $h ??= H;
     $im = imagecreatetruecolor($w, $h);
@@ -231,7 +231,7 @@ const EV = 45; const VRB = 300; const CTL = 120; const ACT = 160;
 const COM = 200; const TMR = 260; const FNC = 290; const AC = 0;
 
 // ============ genre-board.png — tic-tac-toe "move" handler ============
-$im = canvas(); $rows = bg($im, [0x2d,0x1e,0x4a], [0x1e,0x1e,0x2d]); dotgrid($im);
+$im = mk_canvas(); $rows = bg($im, [0x2d,0x1e,0x4a], [0x1e,0x1e,0x2d]); dotgrid($im);
 draw_stack($im, [
     ['hat', EV, [['t','when player action '],['i','move']]],
     ['stmt', AC, [['t','if not my turn '],['i','reject']]],
@@ -245,7 +245,7 @@ draw_stack($im, [
 save($im, 'genre-board.png');
 
 // ============ genre-clicker.png — claim / economy ============
-$im = canvas(); $rows = bg($im, [0x2d,0x24,0x1e], [0x1e,0x1e,0x2d]); dotgrid($im);
+$im = mk_canvas(); $rows = bg($im, [0x2d,0x24,0x1e], [0x1e,0x1e,0x2d]); dotgrid($im);
 draw_stack($im, [
     ['hat', EV, [['t','when player action '],['i','claim']]],
     ['stmt', AC, [['t','rate limit '],['i','2'],['t',' calls per '],['i','1'],['t',' s']]],
@@ -260,7 +260,7 @@ draw_stack($im, [
 save($im, 'genre-clicker.png');
 
 // ============ genre-quiz.png — trivia answer scoring ============
-$im = canvas(); $rows = bg($im, [0x1e,0x2d,0x2d], [0x1e,0x1e,0x2d]); dotgrid($im);
+$im = mk_canvas(); $rows = bg($im, [0x1e,0x2d,0x2d], [0x1e,0x1e,0x2d]); dotgrid($im);
 draw_stack($im, [
     ['hat', EV, [['t','when player action '],['i','answer']]],
     ['c', CTL, [['t','if '],['i','answer'],['t',' = '],['i','correct']], [
@@ -272,7 +272,7 @@ draw_stack($im, [
 save($im, 'genre-quiz.png');
 
 // ============ genre-racing.png — checkpoints in order ============
-$im = canvas(); $rows = bg($im, [0x1e,0x2d,0x3f], [0x1e,0x1e,0x2d]); dotgrid($im);
+$im = mk_canvas(); $rows = bg($im, [0x1e,0x2d,0x3f], [0x1e,0x1e,0x2d]); dotgrid($im);
 draw_stack($im, [
     ['hat', EV, [['t','when player action '],['i','checkpoint']]],
     ['stmt', AC, [['t','require '],['i','id'],['t',' = '],['i','next_cp']]],
@@ -285,7 +285,7 @@ draw_stack($im, [
 save($im, 'genre-racing.png');
 
 // ============ genre-cards.png — play card, hand verified ============
-$im = canvas(); $rows = bg($im, [0x2a,0x1e,0x3f], [0x1e,0x1e,0x2d]); dotgrid($im);
+$im = mk_canvas(); $rows = bg($im, [0x2a,0x1e,0x3f], [0x1e,0x1e,0x2d]); dotgrid($im);
 draw_stack($im, [
     ['hat', EV, [['t','when player joins']]],
     ['c', CTL, [['t','repeat '],['i','5'],['t',' times']], [
@@ -302,7 +302,7 @@ draw_stack($im, [
 save($im, 'genre-cards.png');
 
 // ============ genre-arena.png — shrinking zone timer ============
-$im = canvas(); $rows = bg($im, [0x3f,0x1e,0x2a], [0x1e,0x1e,0x2d]); dotgrid($im);
+$im = mk_canvas(); $rows = bg($im, [0x3f,0x1e,0x2a], [0x1e,0x1e,0x2d]); dotgrid($im);
 draw_stack($im, [
     ['hat', EV, [['t','every timer '],['i','shrink'],['t',' fires']]],
     ['stmt', VRB, [['t','set '],['i','zone'],['t',' = '],['i','zone x 0.7']]],
@@ -318,7 +318,7 @@ save($im, 'genre-arena.png');
 
 // ============ hero-constructor.png — mini editor scene ============
 // Landing hero: toolbox rail + workspace with an assembled program.
-$im = canvas(1200, 630);
+$im = mk_canvas(1200, 630);
 $rows = bg($im, [0x1e,0x1e,0x2d], [0x2d,0x1e,0x4a]);
 dotgrid($im, 26, 168);
 imagefilledrectangle($im, 0, 0, 168, 630, imagecolorallocatealpha($im, 10, 8, 20, 40));
