@@ -31,10 +31,43 @@ jobs:
             | xargs -0 -n1 php -l > /dev/null && echo "lint ok"
 
       - name: PHPUnit (Unit + Contract)
-        run: vendor/bin/phpunit --testsuite Unit,Contract
+        id: phpunit
+        run: |
+          set -o pipefail
+          vendor/bin/phpunit --testsuite Unit,Contract 2>&1 | tee phpunit.log
+          rc=$?
+          {
+            echo "## PHPUnit — PHP ${{ matrix.php }}"
+            echo '```'
+            tail -n 15 phpunit.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $rc
 
       - name: PHPStan
-        run: vendor/bin/phpstan analyse --no-progress
+        id: phpstan
+        run: |
+          set -o pipefail
+          vendor/bin/phpstan analyse --no-progress 2>&1 | tee phpstan.log
+          rc=$?
+          {
+            echo "## PHPStan — PHP ${{ matrix.php }}"
+            echo '```'
+            grep -v "old version\|blog\|Upgrade today\|new PHPStan\|last release\|quality of life" phpstan.log | tail -n 15
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $rc
+
+      - name: Step summary footer
+        if: always()
+        run: |
+          {
+            echo "---"
+            echo "| Step | Result |"
+            echo "|---|---|"
+            echo "| PHPUnit | ${{ steps.phpunit.outcome }} |"
+            echo "| PHPStan | ${{ steps.phpstan.outcome }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   integration:
     name: Integration (MySQL)
@@ -70,7 +103,18 @@ jobs:
           DB_PASS: root
 
       - name: PHPUnit (Integration)
-        run: vendor/bin/phpunit --testsuite Integration
+        id: phpunit
+        run: |
+          set -o pipefail
+          vendor/bin/phpunit --testsuite Integration 2>&1 | tee phpunit.log
+          rc=$?
+          {
+            echo "## PHPUnit — Integration (MySQL 8.4)"
+            echo '```'
+            tail -n 15 phpunit.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $rc
         env:
           TEST_DB_HOST: 127.0.0.1
           TEST_DB_NAME: test_mlc
