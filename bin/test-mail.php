@@ -16,9 +16,10 @@ if (php_sapi_name() !== 'cli') {
 require_once dirname(__DIR__) . '/src/bootstrap.php';
 require_once APP_SRC . '/mailer.php';
 
-$to = $argv[1] ?? '';
-$mailOnly = in_array('--mail', $argv, true);
-$probeOnly = in_array('--probe', $argv, true);
+$args = (array)($argv ?? $_SERVER['argv'] ?? []);
+$to = $args[1] ?? '';
+$mailOnly = in_array('--mail', $args, true);
+$probeOnly = in_array('--probe', $args, true);
 if ($to === '' || !filter_var($to, FILTER_VALIDATE_EMAIL)) {
     fwrite(STDERR, "usage: test-mail.php you@example.com [--mail|--probe]\n");
     exit(1);
