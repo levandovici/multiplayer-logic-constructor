@@ -223,6 +223,7 @@ CREATE TABLE IF NOT EXISTS scheduled_events (
     run_at TIMESTAMP NOT NULL,
     status ENUM('pending','running','done','failed','cancelled') NOT NULL DEFAULT 'pending',
     attempts TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    claimed_at TIMESTAMP NULL COMMENT 'When a tick run claimed this event; stale claims get re-queued',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     processed_at TIMESTAMP NULL,
     INDEX idx_due (status, run_at),

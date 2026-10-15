@@ -133,11 +133,14 @@ if ($action === 'join' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $pdo->beginTransaction();
     try {
-        // Serialized capacity check inside the txn; seat = join order index.
-        $cnt = $pdo->prepare("SELECT COUNT(*) FROM room_players WHERE room_id = ? FOR UPDATE");
+        // Serialized capacity check inside the txn; seat = MAX+1 so a leave
+        // can't free a number the next join would re-assign (collision would
+        // corrupt ctx.player_seat for two members).
+        $cnt = $pdo->prepare("SELECT COUNT(*), COALESCE(MAX(seat), -1) FROM room_players WHERE room_id = ? FOR UPDATE");
         $cnt->execute([$room['room_id']]);
-        $seat = (int)$cnt->fetchColumn();
-        if ($seat >= (int)$room['max_players']) {
+        [$memberCount, $maxSeat] = array_map('intval', $cnt->fetch(PDO::FETCH_NUM));
+        $seat = $maxSeat + 1;
+        if ($memberCount >= (int)$room['max_players']) {
             $pdo->rollBack();
             respond_json(['success' => false, 'error' => 'Room is full'], 409);
         }

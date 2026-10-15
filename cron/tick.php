@@ -34,28 +34,39 @@ function tick_log($msg) {
     }
 }
 
-// Claim a bounded batch of due events. UPDATE … status='running' acts as a
-// poor-man's queue lock — two overlapping cron runs can't double-fire.
+// Re-queue events stranded 'running' by a crashed tick (claim older than 5 min).
 /** @var PDO $pdo */
-$claim = $pdo->prepare("
-    UPDATE scheduled_events
-    SET status = 'running', attempts = attempts + 1
-    WHERE status = 'pending' AND run_at <= NOW()
-    ORDER BY run_at
-    LIMIT 50
+$pdo->exec("
+    UPDATE scheduled_events SET status = 'pending', claimed_at = NULL
+    WHERE status = 'running' AND claimed_at < NOW() - INTERVAL 5 MINUTE
 ");
-$claim->execute();
-$claimed = $claim->rowCount();
 
-tick_log("claimed $claimed due event(s)");
+// Claim atomically: lock due rows FOR UPDATE inside a txn, flip just those
+// ids to 'running', commit — concurrent ticks serialize on the row locks, so
+// nobody double-fires. We then process ONLY the ids we claimed.
+$pdo->beginTransaction();
+$dueIds = $pdo->query("
+    SELECT event_id FROM scheduled_events
+    WHERE status = 'pending' AND run_at <= NOW()
+    ORDER BY run_at LIMIT 50 FOR UPDATE
+")->fetchAll(PDO::FETCH_COLUMN);
+if ($dueIds !== []) {
+    $ph = implode(',', array_fill(0, count($dueIds), '?'));
+    $pdo->prepare("
+        UPDATE scheduled_events
+        SET status = 'running', attempts = attempts + 1, claimed_at = NOW()
+        WHERE event_id IN ($ph)
+    ")->execute($dueIds);
+}
+$pdo->commit();
 
-if ($claimed > 0) {
-    $due = $pdo->query("
-        SELECT * FROM scheduled_events
-        WHERE status = 'running'
-        ORDER BY run_at
-        LIMIT 50
-    ")->fetchAll(PDO::FETCH_ASSOC);
+tick_log('claimed ' . count($dueIds) . ' due event(s)');
+
+if ($dueIds !== []) {
+    $ph = implode(',', array_fill(0, count($dueIds), '?'));
+    $dueStmt = $pdo->prepare("SELECT * FROM scheduled_events WHERE event_id IN ($ph) ORDER BY run_at");
+    $dueStmt->execute($dueIds);
+    $due = $dueStmt->fetchAll(PDO::FETCH_ASSOC);
 
     $runtime = new Mlc\Engine\Runtime($pdo);
     $gameStmt = $pdo->prepare("SELECT * FROM games WHERE id = ?");
