@@ -40,9 +40,9 @@ $endpoints = [
         code, .mono { font-family: 'Fira Code', monospace; }
     </style>
 </head>
-<body class="bg-[#1e1e2d] text-white min-h-screen">
-    <main class="max-w-4xl mx-auto px-6 py-16">
-        <img src="/assets/logo.svg" alt="Multiplayer Logic Constructor" class="w-16 h-16 mb-5">
+<body class="bg-[#1e1e2d] text-white min-h-screen flex flex-col">
+    <?php site_header('api'); ?>
+    <main class="max-w-4xl mx-auto px-6 py-16 flex-1 w-full">
         <h1 class="text-4xl font-bold mb-3">REST API</h1>
         <p class="text-gray-400 mb-8">
             Secrets travel in headers only — never in URLs:
@@ -70,5 +70,6 @@ $endpoints = [
             </tbody>
         </table>
     </main>
+    <?php site_footer(); ?>
 </body>
 </html>

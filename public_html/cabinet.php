@@ -35,22 +35,10 @@ $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .glass { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); }
     </style>
 </head>
-<body class="bg-page min-h-screen text-white">
-    <header class="border-b border-white/10">
-        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="/" class="font-bold flex items-center gap-2"><img src="/assets/logo.svg" alt="" class="w-8 h-8">Multiplayer Logic Constructor</a>
-            <div class="flex items-center gap-4 text-sm">
-                <span class="text-gray-400"><?= htmlspecialchars($_SESSION['email'] ?? '', ENT_QUOTES) ?></span>
-                <form method="POST" action="/php/auth.php" class="inline">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="action" value="logout">
-                    <button class="text-gray-300 hover:text-white">Sign out</button>
-                </form>
-            </div>
-        </div>
-    </header>
+<body class="bg-page min-h-screen text-white flex flex-col">
+    <?php site_header('cabinet'); ?>
 
-    <main class="max-w-6xl mx-auto px-6 py-10">
+    <main class="max-w-6xl mx-auto px-6 py-10 flex-1 w-full">
         <div class="flex items-center justify-between mb-8">
             <h1 class="text-3xl font-bold">Your Games</h1>
             <form method="POST" action="/php/games.php" id="create-game" class="flex gap-2">
@@ -126,6 +114,7 @@ $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php endif; ?>
     </main>
 
+    <?php site_footer(); ?>
     <script nonce="<?= csp_nonce() ?>">
     const CSRF = <?= json_encode(csrf_token()) ?>;
     const flash = (msg, ok) => {

@@ -27,7 +27,9 @@ $error = is_string($_GET['error'] ?? null) ? $_GET['error'] : '';
         .glass { background: rgba(255,255,255,0.08); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.15); }
     </style>
 </head>
-<body class="bg-page min-h-screen text-white flex items-center justify-center p-4">
+<body class="bg-page min-h-screen text-white flex flex-col">
+    <?php site_header('login'); ?>
+    <main class="flex-1 w-full flex items-center justify-center p-4">
     <div class="glass w-full max-w-md rounded-2xl p-8">
         <img src="/assets/logo.svg" alt="Multiplayer Logic Constructor" class="w-14 h-14 mb-4">
         <h1 class="text-2xl font-bold mb-1">Developer Login</h1>
@@ -81,6 +83,8 @@ $error = is_string($_GET['error'] ?? null) ? $_GET['error'] : '';
 
         <p class="text-center mt-6 text-sm"><a href="/" class="text-gray-400 hover:text-white">&larr; Home</a></p>
     </div>
+    </main>
+    <?php site_footer(); ?>
     <?php if ($sent): ?>
     <script nonce="<?= csp_nonce() ?>">
     (function () {

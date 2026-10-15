@@ -29,8 +29,9 @@ $description = "Visual block-programming platform for server-authoritative multi
         }
     </style>
 </head>
-<body class="hero-gradient min-h-screen text-white">
-    <main class="max-w-5xl mx-auto px-6 py-24">
+<body class="hero-gradient min-h-screen text-white flex flex-col">
+    <?php site_header('home'); ?>
+    <main class="max-w-5xl mx-auto px-6 py-24 flex-1 w-full">
         <img src="/assets/logo.svg" alt="Multiplayer Logic Constructor" class="w-20 h-20 mb-6 drop-shadow-xl">
         <p class="text-sm uppercase tracking-[0.3em] text-purple-300 mb-4">Multiplayer Logic Constructor</p>
         <h1 class="text-5xl md:text-6xl font-black leading-tight mb-6">
@@ -104,5 +105,6 @@ if (r.Result == "rejected") ShowReason(r.Reason);   // "not your turn"
 game.OnUpdate += u => ApplyUpdate(u.Type, u.Data);  // server pushes what's visible</code></pre>
         </section>
     </main>
+    <?php site_footer(); ?>
 </body>
 </html>

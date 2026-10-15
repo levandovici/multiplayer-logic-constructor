@@ -1,7 +1,8 @@
 <?php
 
-// Helpers — no session, no output, no DB. Safe to include from tests and
-// CLI tools. Loaded by src/bootstrap.php.
+// Helpers — no DB. The view helpers (brand_head_tags, site_header,
+// site_footer) echo escaped HTML; everything else is pure output-free code.
+// Safe to include from tests and CLI tools. Loaded by src/bootstrap.php.
 // Ported subset of multiplayer-api helpers, trimmed to what MLC needs.
 
 function client_ip() {
@@ -170,6 +171,64 @@ function brand_head_tags($title = 'Multiplayer Logic Constructor', $description 
     <meta name="twitter:title" content="{$t}">
     <meta name="twitter:description" content="{$d}">
     <meta name="twitter:image" content="{$u}/assets/og-cover.png">
+
+HTML;
+}
+
+// Shared top bar for every HTML page. $active ('home'|'api'|'cabinet')
+// highlights the current nav item. The editor is the exception — it is a
+// fullscreen workspace with its own functional toolbar, not a site page.
+function site_header(string $active = ''): void {
+    $email = is_string($_SESSION['email'] ?? null) ? $_SESSION['email'] : '';
+    $navItem = static function (string $key, string $href, string $label) use ($active): string {
+        $cls = $key === $active ? 'text-white font-semibold' : 'text-gray-400 hover:text-white';
+        return '<a href="' . $href . '" class="' . $cls . ' transition">' . $label . '</a>';
+    };
+    $nav = $navItem('home', '/', 'Home') . $navItem('api', '/api/', 'API');
+    if ($email !== '') {
+        $nav .= $navItem('cabinet', '/cabinet.php', 'Cabinet');
+        $account = '<span class="text-gray-500 hidden sm:inline">'
+            . htmlspecialchars($email, ENT_QUOTES, 'UTF-8') . '</span>'
+            . '<form method="POST" action="/php/auth.php" class="inline">'
+            . csrf_field()
+            . '<input type="hidden" name="action" value="logout">'
+            . '<button class="text-gray-300 hover:text-white transition">Sign out</button></form>';
+    } else {
+        $account = '<a href="/login.php" class="bg-purple-600 hover:bg-purple-500 rounded-lg px-4 py-1.5 font-semibold transition">Developer Login</a>';
+    }
+    echo <<<HTML
+    <header class="border-b border-white/10 bg-[#16161f]/85 backdrop-blur">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+            <a href="/" class="font-bold flex items-center gap-2 shrink-0"><img src="/assets/logo.svg" alt="" class="w-8 h-8">Multiplayer Logic Constructor</a>
+            <nav class="flex items-center gap-5 text-sm">{$nav}{$account}</nav>
+        </div>
+    </header>
+
+HTML;
+}
+
+// Shared footer — place before </body>; page body should be a
+// min-h-screen flex column with a flex-1 <main> so it hugs the bottom.
+function site_footer(): void {
+    $year = gmdate('Y');
+    echo <<<HTML
+    <footer class="border-t border-white/10 mt-16">
+        <div class="max-w-6xl mx-auto px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-sm">
+            <div class="flex items-center gap-3">
+                <img src="/assets/logo.svg" alt="" class="w-9 h-9">
+                <div>
+                    <p class="font-semibold">Multiplayer Logic Constructor</p>
+                    <p class="text-gray-500 text-xs">Server-authoritative multiplayer logic, built from blocks.</p>
+                </div>
+            </div>
+            <nav class="flex items-center gap-5 text-gray-400">
+                <a href="/" class="hover:text-white transition">Home</a>
+                <a href="/api/" class="hover:text-white transition">API</a>
+                <a href="/cabinet.php" class="hover:text-white transition">Cabinet</a>
+            </nav>
+        </div>
+        <p class="text-center text-xs text-gray-600 pb-6">&copy; {$year} Multiplayer Logic Constructor</p>
+    </footer>
 
 HTML;
 }
