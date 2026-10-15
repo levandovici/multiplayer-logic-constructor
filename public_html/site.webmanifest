@@ -1,6 +1,6 @@
 {
     "name": "Multiplayer Logic Constructor",
-    "short_name": "MLC",
+    "short_name": "Multiplayer Logic Constructor",
     "description": "Visual block-programming platform for server-authoritative multiplayer game logic.",
     "icons": [
         { "src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png" },

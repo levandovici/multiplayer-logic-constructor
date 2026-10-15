@@ -29,6 +29,7 @@ $error = is_string($_GET['error'] ?? null) ? $_GET['error'] : '';
 </head>
 <body class="bg-page min-h-screen text-white flex items-center justify-center p-4">
     <div class="glass w-full max-w-md rounded-2xl p-8">
+        <img src="/assets/logo.svg" alt="Multiplayer Logic Constructor" class="w-14 h-14 mb-4">
         <h1 class="text-2xl font-bold mb-1">Developer Login</h1>
         <p class="text-gray-300 text-sm mb-6">Passwordless — we email you a code. New email? That registers you.</p>
 

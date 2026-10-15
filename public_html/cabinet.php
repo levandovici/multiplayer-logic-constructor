@@ -38,7 +38,7 @@ $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body class="bg-page min-h-screen text-white">
     <header class="border-b border-white/10">
         <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="/" class="font-bold">Logic Constructor</a>
+            <a href="/" class="font-bold flex items-center gap-2"><img src="/assets/logo.svg" alt="" class="w-8 h-8">Multiplayer Logic Constructor</a>
             <div class="flex items-center gap-4 text-sm">
                 <span class="text-gray-400"><?= htmlspecialchars($_SESSION['email'] ?? '', ENT_QUOTES) ?></span>
                 <form method="POST" action="/php/auth.php" class="inline">

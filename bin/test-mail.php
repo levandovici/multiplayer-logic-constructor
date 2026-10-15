@@ -71,7 +71,7 @@ if (!$mailOnly && $host !== '') {
 }
 
 if (!$probeOnly) {
-    $subject = 'MLC mail test ' . date('H:i:s');
+    $subject = 'Multiplayer Logic Constructor mail test ' . date('H:i:s');
     $body = "If you see this, outbound mail works from this host.\nSent via test-mail.php";
     echo "-- send_mail() --\n";
     $ok = send_mail($to, $subject, $body);

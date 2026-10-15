@@ -31,7 +31,7 @@ $description = "Visual block-programming platform for server-authoritative multi
 </head>
 <body class="hero-gradient min-h-screen text-white">
     <main class="max-w-5xl mx-auto px-6 py-24">
-        <img src="/assets/logo.svg" alt="MLC logo" class="w-20 h-20 mb-6 drop-shadow-xl">
+        <img src="/assets/logo.svg" alt="Multiplayer Logic Constructor" class="w-20 h-20 mb-6 drop-shadow-xl">
         <p class="text-sm uppercase tracking-[0.3em] text-purple-300 mb-4">Multiplayer Logic Constructor</p>
         <h1 class="text-5xl md:text-6xl font-black leading-tight mb-6">
             Your game's backend,<br>

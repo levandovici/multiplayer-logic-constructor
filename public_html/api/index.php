@@ -2,7 +2,7 @@
 require_once dirname(__DIR__, 2) . '/src/bootstrap.php';
 send_security_headers();
 
-$title = "MLC — REST API";
+$title = "Multiplayer Logic Constructor — REST API";
 $description = "Multiplayer Logic Constructor REST API. Player tokens, rooms, block-program triggers and update polling.";
 
 $endpoints = [
@@ -32,6 +32,7 @@ $endpoints = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8') ?></title>
     <meta name="description" content="<?= htmlspecialchars($description, ENT_QUOTES, 'UTF-8') ?>">
+    <?php brand_head_tags($title, $description); ?>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
@@ -41,6 +42,7 @@ $endpoints = [
 </head>
 <body class="bg-[#1e1e2d] text-white min-h-screen">
     <main class="max-w-4xl mx-auto px-6 py-16">
+        <img src="/assets/logo.svg" alt="Multiplayer Logic Constructor" class="w-16 h-16 mb-5">
         <h1 class="text-4xl font-bold mb-3">REST API</h1>
         <p class="text-gray-400 mb-8">
             Secrets travel in headers only — never in URLs:

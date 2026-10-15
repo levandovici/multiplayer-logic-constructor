@@ -48,7 +48,7 @@ $workspaceJson = $program['draft_workspace'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editor — <?= htmlspecialchars($game['name'], ENT_QUOTES) ?> — MLC</title>
+    <title>Editor — <?= htmlspecialchars($game['name'], ENT_QUOTES) ?> — Multiplayer Logic Constructor</title>
     <?php brand_head_tags('Editor — Multiplayer Logic Constructor'); ?>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/blockly@10.4.3/blockly.min.js"></script>
@@ -65,6 +65,7 @@ $workspaceJson = $program['draft_workspace'];
     <header class="border-b border-white/10 shrink-0">
         <div class="px-4 h-14 flex items-center justify-between">
             <div class="flex items-center gap-4">
+                <img src="/assets/logo.svg" alt="" class="w-8 h-8">
                 <a href="/cabinet.php" class="text-gray-400 hover:text-white text-sm">← Cabinet</a>
                 <h1 class="font-semibold"><?= htmlspecialchars($game['name'], ENT_QUOTES) ?></h1>
                 <span class="text-xs text-gray-500 mono">program: <?= htmlspecialchars($program['name'] ?? 'main', ENT_QUOTES) ?></span>
