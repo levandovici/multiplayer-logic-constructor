@@ -227,7 +227,10 @@ function site_footer(): void {
                 <a href="/cabinet.php" class="hover:text-white transition">Cabinet</a>
             </nav>
         </div>
-        <p class="text-center text-xs text-gray-600 pb-6">&copy; {$year} Multiplayer Logic Constructor</p>
+        <div class="text-center text-xs text-gray-600 pb-6">
+            <p>&copy; {$year} Multiplayer Logic Constructor</p>
+            <p class="mt-1">Made by Nichita Levandovici</p>
+        </div>
     </footer>
 
 HTML;
