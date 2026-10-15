@@ -81,21 +81,20 @@ The **wire format is identical everywhere** (plain JSON); only how the client
 *materializes* free-form payloads differs. `Do(action, args)` and `u.data` are
 arbitrary JSON — the platform can't ship typed DTOs for program-defined data.
 
-| SDK | Outgoing `args` | Incoming `data` | Why |
+| SDK | Outgoing args | Incoming payload | Why |
 |---|---|---|---|
-| **.NET** | `object` / `Dictionary<string,object>` / anonymous — free-form native | `JsonElement` on `u.Data` | `System.Text.Json` handles arbitrary JSON |
-| **Unity** | `[Serializable]` arg classes OR `Dictionary` via bundled **MiniJSON.cs** | `u.DataJson` raw string → `JsonUtility.FromJson<T>` or MiniJSON dict | `JsonUtility` can't serialize `Dictionary` and can't parse untyped trees |
-| **C++** | `nlohmann::json` object literal | `nlohmann::json` on `u.data` | free-form native |
-| **Unreal** | `TSharedPtr<FJsonObject>` / `FString` raw | `FString` raw + `JsonObjectConverter` helpers | UHT can't serialize open maps into DTOs |
+| **.NET** | `payload` object — free-form native | `data` / `response` parsed fields | `System.Text.Json` handles arbitrary JSON |
+| **Unity** | `payload_json` **string** | `data_json` / `response_json` / `state_json` strings | `JsonUtility` can't serialize `Dictionary` or parse untyped trees |
+| **C++** | `payload` — `nlohmann::json` | `data` / `response` | free-form native |
+| **Unreal** | `payload_json` `FString` raw or `FJsonObject` | `*_json` strings + `JsonObjectConverter` helpers | UHT can't serialize open maps into DTOs |
 
-**Unity rule** (same as the multiplayer-api Unity SDK's `data_json` pattern):
-payload always arrives as a raw `DataJson` string; game code either calls
-`JsonUtility.FromJson<MyType>(u.DataJson)` with a `[Serializable]` class it
-declared, or parses with the bundled `MiniJSON` for `Dictionary` access. For
-outgoing args, both paths work: `Do("move", new MoveArgs{x=1,y=2})`
-(`JsonUtility.ToJson` — teaches typed classes, inspector-visible) or
-`Do("move", new Dictionary<string,object>{{"x",1},{"y",2}})` (MiniJSON —
-mirrors the .NET samples so docs can show one shape across SDKs).
+**The `*_json` convention (implemented server-side — same as multiplayer-api):**
+every free-form field is emitted twice — parsed (`data`, `response`, `state`)
+and raw string (`data_json`, `response_json`, `state_json`). Endpoints that
+take free-form input (`do`, `message`) accept `payload` object *or*
+`payload_json` string. Unity SDK sends/reads only the `*_json` forms, so its
+envelope DTOs stay `[Serializable]`-compatible and game code parses the
+string with `JsonUtility.FromJson<T>` (typed) or the bundled MiniJSON dict.
 
 The SDK embeds `MiniJSON.cs` (~200 lines, MIT, no dependency) rather than
 pulling Newtonsoft — Unity 2021+ package friction isn't worth it for one file.

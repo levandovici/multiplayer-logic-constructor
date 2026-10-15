@@ -124,7 +124,10 @@ if ($action === 'me' && $_SERVER['REQUEST_METHOD'] === 'GET') {
             'name' => $player['name'],
             'is_online' => (bool)$player['is_online'],
             'room_id' => $membership['room_id'] ?? null,
+            // Dual form: parsed for typed SDKs, _json string for Unity
+            // (JsonUtility can't decode arbitrary nested objects).
             'data' => json_decode($player['player_data'] ?? '{}', true),
+            'data_json' => $player['player_data'] ?? '{}',
         ],
     ]);
 }
@@ -158,6 +161,7 @@ if ($action === 'updates' && $_SERVER['REQUEST_METHOD'] === 'GET') {
             'from' => $r['from_player_id'] !== null ? (int)$r['from_player_id'] : null,
             'type' => $r['type'],
             'data' => json_decode($r['data'], true),
+            'data_json' => $r['data'],
             'at' => isoUtc($r['created_at']),
         ], $rows),
     ]);

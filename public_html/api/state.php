@@ -37,8 +37,9 @@ $pl->execute([$room['room_id']]);
 
 $st = $pdo->prepare("SELECT state FROM player_state WHERE room_id = ? AND player_id = ?");
 $st->execute([$room['room_id'], $player['id']]);
-$myState = $st->fetchColumn();
-$myState = $myState === false ? [] : (json_decode((string)$myState, true) ?: []);
+$myStateRaw = $st->fetchColumn();
+$myStateRaw = $myStateRaw === false ? '{}' : (string)$myStateRaw;
+$myState = json_decode($myStateRaw, true) ?: [];
 
 respond_json([
     'success' => true,
@@ -62,5 +63,6 @@ respond_json([
         'is_host' => (bool)$membership['is_host'],
         'seat' => $membership['seat'] !== null ? (int)$membership['seat'] : null,
         'state' => $myState,
+        'state_json' => $myStateRaw, // Unity: parse this string, not `state`
     ],
 ]);

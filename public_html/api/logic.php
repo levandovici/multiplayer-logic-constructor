@@ -63,7 +63,12 @@ if ($action === 'do' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         || !preg_match('/^[a-zA-Z0-9_\-:.]+$/', $actionName)) {
         respond_json(['success' => false, 'error' => 'action name is required (letters, digits, _ - : .)'], 400);
     }
-    $payload = $input['payload'] ?? [];
+    // payload (object) or payload_json (string) — Unity's JsonUtility can't
+    // serialize Dictionary into a nested object, so SDKs send the string.
+    $payload = $input['payload'] ?? null;
+    if ($payload === null && isset($input['payload_json'])) {
+        $payload = json_decode((string)$input['payload_json'], true);
+    }
     if (!is_array($payload)) {
         respond_json(['success' => false, 'error' => 'payload must be an object'], 400);
     }
@@ -94,6 +99,9 @@ if ($action === 'do' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         'result' => $result['result'],
         'reason' => $result['reason'],
         'response' => $result['response'],
+        // Unity SDK reads the string form — JsonUtility can't decode
+        // free-form nested objects into Dictionary.
+        'response_json' => json_encode($result['response'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
         'version' => $result['version'],
     ], $result['result'] === 'rejected' ? 403 : 200);
 }
@@ -108,7 +116,10 @@ if ($action === 'message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         || !preg_match('/^[a-zA-Z0-9_\-:.]+$/', $messageName)) {
         respond_json(['success' => false, 'error' => 'message name is required'], 400);
     }
-    $payload = $input['payload'] ?? [];
+    $payload = $input['payload'] ?? null;
+    if ($payload === null && isset($input['payload_json'])) {
+        $payload = json_decode((string)$input['payload_json'], true);
+    }
     if (!is_array($payload)) {
         respond_json(['success' => false, 'error' => 'payload must be an object'], 400);
     }
@@ -132,6 +143,7 @@ if ($action === 'message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         'result' => $result['result'],
         'reason' => $result['reason'],
         'response' => $result['response'],
+        'response_json' => json_encode($result['response'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
     ], $result['result'] === 'rejected' ? 403 : ($result['result'] === 'error' ? 500 : 200));
 }
 
