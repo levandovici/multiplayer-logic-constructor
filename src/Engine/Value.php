@@ -8,6 +8,12 @@ namespace Mlc\Engine;
 // type mismatch unless a value is structurally unusable.
 final class Value
 {
+    /** Serialized-size ceiling for one engine value (256 KiB). Enforced on
+     *  every expression result and every scope write — blocks amplification
+     *  loops (concat doubling, self-nesting lists) before they can exhaust
+     *  request memory. */
+    public const MAX_BYTES = 262144;
+
     public static function num(mixed $v): int|float
     {
         if (is_int($v) || is_float($v)) {
@@ -97,6 +103,44 @@ final class Value
             is_array($v) => 'map',
             default => get_debug_type($v),
         };
+    }
+
+    /**
+     * Approximate serialized size of a value: strings count at full length,
+     * ~8 per scalar/element plus key lengths. Iterative walk (runtime values
+     * nest deeper than MAX_DEPTH) with early exit once past $limit — callers
+     * that only care "is it over the cap" never scan the whole value.
+     */
+    public static function byteSize(mixed $v, int $limit = PHP_INT_MAX): int
+    {
+        $size = 0;
+        $stack = [$v];
+        while ($stack !== []) {
+            $item = array_pop($stack);
+            if (is_string($item)) {
+                $size += strlen($item);
+            } elseif (is_array($item)) {
+                $size += 2;
+                foreach ($item as $k => $x) {
+                    $size += is_int($k) ? 4 : strlen((string)$k) + 4;
+                    $stack[] = $x;
+                }
+            } else {
+                $size += 8;
+            }
+            if ($size > $limit) {
+                return $size;
+            }
+        }
+        return $size;
+    }
+
+    /** Hard-fail the run when a value crosses the per-value size ceiling. */
+    public static function assertSize(mixed $v): void
+    {
+        if (self::byteSize($v, self::MAX_BYTES) > self::MAX_BYTES) {
+            throw new BudgetExhausted('value exceeds ' . self::MAX_BYTES . ' bytes');
+        }
     }
 
     /** Deep-compare for `eq` — strict on scalars, structural on arrays. */

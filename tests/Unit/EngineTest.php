@@ -9,6 +9,7 @@ use Mlc\Engine\EngineError;
 use Mlc\Engine\Executor;
 use Mlc\Engine\Program;
 use Mlc\Engine\Reject;
+use Mlc\Engine\Value;
 use PHPUnit\Framework\TestCase;
 
 class EngineTest extends TestCase
@@ -447,6 +448,166 @@ class EngineTest extends TestCase
             $this->fail('expected reject');
         } catch (Reject $r) {
             $this->assertSame('game is over', $r->reason);
+        }
+    }
+
+    // ====================== resource limits ======================
+
+    public function testValueSizeCapInExpression(): void
+    {
+        // concat doubling — the second iteration produces 512 KiB, over
+        // the 256 KiB ceiling, and dies inside expression evaluation.
+        $this->expectException(BudgetExhausted::class);
+        $this->execProgram([
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 't',
+                'body' => [
+                    ['op' => 'set.local', 'name' => 's', 'value' => str_repeat('x', 131072)],
+                    ['op' => 'repeat', 'times' => 3, 'body' => [
+                        ['op' => 'set.local', 'name' => 's', 'value' => ['op' => 'concat',
+                            'a' => ['op' => 'var.local', 'name' => 's'],
+                            'b' => ['op' => 'var.local', 'name' => 's']]],
+                    ]],
+                ],
+            ]],
+        ], 'on_player_action', 't');
+    }
+
+    public function testValueSizeCapOnWrite(): void
+    {
+        // a single oversized literal is refused on the expression result
+        $this->expectException(BudgetExhausted::class);
+        $this->execProgram([
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 't',
+                'body' => [['op' => 'set.room', 'name' => 'big', 'value' => str_repeat('y', 300000)]],
+            ]],
+        ], 'on_player_action', 't');
+    }
+
+    public function testScopeAggregateCap(): void
+    {
+        // 20 distinct room vars × 64 KiB ≈ 1.25 MiB > 1 MiB scope ceiling —
+        // each value is legal on its own; the aggregate trips the guard.
+        $body = [];
+        for ($i = 0; $i < 20; $i++) {
+            $body[] = ['op' => 'set.room', 'name' => "v$i", 'value' => str_repeat('z', 65536)];
+        }
+        $this->expectException(BudgetExhausted::class);
+        $this->execProgram([
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 't',
+                'body' => $body,
+            ]],
+        ], 'on_player_action', 't');
+    }
+
+    public function testUpdateBudget(): void
+    {
+        $this->expectException(BudgetExhausted::class);
+        $this->execProgram([
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 't',
+                'body' => [['op' => 'repeat', 'times' => 300, 'body' => [
+                    ['op' => 'send.room', 'type' => 'spam', 'data' => 'x'],
+                ]]],
+            ]],
+        ], 'on_player_action', 't');
+    }
+
+    public function testScheduleBudget(): void
+    {
+        $this->expectException(BudgetExhausted::class);
+        $this->execProgram([
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 't',
+                'body' => [['op' => 'repeat', 'times' => 100, 'body' => [
+                    ['op' => 'schedule', 'timer' => 't', 'delay' => 60],
+                ]]],
+            ]],
+        ], 'on_player_action', 't');
+    }
+
+    public function testLogBudget(): void
+    {
+        $this->expectException(BudgetExhausted::class);
+        $this->execProgram([
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 't',
+                'body' => [['op' => 'repeat', 'times' => 200, 'body' => [
+                    ['op' => 'log', 'message' => 'flood'],
+                ]]],
+            ]],
+        ], 'on_player_action', 't');
+    }
+
+    public function testCallDepthBudget(): void
+    {
+        // unbounded recursion dies at the call-depth cap, not the PHP stack
+        $this->expectException(BudgetExhausted::class);
+        $this->execProgram([
+            'functions' => [[
+                'name' => 'f', 'params' => [],
+                'body' => [['op' => 'call', 'name' => 'f', 'args' => []]],
+            ]],
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 't',
+                'body' => [['op' => 'call', 'name' => 'f', 'args' => []]],
+            ]],
+        ], 'on_player_action', 't');
+    }
+
+    public function testValueAtExactCapPasses(): void
+    {
+        // exactly MAX_BYTES is legal — only strictly-over is refused
+        [$ctx] = $this->execProgram([
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 't',
+                'body' => [['op' => 'set.room', 'name' => 's', 'value' => str_repeat('x', \Mlc\Engine\Value::MAX_BYTES)]],
+            ]],
+        ], 'on_player_action', 't');
+        $this->assertSame(\Mlc\Engine\Value::MAX_BYTES, strlen($ctx->roomGet('s')));
+    }
+
+    public function testOversizedRespondRefused(): void
+    {
+        $this->expectException(BudgetExhausted::class);
+        $this->execProgram([
+            'triggers' => [[
+                'event' => 'on_player_action', 'action' => 't',
+                'body' => [['op' => 'respond', 'value' => str_repeat('x', \Mlc\Engine\Value::MAX_BYTES + 1)]],
+            ]],
+        ], 'on_player_action', 't');
+    }
+
+    public function testByteSizeEstimator(): void
+    {
+        $this->assertSame(8, \Mlc\Engine\Value::byteSize(null));
+        $this->assertSame(3, \Mlc\Engine\Value::byteSize('abc'));
+        // 'x' key (~5) + value 3 + brackets 2
+        $this->assertSame(10, \Mlc\Engine\Value::byteSize(['x' => 'abc']));
+        // early exit: reports over-limit without walking the rest
+        $this->assertGreaterThan(100, \Mlc\Engine\Value::byteSize(str_repeat('y', 1000), 100));
+    }
+
+    public function testMalformedProgramsThrowEngineError(): void
+    {
+        foreach ([
+            // non-whitelisted op
+            ['triggers' => [['event' => 'on_player_action', 'action' => 't', 'body' => [['op' => 'exec_shell']]]]],
+            // node without an op
+            ['triggers' => [['event' => 'on_player_action', 'action' => 't', 'body' => [['not_op' => true]]]]],
+            // unknown event name
+            ['triggers' => [['event' => 'rm_rf', 'body' => []]]],
+            // expression where a statement is required
+            ['triggers' => [['event' => 'on_player_action', 'action' => 't', 'body' => [['op' => 'lit', 'value' => 1]]]]],
+        ] as $ast) {
+            try {
+                Program::load($ast);
+                $this->fail('expected EngineError');
+            } catch (EngineError $e) {
+                $this->assertNotSame('', $e->getMessage());
+            }
         }
     }
 }

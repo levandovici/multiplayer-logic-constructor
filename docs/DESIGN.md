@@ -201,6 +201,13 @@ Execution semantics:
 - **Step budget** (default 10k ops) + per-loop iteration caps, mirroring
   BlocksEngine2's overflow guard — a malformed `repeat until` cannot melt
   shared hosting.
+- **Size budgets** (all `BudgetExhausted` → rollback): one value ≤ 256 KiB
+  serialized (`Value::MAX_BYTES`, checked on every expression result and
+  scope write — kills concat-doubling amplification); each scope ≤ 1 MiB
+  aggregate (`Context::MAX_SCOPE_BYTES`, byte tallies kept per scope);
+  function call depth ≤ 64; per-run outboxes capped (256 updates, 64
+  scheduled timers, 64 cancellations, 128 log lines). Request bodies are
+  capped at 1 MiB in `json_input` (`php://input` ignores `post_max_size`).
 - **No synchronous `wait`.** PHP is request-scoped; "do X later" is always
   `schedule` → `mlc_scheduled_events` row → cron worker re-enters the engine
   under the same locking. (Documented trade-off; sub-minute timers need the

@@ -11,6 +11,8 @@ final class Executor
 {
     public int $steps = 0;
     private int $loopIters = 0;
+    private int $callDepth = 0;
+    private const MAX_CALL_DEPTH = 64;
 
     public function __construct(
         private Program $program,
@@ -187,9 +189,9 @@ final class Executor
                 $indexAs = is_string($n['index'] ?? null) ? $n['index'] : null;
                 foreach ($list as $i => $item) {
                     $this->loopTick();
-                    $scope->vars[$as] = $item;
+                    $this->setLocal($scope, $as, $item);
                     if ($indexAs !== null) {
-                        $scope->vars[$indexAs] = $i;
+                        $this->setLocal($scope, $indexAs, $i);
                     }
                     try {
                         $this->execList($n['body'] ?? [], $scope);
@@ -203,7 +205,7 @@ final class Executor
                 $as = $this->varName($n, 'as');
                 foreach ($this->ctx->roomPlayers() as $member) {
                     $this->loopTick();
-                    $scope->vars[$as] = (int)$member['player_id'];
+                    $this->setLocal($scope, $as, (int)$member['player_id']);
                     try {
                         $this->execList($n['body'] ?? [], $scope);
                     } catch (BreakSignal) {
@@ -256,7 +258,7 @@ final class Executor
 
             case 'broadcast.log':
                 $line = Value::str($this->evalExpr($n['message'] ?? '', $scope));
-                $this->ctx->logLines[] = $line;
+                $this->ctx->log($line);
                 $this->ctx->sendToRoom('log', $line);
                 return;
 
@@ -352,7 +354,7 @@ final class Executor
 
             // ---------- audit ----------
             case 'log':
-                $this->ctx->logLines[] = Value::str($this->evalExpr($n['message'] ?? '', $scope));
+                $this->ctx->log(Value::str($this->evalExpr($n['message'] ?? '', $scope)));
                 return;
 
             default:
@@ -368,7 +370,19 @@ final class Executor
 
     // ====================== expressions ======================
 
+    /**
+     * Every expression result passes the size check — a single amplifying
+     * node (concat of two near-cap strings) can't slip an oversized value
+     * through before it's caught here.
+     */
     private function evalExpr(mixed $node, Scope $scope): mixed
+    {
+        $v = $this->evalExprInner($node, $scope);
+        Value::assertSize($v);
+        return $v;
+    }
+
+    private function evalExprInner(mixed $node, Scope $scope): mixed
     {
         if (!is_array($node) || !isset($node['op'])) {
             return $node; // scalar shorthand = literal
@@ -625,14 +639,20 @@ final class Executor
             throw new EngineError("unknown function \"$name\"");
         }
         $args = array_map(fn($a) => $this->evalExpr($a, $scope), $node['args'] ?? []);
+        if ($this->callDepth >= self::MAX_CALL_DEPTH) {
+            throw new BudgetExhausted('call depth ' . self::MAX_CALL_DEPTH . ' exceeded');
+        }
         $local = new Scope();
         foreach ($fn['params'] as $i => $param) {
-            $local->vars[$param] = $args[$i] ?? null;
+            $this->setLocal($local, $param, $args[$i] ?? null);
         }
+        $this->callDepth++;
         try {
             $this->execList($fn['body'], $local);
         } catch (ReturnSignal $r) {
             return $r->value;
+        } finally {
+            $this->callDepth--;
         }
         return null;
     }
@@ -672,10 +692,24 @@ final class Executor
         };
     }
 
+    /** Local-scope write with the same size discipline as persistent scopes. */
+    private function setLocal(Scope $local, string $name, mixed $value): void
+    {
+        Value::assertSize($value);
+        $local->bytes += Value::byteSize($value) - Value::byteSize($local->vars[$name] ?? null);
+        if ($local->bytes > Context::MAX_SCOPE_BYTES) {
+            throw new BudgetExhausted('local scope exceeds ' . Context::MAX_SCOPE_BYTES . ' bytes');
+        }
+        $local->vars[$name] = $value;
+    }
+
     private function setVar(string $scope, string $name, mixed $value, ?int $playerId, Scope $local): void
     {
+        if ($scope === 'local') {
+            $this->setLocal($local, $name, $value);
+            return;
+        }
         match ($scope) {
-            'local' => $local->vars[$name] = $value,
             'player' => $this->ctx->playerSet($playerId, $name, $value),
             'room' => $this->ctx->roomSet($name, $value),
             'game' => $this->ctx->gameSet($name, $value),

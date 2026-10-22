@@ -8,4 +8,8 @@ final class Scope
 {
     /** @var array<string,mixed> */
     public array $vars = [];
+
+    /** Approximate live bytes of $vars — Executor keeps it in step with
+     *  every write and hard-fails past Context::MAX_SCOPE_BYTES. */
+    public int $bytes = 0;
 }

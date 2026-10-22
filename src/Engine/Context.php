@@ -7,6 +7,17 @@ namespace Mlc\Engine;
 // effects (updates, scheduled events) flushed once at commit time.
 final class Context
 {
+    /** Serialized ceiling per persistent scope (1 MiB) and per local Scope —
+     *  caps total state a program can hold, not just single values. */
+    public const MAX_SCOPE_BYTES = 1048576;
+
+    /** Outbox row budgets per trigger run — beyond these the run hard-fails
+     *  instead of flushing thousands of update/timer/log rows. */
+    public const MAX_UPDATES = 256;
+    public const MAX_SCHEDULED = 64;
+    public const MAX_CANCELLED = 64;
+    public const MAX_LOG_LINES = 128;
+
     /** @var array<string,mixed> games row */
     public array $game;
     /** @var array<string,mixed>|null rooms row — null outside a room */
@@ -45,6 +56,11 @@ final class Context
     private array $playerDirty = [];
     private bool $roomDirty = false;
     private bool $gameDirty = false;
+    /** Approximate serialized bytes per loaded scope (MAX_SCOPE_BYTES guard). */
+    private int $roomBytes = 0;
+    private int $gameBytes = 0;
+    /** @var array<int,int> playerId => approx bytes */
+    private array $playerBytes = [];
 
     /** @var array{player:array,room:array,game:array} declared variable
      *  defaults — merged under stored state so a declared var always reads. */
@@ -145,7 +161,12 @@ final class Context
 
     public function roomSet(string $name, mixed $value): void
     {
+        Value::assertSize($value);
         $this->loadRoom();
+        $this->roomBytes += Value::byteSize($value) - Value::byteSize($this->roomState[$name] ?? null);
+        if ($this->roomBytes > self::MAX_SCOPE_BYTES) {
+            throw new BudgetExhausted('room state exceeds ' . self::MAX_SCOPE_BYTES . ' bytes');
+        }
         $this->roomState[$name] = $value;
         $this->roomDirty = true;
     }
@@ -157,6 +178,7 @@ final class Context
                 $this->defaults['room'],
                 $this->store->loadRoomState($this)
             );
+            $this->roomBytes = Value::byteSize($this->roomState);
         }
     }
 
@@ -164,25 +186,31 @@ final class Context
 
     public function gameGet(string $name, mixed $default = null): mixed
     {
-        if ($this->gameState === null) {
-            $this->gameState = array_replace_recursive(
-                $this->defaults['game'],
-                $this->store->loadGameState($this)
-            );
-        }
+        $this->loadGame();
         return $this->gameState[$name] ?? $default;
     }
 
     public function gameSet(string $name, mixed $value): void
+    {
+        Value::assertSize($value);
+        $this->loadGame();
+        $this->gameBytes += Value::byteSize($value) - Value::byteSize($this->gameState[$name] ?? null);
+        if ($this->gameBytes > self::MAX_SCOPE_BYTES) {
+            throw new BudgetExhausted('game state exceeds ' . self::MAX_SCOPE_BYTES . ' bytes');
+        }
+        $this->gameState[$name] = $value;
+        $this->gameDirty = true;
+    }
+
+    private function loadGame(): void
     {
         if ($this->gameState === null) {
             $this->gameState = array_replace_recursive(
                 $this->defaults['game'],
                 $this->store->loadGameState($this)
             );
+            $this->gameBytes = Value::byteSize($this->gameState);
         }
-        $this->gameState[$name] = $value;
-        $this->gameDirty = true;
     }
 
     // ---------- player scope ----------
@@ -195,8 +223,13 @@ final class Context
 
     public function playerSet(?int $playerId, string $name, mixed $value): void
     {
+        Value::assertSize($value);
         $playerId ??= $this->playerId();
-        $this->playerState($playerId); // ensure loaded
+        $state = $this->playerState($playerId); // ensure loaded
+        $this->playerBytes[$playerId] += Value::byteSize($value) - Value::byteSize($state[$name] ?? null);
+        if ($this->playerBytes[$playerId] > self::MAX_SCOPE_BYTES) {
+            throw new BudgetExhausted('player state exceeds ' . self::MAX_SCOPE_BYTES . ' bytes');
+        }
         $this->playerStates[$playerId][$name] = $value;
         $this->playerDirty[$playerId] = true;
     }
@@ -208,6 +241,7 @@ final class Context
                 $this->defaults['player'],
                 $this->store->loadPlayerState($this, $playerId)
             );
+            $this->playerBytes[$playerId] = Value::byteSize($this->playerStates[$playerId]);
         }
         return $this->playerStates[$playerId];
     }
@@ -216,33 +250,60 @@ final class Context
 
     public function respond(mixed $value): void
     {
+        Value::assertSize($value);
         $this->response = $value;
         $this->responded = true;
     }
 
+    private function pushUpdate(?int $playerId, bool $others, string $type, mixed $data): void
+    {
+        if (count($this->updates) >= self::MAX_UPDATES) {
+            throw new BudgetExhausted('update budget ' . self::MAX_UPDATES . ' exceeded');
+        }
+        Value::assertSize($data);
+        $this->updates[] = ['target' => $playerId, 'others' => $others, 'type' => $type, 'data' => $data];
+    }
+
     public function sendToPlayer(int $playerId, string $type, mixed $data): void
     {
-        $this->updates[] = ['target' => $playerId, 'others' => false, 'type' => $type, 'data' => $data];
+        $this->pushUpdate($playerId, false, $type, $data);
     }
 
     public function sendToRoom(string $type, mixed $data): void
     {
-        $this->updates[] = ['target' => null, 'others' => false, 'type' => $type, 'data' => $data];
+        $this->pushUpdate(null, false, $type, $data);
     }
 
     public function sendToOthers(string $type, mixed $data): void
     {
-        $this->updates[] = ['target' => null, 'others' => true, 'type' => $type, 'data' => $data];
+        $this->pushUpdate(null, true, $type, $data);
     }
 
     public function schedule(string $timer, int $delaySeconds, mixed $payload): void
     {
+        if (count($this->scheduled) >= self::MAX_SCHEDULED) {
+            throw new BudgetExhausted('schedule budget ' . self::MAX_SCHEDULED . ' exceeded');
+        }
+        Value::assertSize($payload);
         $this->scheduled[] = ['timer' => $timer, 'run_at' => time() + $delaySeconds, 'payload' => $payload];
     }
 
     public function cancelTimer(string $timer): void
     {
+        if (count($this->cancelledTimers) >= self::MAX_CANCELLED) {
+            throw new BudgetExhausted('cancel budget ' . self::MAX_CANCELLED . ' exceeded');
+        }
         $this->cancelledTimers[] = $timer;
+    }
+
+    /** Free-form audit line (action_log.detail / simulate log). */
+    public function log(string $line): void
+    {
+        if (count($this->logLines) >= self::MAX_LOG_LINES) {
+            throw new BudgetExhausted('log budget ' . self::MAX_LOG_LINES . ' exceeded');
+        }
+        Value::assertSize($line);
+        $this->logLines[] = $line;
     }
 
     /** Persist all dirty scopes + outbox effects. Called once by Runtime. */

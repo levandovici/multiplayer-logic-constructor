@@ -21,13 +21,20 @@ function post_param($name) {
     return is_string($v) ? $v : null;
 }
 
+// Request-body ceiling — php://input ignores post_max_size, so cap the read
+// explicitly. Oversized bodies decode as malformed ([]) and endpoints answer
+// with their usual field errors instead of buffering unbounded input.
+const JSON_BODY_MAX_BYTES = 1048576;
+
 // Decoded JSON request body (Content-Type: application/json). Returns the
 // decoded array, or [] when absent/malformed — callers validate fields.
 function json_input() {
     static $cache = null;
     if ($cache === null) {
-        $raw = file_get_contents('php://input');
-        $decoded = is_string($raw) && $raw !== '' ? json_decode($raw, true) : null;
+        $raw = file_get_contents('php://input', false, null, 0, JSON_BODY_MAX_BYTES + 1);
+        $decoded = is_string($raw) && $raw !== '' && strlen($raw) <= JSON_BODY_MAX_BYTES
+            ? json_decode($raw, true)
+            : null;
         $cache = is_array($decoded) ? $decoded : [];
     }
     return $cache;
